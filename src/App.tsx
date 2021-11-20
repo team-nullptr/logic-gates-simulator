@@ -1,3 +1,21 @@
+import { Navigation } from "./features/navigation/Navigation";
+import { GitMerge, Plus } from "react-feather";
+
 export const App = () => {
-  return <h1>App</h1>;
+  return (
+    <div>
+      <Navigation
+        title={"My first circuit"}
+        onHomeClicked={() => console.log("home clicked")}
+        actions={[
+          {
+            icon: Plus,
+            text: "Create gate",
+            onClick: () => console.log("create gate clicked"),
+          },
+          { icon: GitMerge, onClick: () => console.log("cleanup clicked") },
+        ]}
+      />
+    </div>
+  );
 };
