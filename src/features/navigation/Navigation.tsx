@@ -1,22 +1,14 @@
 import { FC } from "react";
 import { NavigationItem } from "../../common/models/NavigationItem";
-import { Home, Icon } from "react-feather";
+import { Home } from "react-feather";
 import styles from "./Navigation.module.scss";
+import { NavigationIcon } from "./NavigationIcon";
 
 type NavigationProps = {
   title: string;
   onHomeClicked: () => void;
   actions: NavigationItem[];
 };
-
-const NavigationIcon: FC<{ icon: Icon; text?: string; onClick: () => void }> = (
-  props
-) => (
-  <button className={`${styles.button} ${props.text ? styles.expanded : ""}`}>
-    <props.icon className={styles.icon} onClick={props.onClick} />
-    {props.text && <span className={styles.text}>{props.text}</span>}
-  </button>
-);
 
 export const Navigation: FC<NavigationProps> = (props) => {
   const renderActions = () => {
