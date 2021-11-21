@@ -1,5 +1,6 @@
 import { Navigation } from "./features/navigation/Navigation";
 import { GitMerge, Plus } from "react-feather";
+import "./common/styles/index.css";
 
 export const App = () => {
   return (

@@ -7,8 +7,11 @@ export const NavigationIcon: FC<{
   text?: string;
   onClick: () => void;
 }> = (props) => (
-  <button className={`${styles.button} ${props.text ? styles.expanded : ""}`}>
-    <props.icon className={styles.icon} onClick={props.onClick} />
+  <button
+    onClick={props.onClick}
+    className={`${styles.button} ${props.text ? styles.expanded : ""}`}
+  >
+    <props.icon className={styles.icon} />
     {props.text && <span className={styles.text}>{props.text}</span>}
   </button>
 );
