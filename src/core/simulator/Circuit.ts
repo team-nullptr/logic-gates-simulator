@@ -1,14 +1,9 @@
 import { v4 as uuid } from "uuid";
 import { GateOutput } from "./intarfaces/GateOutput";
-import { Gate, gates } from "./gates";
-import { Input } from "./input";
-import { Output } from "./output";
-
-export interface ConnectRequest {
-  fromId: string;
-  toId: string;
-  inputIndex: number;
-}
+import { ConnectRequest } from "./intarfaces/ConnectRequest";
+import { Gate, gates } from "./Gate";
+import { Input } from "./Input";
+import { Output } from "./Output";
 
 export class Circuit {
   private inputs = new Map<string, Input>();
@@ -16,7 +11,7 @@ export class Circuit {
   private gates = new Map<string, Gate>();
 
   /**
-   * Whole circuit with inputs, gates and outputs.
+   * Whole circuit with inputs, gate and outputs.
    */
   get circuit() {
     return new Map<string, Gate | Input | Output>([
@@ -51,7 +46,7 @@ export class Circuit {
   }
 
   /**
-   * Connects two gates from the circuit.
+   * Connects two gate from the circuit.
    */
   connect({ fromId, toId, inputIndex }: ConnectRequest) {
     const from = this.gates.get(fromId) ?? this.inputs.get(fromId);
@@ -72,7 +67,7 @@ export class Circuit {
   }
 
   /**
-   * Updates all gates connected with gate output.
+   * Updates all gate connected with gate output.
    */
   private update(outputs: GateOutput[], state: boolean) {
     outputs.forEach(({ toId, inputIndex }) => {
