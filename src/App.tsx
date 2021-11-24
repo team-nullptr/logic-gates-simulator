@@ -1,6 +1,7 @@
 import { Navigation } from "./features/navigation/Navigation";
 import { GitMerge, Plus } from "react-feather";
 import "./common/styles/index.css";
+import { Sidebar } from "./features/sidebar/Sidebar";
 
 export const App = () => {
   return (
@@ -17,6 +18,9 @@ export const App = () => {
           { icon: GitMerge, onClick: () => console.log("cleanup clicked") },
         ]}
       />
+      <main style={{ position: "absolute", width: "100%", height: "100%" }}>
+        <Sidebar />
+      </main>
     </div>
   );
 };
