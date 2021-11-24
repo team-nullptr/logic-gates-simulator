@@ -1,19 +1,18 @@
 import { FC } from "react";
 import { NavigationItem } from "../../common/models/NavigationItem";
-import { Home } from "react-feather";
 import styles from "./Navigation.module.scss";
-import { NavigationIcon } from "./NavigationIcon";
+import { NavigationButton } from "./NavigationButton";
 
 type NavigationProps = {
   title: string;
-  onHomeClicked: () => void;
-  actions: NavigationItem[];
+  left: NavigationItem[];
+  right: NavigationItem[];
 };
 
 export const Navigation: FC<NavigationProps> = (props) => {
-  const renderActions = () => {
-    return props.actions.map((action, i) => (
-      <NavigationIcon
+  const renderActions = (actions: NavigationItem[]) => {
+    return actions.map((action, i) => (
+      <NavigationButton
         icon={action.icon}
         onClick={action.onClick}
         text={action.text}
@@ -24,9 +23,9 @@ export const Navigation: FC<NavigationProps> = (props) => {
 
   return (
     <nav className={styles.navigation}>
-      <NavigationIcon icon={Home} onClick={props.onHomeClicked} />
+      <div className={styles.actions}>{renderActions(props.left)}</div>
       <p className={styles.title}>{props.title}</p>
-      <div className={styles.actions}>{renderActions()}</div>
+      <div className={styles.actions}>{renderActions(props.right)}</div>
     </nav>
   );
 };
