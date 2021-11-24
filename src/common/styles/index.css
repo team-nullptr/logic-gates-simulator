@@ -7,3 +7,9 @@
 body {
     font-family: "Ubuntu", "Roboto", sans-serif;
 }
+
+html,
+body,
+#root {
+    height: 100%;
+}

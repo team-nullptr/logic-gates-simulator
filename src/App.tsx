@@ -1,11 +1,12 @@
-import { Navigation } from "./features/navigation/Navigation";
-import { GitMerge, Plus } from "react-feather";
 import "./common/styles/index.css";
-import { Sidebar } from "./features/sidebar/Sidebar";
+import { Editor } from "./screens/editor/Editor";
+import { GitMerge, Plus } from "react-feather";
+import { Navigation } from "./features/navigation/Navigation";
+import styles from "./App.module.scss";
 
 export const App = () => {
   return (
-    <div>
+    <div className={styles.container}>
       <Navigation
         title={"My first circuit"}
         onHomeClicked={() => console.log("home clicked")}
@@ -18,9 +19,7 @@ export const App = () => {
           { icon: GitMerge, onClick: () => console.log("cleanup clicked") },
         ]}
       />
-      <main style={{ position: "absolute", width: "100%", height: "100%" }}>
-        <Sidebar />
-      </main>
+      <Editor />
     </div>
   );
 };
