@@ -1,4 +1,4 @@
-import "./common/styles/index.css";
+import "./main.css";
 import { Editor } from "./screens/editor/Editor";
 import styles from "./App.module.scss";
 import { Route, Routes, useLocation } from "react-router-dom";

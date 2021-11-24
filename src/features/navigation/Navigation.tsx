@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { NavigationItem } from "../../common/models/NavigationItem";
+import { NavigationItem } from "./NavigationItem";
 import styles from "./Navigation.module.scss";
 import { NavigationButton } from "./NavigationButton";
 
