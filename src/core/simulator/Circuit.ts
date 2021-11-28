@@ -1,88 +1,49 @@
-import { v4 as uuid } from "uuid";
-import { GateOutput } from "./intarfaces/GateOutput";
-import { ConnectRequest } from "./intarfaces/ConnectRequest";
-import { Gate, gates } from "./Gate";
-import { Input } from "./Input";
-import { Output } from "./Output";
+import { Input } from "./elements/Input";
+import { Gate } from "./elements/interfaces/Gate";
+import { Output } from "./elements/Output";
 
+interface Update {
+  to: number;
+  receiverId: string;
+  state: boolean;
+}
+
+/**
+ * Executor of circuit.
+ */
 export class Circuit {
-  private inputs = new Map<string, Input>();
-  private outputs = new Map<string, Output>();
-  private gates = new Map<string, Gate>();
+  inputs: Map<string, Input> = new Map<string, Input>();
+  gates: Map<string, Gate> = new Map<string, Gate>();
+  outputs: Map<string, Output> = new Map<string, Output>();
 
   /**
-   * Whole circuit with inputs, gate and outputs.
+   * Simulates execution of a circuit.
    */
-  get circuit() {
-    return new Map<string, Gate | Input | Output>([
-      ...this.inputs,
-      ...this.gates,
-      ...this.outputs,
-    ]);
+  simulate() {
+    this.inputs.forEach(({ outputs, state }) => {
+      outputs.forEach(({ from, to, receiverId }) => {
+        this.update({ to, receiverId, state: state[from] });
+      });
+    });
   }
 
   /**
-   * Adds new gate, input or output to the circuit.
+   * Simulates execution of a single step in simulation.
    */
-  add(type: string): string {
-    const id = uuid();
+  private update({ to, receiverId, state }: Update) {
+    const receiver = this.gates.get(receiverId) ?? this.outputs.get(receiverId);
+    if (!receiver) throw new Error(`element not found: ${receiverId}`);
 
-    switch (type) {
-      case "input":
-        const input = new Input();
-        this.inputs.set(id, input);
-        break;
-      case "output":
-        const output = new Output();
-        this.outputs.set(id, output);
-        break;
-      default:
-        const gate = gates.get(type);
-        if (!gate) throw new Error(`unknown gate type: ${type}`);
-        this.gates.set(id, gate);
+    if (receiver instanceof Output) {
+      receiver.state[0] = state;
+      return;
     }
 
-    return id;
-  }
+    receiver.inputs[to] = state;
+    receiver.run();
 
-  /**
-   * Connects two gate from the circuit.
-   */
-  connect({ fromId, toId, inputIndex }: ConnectRequest) {
-    const from = this.gates.get(fromId) ?? this.inputs.get(fromId);
-    const to = this.gates.get(toId);
-
-    if (!from || !to)
-      throw new Error(`gate not found: ${from ? toId : fromId}`);
-
-    from.outputs.push({ toId, inputIndex });
-    this.simulate();
-  }
-
-  /**
-   * Simulates behaviour of a circuit with given inputs.
-   */
-  private simulate() {
-    this.inputs.forEach(({ outputs, state }) => this.update(outputs, state));
-  }
-
-  /**
-   * Updates all gate connected with gate output.
-   */
-  private update(outputs: GateOutput[], state: boolean) {
-    outputs.forEach(({ toId, inputIndex }) => {
-      const receiver = this.gates.get(toId) ?? this.outputs.get(toId);
-
-      if (!receiver) throw new Error(`gate not found: ${toId}`);
-
-      if (receiver instanceof Gate) {
-        receiver.inputs[inputIndex] = state;
-
-        const changed = receiver.run();
-        if (changed) this.update(receiver.outputs, receiver.state);
-      } else {
-        receiver.state = state;
-      }
+    receiver.outputs.forEach(({ from, to, receiverId }) => {
+      this.update({ to, receiverId, state: receiver.states[from] });
     });
   }
 }

@@ -1,9 +1,154 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import { Simulator } from "./core/simulator/Simulator";
 
 function App() {
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "nor",
+      JSON.stringify({
+        inputs: [
+          {
+            id: "1",
+            outputs: [
+              {
+                from: 0,
+                to: 0,
+                receiverId: "3",
+              },
+            ],
+          },
+          {
+            id: "2",
+            outputs: [
+              {
+                from: 0,
+                to: 1,
+                receiverId: "3",
+              },
+            ],
+          },
+        ],
+        gates: [
+          {
+            id: "3",
+            element: "or",
+            outputs: [
+              {
+                from: 0,
+                to: 0,
+                receiverId: "4",
+              },
+            ],
+          },
+          {
+            id: "4",
+            element: "not",
+            outputs: [
+              {
+                from: 0,
+                to: 0,
+                receiverId: "5",
+              },
+            ],
+          },
+        ],
+        outputs: [
+          {
+            id: "5",
+          },
+        ],
+      })
+    );
+
+    localStorage.setItem(
+      "giga-nor",
+      JSON.stringify({
+        inputs: [
+          {
+            id: "1",
+            outputs: [
+              {
+                from: 0,
+                to: 0,
+                receiverId: "4",
+              },
+            ],
+          },
+          {
+            id: "2",
+            outputs: [
+              {
+                from: 0,
+                to: 1,
+                receiverId: "4",
+              },
+            ],
+          },
+          {
+            id: "3",
+            outputs: [
+              {
+                from: 0,
+                to: 0,
+                receiverId: "5",
+              },
+            ],
+          },
+        ],
+        gates: [
+          {
+            id: "4",
+            element: "nor",
+            outputs: [
+              {
+                from: 0,
+                to: 1,
+                receiverId: "5",
+              },
+            ],
+          },
+          {
+            id: "5",
+            element: "nor",
+            outputs: [
+              {
+                from: 0,
+                to: 0,
+                receiverId: "6",
+              },
+            ],
+          },
+        ],
+        outputs: [
+          {
+            id: "6",
+          },
+        ],
+      })
+    );
+
+    const simulator = new Simulator();
+
+    const a = simulator.add("input");
+    simulator.toggle(a);
+
+    const b = simulator.add("input");
+    const c = simulator.add("input");
+
+    const d = simulator.add("giga-nor");
+    const e = simulator.add("output");
+
+    simulator.connect({ emitterId: a, receiverId: d, from: 0, to: 0 });
+    simulator.connect({ emitterId: b, receiverId: d, from: 0, to: 1 });
+    simulator.connect({ emitterId: c, receiverId: d, from: 0, to: 2 });
+    simulator.connect({ emitterId: d, receiverId: e, from: 0, to: 0 });
+
+    console.log(simulator.circuit);
+  });
 
   return (
     <div className="App">
