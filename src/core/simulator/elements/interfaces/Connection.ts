@@ -1,6 +1,4 @@
-/**
- * Represents a connection between two gates.
- */
+/** Represents a connection between two gates. */
 export interface Connection {
   from: number;
   to: number;

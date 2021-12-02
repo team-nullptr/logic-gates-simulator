@@ -1,6 +1,3 @@
-/**
- * Circuit output.
- */
 export class Output {
   state: boolean[] = [];
 

@@ -18,13 +18,10 @@ export const gates = new Map<string, any>([
   ],
 ]);
 
-/**
- * Basic logic gate.
- */
 export class BaseGate implements Gate {
   states: boolean[] = [];
   inputs: boolean[];
-  outputs: Connection[] = [];
+  connections: Connection[] = [];
   handler: (inputs: boolean[]) => boolean;
 
   constructor(readonly id: string, readonly type: string) {
@@ -33,11 +30,7 @@ export class BaseGate implements Gate {
     this.handler = handler;
   }
 
-  /**
-   * Executes the gate handler.
-   */
   run() {
-    const prev = this.states[0];
     this.states[0] = this.handler(this.inputs);
   }
 }

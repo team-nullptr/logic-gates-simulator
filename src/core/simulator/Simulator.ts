@@ -6,6 +6,7 @@ import { Output } from "./elements/Output";
 import { BaseGate } from "./elements/BaseGate";
 import { CustomGate } from "./elements/CustomGate";
 
+/** Represents a connection request. */
 interface ConnectRequest {
   emitterId: string;
   receiverId: string;
@@ -16,9 +17,7 @@ interface ConnectRequest {
 export class Simulator {
   circuit = new Circuit();
 
-  /**
-   * Adds a new gate to the simulator's circuit.
-   */
+  /** Adds a new gate to the simulator's circuit. */
   add(element: string) {
     const id = uuid();
     const type = getElementType(element);
@@ -46,9 +45,7 @@ export class Simulator {
     input.state[0] = true;
   }
 
-  /**
-   * Connects two gates together.
-   */
+  /** Connects two gates together. */
   connect({ emitterId, receiverId, from, to }: ConnectRequest) {
     const emitter =
       this.circuit.gates.get(emitterId) ?? this.circuit.inputs.get(emitterId);
@@ -59,7 +56,7 @@ export class Simulator {
 
     if (!emitter || !receiver) throw new Error("unable to get gates");
 
-    emitter.outputs.push({ from, to, receiverId });
+    emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();
   }
 }

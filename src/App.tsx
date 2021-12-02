@@ -13,7 +13,7 @@ function App() {
         inputs: [
           {
             id: "1",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 0,
@@ -23,7 +23,7 @@ function App() {
           },
           {
             id: "2",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 1,
@@ -36,7 +36,7 @@ function App() {
           {
             id: "3",
             element: "or",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 0,
@@ -47,7 +47,7 @@ function App() {
           {
             id: "4",
             element: "not",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 0,
@@ -70,7 +70,7 @@ function App() {
         inputs: [
           {
             id: "1",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 0,
@@ -80,7 +80,7 @@ function App() {
           },
           {
             id: "2",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 1,
@@ -90,7 +90,7 @@ function App() {
           },
           {
             id: "3",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 0,
@@ -103,7 +103,7 @@ function App() {
           {
             id: "4",
             element: "nor",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 1,
@@ -114,7 +114,7 @@ function App() {
           {
             id: "5",
             element: "nor",
-            outputs: [
+            connections: [
               {
                 from: 0,
                 to: 0,

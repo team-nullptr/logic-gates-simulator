@@ -1,11 +1,8 @@
 import { Connection } from "./interfaces/Connection";
 
-/**
- * Circuit input.
- */
 export class Input {
   state: boolean[] = [false];
-  outputs: Connection[] = [];
+  connections: Connection[] = [];
 
   constructor(readonly id: string) {}
 }
