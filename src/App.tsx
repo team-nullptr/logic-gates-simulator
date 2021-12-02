@@ -64,90 +64,47 @@ function App() {
       })
     );
 
-    localStorage.setItem(
-      "giga-nor",
-      JSON.stringify({
-        inputs: [
-          {
-            id: "1",
-            connections: [
-              {
-                from: 0,
-                to: 0,
-                receiverId: "4",
-              },
-            ],
-          },
-          {
-            id: "2",
-            connections: [
-              {
-                from: 0,
-                to: 1,
-                receiverId: "4",
-              },
-            ],
-          },
-          {
-            id: "3",
-            connections: [
-              {
-                from: 0,
-                to: 0,
-                receiverId: "5",
-              },
-            ],
-          },
-        ],
-        gates: [
-          {
-            id: "4",
-            element: "nor",
-            connections: [
-              {
-                from: 0,
-                to: 1,
-                receiverId: "5",
-              },
-            ],
-          },
-          {
-            id: "5",
-            element: "nor",
-            connections: [
-              {
-                from: 0,
-                to: 0,
-                receiverId: "6",
-              },
-            ],
-          },
-        ],
-        outputs: [
-          {
-            id: "6",
-          },
-        ],
-      })
-    );
-
     const simulator = new Simulator();
 
     const a = simulator.add("input");
-    simulator.toggle(a);
-
+    simulator.circuit.inputs.get(a)!.state[0] = true;
     const b = simulator.add("input");
-    const c = simulator.add("input");
+    const c = simulator.add("nor");
+    const d = simulator.add("nor");
 
-    const d = simulator.add("giga-nor");
-    const e = simulator.add("output");
-
-    simulator.connect({ emitterId: a, receiverId: d, from: 0, to: 0 });
-    simulator.connect({ emitterId: b, receiverId: d, from: 0, to: 1 });
-    simulator.connect({ emitterId: c, receiverId: d, from: 0, to: 2 });
-    simulator.connect({ emitterId: d, receiverId: e, from: 0, to: 0 });
+    try {
+      simulator.connect({ emitterId: a, receiverId: c, from: 0, to: 1 });
+      simulator.connect({ emitterId: b, receiverId: d, from: 0, to: 0 });
+      simulator.connect({ emitterId: c, receiverId: d, from: 0, to: 1 });
+      simulator.connect({ emitterId: d, receiverId: c, from: 0, to: 0 });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.log(err.message);
+      }
+    }
 
     console.log(simulator.circuit);
+
+    const simulator2 = new Simulator();
+
+    const aa = simulator2.add("input");
+    simulator2.circuit.inputs.get(aa)!.state[0] = true;
+    const bb = simulator2.add("and");
+    const cc = simulator2.add("not");
+
+    try {
+      simulator2.connect({ emitterId: bb, receiverId: cc, from: 0, to: 0 });
+      console.log("=====");
+      simulator2.connect({ emitterId: cc, receiverId: bb, from: 0, to: 1 });
+      console.log("=====");
+      simulator2.connect({ emitterId: aa, receiverId: bb, from: 0, to: 0 });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.log(err.message);
+      }
+    }
+
+    console.log(simulator2.circuit);
   });
 
   return (

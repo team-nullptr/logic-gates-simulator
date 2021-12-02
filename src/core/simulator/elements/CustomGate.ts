@@ -47,9 +47,14 @@ export class CustomGate implements Gate {
 
     this.circuit.simulate();
 
+    let changed = false;
     [...this.circuit.outputs.values()].forEach(({ state }, index) => {
+      const previous = this.states[index];
       this.states[index] = state[0];
+      changed = previous !== this.states[index];
     });
+
+    return changed;
   }
 
   /** Load serialized gate. */

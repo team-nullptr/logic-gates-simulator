@@ -8,5 +8,5 @@ export interface Gate {
   connections: Connection[];
 
   /** Executes the gate. */
-  run(): void;
+  run(): boolean;
 }

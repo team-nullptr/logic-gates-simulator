@@ -1,6 +1,7 @@
 import { Gate } from "./interfaces/Gate";
 import { Connection } from "./interfaces/Connection";
 
+// TODO: type gate config
 export const gates = new Map<string, any>([
   [
     "not",
@@ -16,6 +17,7 @@ export const gates = new Map<string, any>([
       handler: ([a, b]: boolean[]) => a || b,
     },
   ],
+  ["and", { inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
 ]);
 
 export class BaseGate implements Gate {
@@ -31,6 +33,8 @@ export class BaseGate implements Gate {
   }
 
   run() {
+    const previous = this.states[0];
     this.states[0] = this.handler(this.inputs);
+    return this.states[0] !== previous;
   }
 }

@@ -54,7 +54,9 @@ export class Simulator {
       this.circuit.gates.get(receiverId) ??
       this.circuit.outputs.get(receiverId);
 
-    if (!emitter || !receiver) throw new Error("unable to get gates");
+    if (!emitter || !receiver) {
+      throw new Error("unable to get gates");
+    }
 
     emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();

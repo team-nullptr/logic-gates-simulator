@@ -14,9 +14,12 @@ export class Circuit {
   gates: Map<string, Gate> = new Map<string, Gate>();
   outputs: Map<string, Output> = new Map<string, Output>();
 
+  private callStack = new Set<string>();
+
   /** Simulates execution of a circuit. */
   simulate() {
     this.inputs.forEach(({ connections, state }) => {
+      this.callStack.clear();
       connections.forEach(({ from, to, receiverId }) => {
         this.update({ to, receiverId, state: state[from] });
       });
@@ -26,7 +29,6 @@ export class Circuit {
   /** Simulates execution of a single step in simulation. */
   private update({ to, receiverId, state }: Update) {
     const receiver = this.gates.get(receiverId) ?? this.outputs.get(receiverId);
-
     if (!receiver) throw new Error(`element not found: ${receiverId}`);
 
     if (receiver instanceof Output) {
@@ -35,10 +37,21 @@ export class Circuit {
     }
 
     receiver.inputs[to] = state;
-    receiver.run();
+    const changed = receiver.run();
+    if (!changed) {
+      return;
+    }
+
+    if (this.callStack.has(receiverId))
+      throw new Error("detected infinite loop");
+    this.callStack.add(receiverId);
 
     receiver.connections.forEach(({ from, to, receiverId }) => {
-      this.update({ to, receiverId, state: receiver.states[from] });
+      this.update({
+        to,
+        receiverId,
+        state: receiver.states[from],
+      });
     });
   }
 }
