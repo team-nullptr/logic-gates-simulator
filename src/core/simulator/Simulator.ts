@@ -42,7 +42,7 @@ export class Simulator {
 
   toggle(id: string) {
     const input = this.circuit.inputs.get(id)!;
-    input.state[0] = true;
+    input.states[0] = true;
   }
 
   /** Connects two gates together. */

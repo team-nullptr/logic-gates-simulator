@@ -1,5 +1,5 @@
 export class Output {
-  state: boolean[] = [];
+  states: boolean[] = [];
 
   constructor(readonly id: string) {}
 }

@@ -1,7 +1,7 @@
 import { Connection } from "./interfaces/Connection";
 
 export class Input {
-  state: boolean[] = [false];
+  states: boolean[] = [false];
   connections: Connection[] = [];
 
   constructor(readonly id: string) {}

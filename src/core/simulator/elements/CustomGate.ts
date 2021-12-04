@@ -42,15 +42,15 @@ export class CustomGate implements Gate {
 
   run() {
     [...this.circuit.inputs.values()].forEach((input, index) => {
-      input.state[0] = this.inputs[index];
+      input.states[0] = this.inputs[index];
     });
 
     this.circuit.simulate();
 
     let changed = false;
-    [...this.circuit.outputs.values()].forEach(({ state }, index) => {
+    [...this.circuit.outputs.values()].forEach(({ states }, index) => {
       const previous = this.states[index];
-      this.states[index] = state[0];
+      this.states[index] = states[0];
       changed = previous !== this.states[index];
     });
 

@@ -1,6 +1,8 @@
 import { Input } from "./elements/Input";
 import { Gate } from "./elements/interfaces/Gate";
 import { Output } from "./elements/Output";
+import { BaseGate } from "./elements/BaseGate";
+import { CustomGate } from "./elements/CustomGate";
 
 /** Update represents data required for gate update. */
 interface Update {
@@ -18,40 +20,42 @@ export class Circuit {
 
   /** Simulates execution of a circuit. */
   simulate() {
-    this.inputs.forEach(({ connections, state }) => {
+    this.inputs.forEach(({ connections, states }) => {
       this.callStack.clear();
       connections.forEach(({ from, to, receiverId }) => {
-        this.update({ to, receiverId, state: state[from] });
+        this.update({ to, receiverId, state: states[from] });
       });
     });
   }
 
   /** Simulates execution of a single step in simulation. */
   private update({ to, receiverId, state }: Update) {
-    const receiver = this.gates.get(receiverId) ?? this.outputs.get(receiverId);
+    const receiver: Gate | Output | undefined =
+      this.gates.get(receiverId) ?? this.outputs.get(receiverId);
+
     if (!receiver) throw new Error(`element not found: ${receiverId}`);
 
-    if (receiver instanceof Output) {
-      receiver.state[0] = state;
-      return;
-    }
+    if (receiver instanceof BaseGate || receiver instanceof CustomGate) {
+      receiver.inputs[to] = state;
+      const changed = receiver.run();
+      if (!changed) {
+        return;
+      }
 
-    receiver.inputs[to] = state;
-    const changed = receiver.run();
-    if (!changed) {
-      return;
-    }
+      if (this.callStack.has(receiverId))
+        throw new Error("detected infinite loop");
+      this.callStack.add(receiverId);
 
-    if (this.callStack.has(receiverId))
-      throw new Error("detected infinite loop");
-    this.callStack.add(receiverId);
-
-    receiver.connections.forEach(({ from, to, receiverId }) => {
-      this.update({
-        to,
-        receiverId,
-        state: receiver.states[from],
+      receiver.connections.forEach(({ from, to, receiverId }) => {
+        this.update({
+          to,
+          receiverId,
+          state: receiver.states[from],
+        });
       });
-    });
+    } else {
+      receiver.states[0] = state;
+      return;
+    }
   }
 }

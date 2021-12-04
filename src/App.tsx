@@ -67,7 +67,7 @@ function App() {
     const simulator = new Simulator();
 
     const a = simulator.add("input");
-    simulator.circuit.inputs.get(a)!.state[0] = true;
+    simulator.circuit.inputs.get(a)!.states[0] = true;
     const b = simulator.add("input");
     const c = simulator.add("nor");
     const d = simulator.add("nor");
@@ -85,18 +85,18 @@ function App() {
 
     console.log(simulator.circuit);
 
+    console.log("====");
+
     const simulator2 = new Simulator();
 
     const aa = simulator2.add("input");
-    simulator2.circuit.inputs.get(aa)!.state[0] = true;
+    simulator2.circuit.inputs.get(aa)!.states[0] = true;
     const bb = simulator2.add("and");
     const cc = simulator2.add("not");
 
     try {
       simulator2.connect({ emitterId: bb, receiverId: cc, from: 0, to: 0 });
-      console.log("=====");
       simulator2.connect({ emitterId: cc, receiverId: bb, from: 0, to: 1 });
-      console.log("=====");
       simulator2.connect({ emitterId: aa, receiverId: bb, from: 0, to: 0 });
     } catch (err: unknown) {
       if (err instanceof Error) {
