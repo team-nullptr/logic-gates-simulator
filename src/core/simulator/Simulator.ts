@@ -1,10 +1,10 @@
 import { Circuit } from "./Circuit";
 import { v4 as uuid } from "uuid";
-import { getElementType } from "./elements/utils/type";
-import { Input } from "./elements/Input";
-import { Output } from "./elements/Output";
-import { BaseGate } from "./elements/BaseGate";
-import { CustomGate } from "./elements/CustomGate";
+import { getElementType } from "./utils/type";
+import { Input } from "./Input";
+import { Output } from "./Output";
+import { BaseGate } from "./BaseGate";
+import { CustomGate } from "./CustomGate";
 
 /** Represents a connection request. */
 interface ConnectRequest {

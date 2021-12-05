@@ -3,7 +3,7 @@ import { Output } from "./Output";
 import { BaseGate } from "./BaseGate";
 import { Gate } from "./interfaces/Gate";
 import { Connection } from "./interfaces/Connection";
-import { Circuit } from "../Circuit";
+import { Circuit } from "./Circuit";
 import { getElementType } from "./utils/type";
 
 /** Represents a serialized custom gate. */

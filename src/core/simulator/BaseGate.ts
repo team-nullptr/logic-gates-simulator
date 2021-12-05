@@ -1,22 +1,14 @@
 import { Gate } from "./interfaces/Gate";
 import { Connection } from "./interfaces/Connection";
 
-// TODO: type gate config
-export const gates = new Map<string, any>([
-  [
-    "not",
-    {
-      inputsCount: 1,
-      handler: ([a]: boolean[]) => !a,
-    },
-  ],
-  [
-    "or",
-    {
-      inputsCount: 2,
-      handler: ([a, b]: boolean[]) => a || b,
-    },
-  ],
+interface BaseGateOptions {
+  inputsCount: number;
+  handler: (input: boolean[]) => boolean;
+}
+
+export const gates = new Map<string, BaseGateOptions>([
+  ["not", { inputsCount: 1, handler: ([a]: boolean[]) => !a }],
+  ["or", { inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }],
   ["and", { inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
 ]);
 
@@ -27,9 +19,11 @@ export class BaseGate implements Gate {
   handler: (inputs: boolean[]) => boolean;
 
   constructor(readonly id: string, readonly type: string) {
-    const { inputsCount, handler } = gates.get(type);
-    this.inputs = new Array(inputsCount).fill(false);
-    this.handler = handler;
+    const gate = gates.get(type);
+    if (!gate) throw new Error("unknown gate");
+
+    this.inputs = new Array(gate.inputsCount).fill(false);
+    this.handler = gate.handler;
   }
 
   run() {
