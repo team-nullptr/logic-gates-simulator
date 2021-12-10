@@ -18,8 +18,8 @@ const ProjectNavigation = () => (
       {
         icon: Plus,
         text: "New project",
-        onClick: () => console.log("new project clicked"),
-      },
+        onClick: () => console.log("new project clicked")
+      }
     ]}
   />
 );
@@ -32,12 +32,12 @@ const EditNavigation = () => (
       {
         icon: Plus,
         text: "Create gate",
-        onClick: () => console.log("create gate clicked"),
+        onClick: () => console.log("create gate clicked")
       },
       {
         icon: GitMerge,
-        onClick: () => console.log("cleanup clicked"),
-      },
+        onClick: () => console.log("cleanup clicked")
+      }
     ]}
   />
 );
