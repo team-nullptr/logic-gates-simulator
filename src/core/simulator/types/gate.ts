@@ -1,4 +1,4 @@
-import { Connection } from "./Connection";
+import { Connection } from "./connection";
 
 /** Represents a valid gate object. */
 export interface Gate {

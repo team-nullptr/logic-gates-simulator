@@ -1,9 +1,9 @@
-import { Input } from "./Input";
-import { Output } from "./Output";
-import { BaseGate } from "./BaseGate";
-import { Gate } from "./interfaces/Gate";
-import { Connection } from "./interfaces/Connection";
-import { Circuit } from "./Circuit";
+import { Input } from "./input";
+import { Output } from "./output";
+import { BaseGate } from "./base-gate";
+import { Gate } from "./types/gate";
+import { Connection } from "./types/connection";
+import { Circuit } from "./circuit";
 import { getElementType } from "./utils/type";
 
 /** Represents a serialized custom gate. */
@@ -29,7 +29,7 @@ const loadFromLocalStorage = (element: string): SerializedCustomGate => {
   return JSON.parse(raw);
 };
 
-export class CustomGate implements Gate {
+export class CutomGate implements Gate {
   states: boolean[] = [];
   inputs: boolean[] = [];
   connections: Connection[] = [];
@@ -66,10 +66,8 @@ export class CustomGate implements Gate {
 
     serialized.gates.forEach(({ id, element, connections }) => {
       let gate: Gate;
-      const type = getElementType(element);
-
-      if (type == "base") gate = new BaseGate(id, element);
-      else gate = new CustomGate(id, element);
+      if (getElementType(element) == "base") gate = new BaseGate(id, element);
+      else gate = new CutomGate(id, element);
 
       gate.connections.push(...connections);
       this.circuit.gates.set(id, gate);

@@ -1,8 +1,8 @@
-import { Input } from "./Input";
-import { Gate } from "./interfaces/Gate";
-import { Output } from "./Output";
-import { BaseGate } from "./BaseGate";
-import { CustomGate } from "./CustomGate";
+import { Input } from './input';
+import { Gate } from './types/gate';
+import { Output } from './output';
+import { BaseGate } from './base-gate';
+import { CutomGate } from './cutom-gate';
 
 /** Update represents data required for gate update. */
 interface Update {
@@ -33,20 +33,20 @@ export class Circuit {
     const receiver = this.gates.get(receiverId) ?? this.outputs.get(receiverId);
     if (!receiver) throw new Error(`element not found: ${receiverId}`);
 
-    if (receiver instanceof BaseGate || receiver instanceof CustomGate) {
-      receiver.inputs[to] = state;
-      const changed = receiver.run();
-      if (!changed) return;
-
-      if (this.callStack.has(receiverId))
-        throw new Error("detected infinite loop");
-      this.callStack.add(receiverId);
-
-      receiver.connections.forEach(({ from, to, receiverId }) =>
-        this.update({ to, receiverId, state: receiver.states[from] })
-      );
-    } else {
+    if (!(receiver instanceof BaseGate || receiver instanceof CutomGate)) {
       receiver.states[0] = state;
+      return;
     }
+
+    receiver.inputs[to] = state;
+    const changed = receiver.run();
+    if (!changed) return;
+
+    if (this.callStack.has(receiverId)) throw new Error('detected infinite loop');
+    this.callStack.add(receiverId);
+
+    receiver.connections.forEach(({ from, to, receiverId }) =>
+      this.update({ to, receiverId, state: receiver.states[from] })
+    );
   }
 }

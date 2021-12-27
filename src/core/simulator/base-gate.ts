@@ -1,5 +1,5 @@
-import { Gate } from "./interfaces/Gate";
-import { Connection } from "./interfaces/Connection";
+import { Gate } from "./types/gate";
+import { Connection } from "./types/connection";
 
 interface BaseGateOptions {
   inputsCount: number;

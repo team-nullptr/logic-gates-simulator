@@ -1,10 +1,10 @@
-import { Circuit } from "./Circuit";
-import { v4 as uuid } from "uuid";
-import { getElementType } from "./utils/type";
-import { Input } from "./Input";
-import { Output } from "./Output";
-import { BaseGate } from "./BaseGate";
-import { CustomGate } from "./CustomGate";
+import { Circuit } from './circuit';
+import { v4 as uuid } from 'uuid';
+import { getElementType } from './utils/type';
+import { Input } from './input';
+import { Output } from './output';
+import { BaseGate } from './base-gate';
+import { CutomGate } from './cutom-gate';
 
 /** Represents a connection request. */
 interface ConnectRequest {
@@ -23,17 +23,17 @@ export class Simulator {
     const type = getElementType(element);
 
     switch (type) {
-      case "input":
+      case 'input':
         this.circuit.inputs.set(id, new Input(id));
         break;
-      case "output":
+      case 'output':
         this.circuit.outputs.set(id, new Output(id));
         break;
-      case "base":
+      case 'base':
         this.circuit.gates.set(id, new BaseGate(id, element));
         break;
-      case "custom":
-        this.circuit.gates.set(id, new CustomGate(id, element));
+      case 'custom':
+        this.circuit.gates.set(id, new CutomGate(id, element));
         break;
     }
 
@@ -47,15 +47,11 @@ export class Simulator {
 
   /** Connects two gates together. */
   connect({ emitterId, receiverId, from, to }: ConnectRequest) {
-    const emitter =
-      this.circuit.gates.get(emitterId) ?? this.circuit.inputs.get(emitterId);
-
-    const receiver =
-      this.circuit.gates.get(receiverId) ??
-      this.circuit.outputs.get(receiverId);
+    const emitter = this.circuit.gates.get(emitterId) ?? this.circuit.inputs.get(emitterId);
+    const receiver = this.circuit.gates.get(receiverId) ?? this.circuit.outputs.get(receiverId);
 
     if (!emitter || !receiver) {
-      throw new Error("unable to get gates");
+      throw new Error('unable to get gates');
     }
 
     emitter.connections.push({ from, to, receiverId });
