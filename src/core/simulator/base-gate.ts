@@ -9,7 +9,7 @@ interface BaseGateOptions {
 export const gates = new Map<string, BaseGateOptions>([
   ["not", { inputsCount: 1, handler: ([a]: boolean[]) => !a }],
   ["or", { inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }],
-  ["and", { inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
+  ["and", { inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }]
 ]);
 
 export class BaseGate implements Gate {

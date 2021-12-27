@@ -1,8 +1,8 @@
-import { Input } from './input';
-import { Gate } from './types/gate';
-import { Output } from './output';
-import { BaseGate } from './base-gate';
-import { CutomGate } from './cutom-gate';
+import { Input } from "./input";
+import { Gate } from "./types/gate";
+import { Output } from "./output";
+import { BaseGate } from "./base-gate";
+import { CutomGate } from "./cutom-gate";
 
 /** Update represents data required for gate update. */
 interface Update {
@@ -42,7 +42,8 @@ export class Circuit {
     const changed = receiver.run();
     if (!changed) return;
 
-    if (this.callStack.has(receiverId)) throw new Error('detected infinite loop');
+    if (this.callStack.has(receiverId))
+      throw new Error("detected infinite loop");
     this.callStack.add(receiverId);
 
     receiver.connections.forEach(({ from, to, receiverId }) =>
