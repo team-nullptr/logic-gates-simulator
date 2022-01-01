@@ -1,8 +1,9 @@
-.canvas {
-  flex-grow: 1;
-}
-
 .container {
   display: flex;
   height: 100%;
+  overflow-y: auto;
+}
+
+.canvas {
+  flex-grow: 1;
 }
