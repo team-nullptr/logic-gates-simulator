@@ -1,5 +1,11 @@
+import { Vector } from "./types/Vector";
+
 export class Renderer {
   private readonly ctx: CanvasRenderingContext2D;
+
+  private dragging = false;
+  private previous: Vector = [0, 0];
+  private offset: Vector = [0, 0];
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     this.ctx = canvas.getContext("2d")!;
@@ -18,15 +24,23 @@ export class Renderer {
     addEventListener("mouseup", this.handleMouseUp);
   }
 
-  private handleMouseDown = (e: MouseEvent) => {
-    console.log("mousedown", e);
+  private handleMouseDown = ({ offsetX, offsetY }: MouseEvent) => {
+    this.dragging = true;
+    this.previous = [offsetX, offsetY];
   };
 
-  private handleMouseMove = (e: MouseEvent) => {
-    console.log("mousemove", e);
+  private handleMouseMove = ({ offsetX, offsetY }: MouseEvent) => {
+    if (!this.dragging) return;
+    this.updateOffset([offsetX, offsetY]);
   };
 
-  private handleMouseUp = (e: MouseEvent) => {
-    console.log("mouseup", e);
+  private updateOffset([x, y]: Vector) {
+    this.offset[0] += x - this.previous[0];
+    this.offset[1] += y - this.previous[1];
+    this.previous = [x, y];
+  }
+
+  private handleMouseUp = () => {
+    this.dragging = false;
   };
 }
