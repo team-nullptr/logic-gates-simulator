@@ -1,8 +1,7 @@
-import { Input } from "./input";
-import { Gate } from "./types/gate";
-import { Output } from "./output";
-import { BaseGate } from "./base-gate";
-import { CutomGate } from "./cutom-gate";
+import { CircuitElement } from './elements/element';
+import { Gate } from './types/gate';
+import { BaseGate } from './elements/base-gate';
+import { CutomGate } from './elements/cutom-gate';
 
 /** Update represents data required for gate update. */
 interface Update {
@@ -12,9 +11,9 @@ interface Update {
 }
 
 export class Circuit {
-  inputs: Map<string, Input> = new Map<string, Input>();
-  gates: Map<string, Gate> = new Map<string, Gate>();
-  outputs: Map<string, Output> = new Map<string, Output>();
+  readonly inputs = new Map<string, CircuitElement>();
+  readonly gates = new Map<string, Gate>();
+  readonly outputs = new Map<string, CircuitElement>();
 
   private callStack = new Set<string>();
 
@@ -39,11 +38,10 @@ export class Circuit {
     }
 
     receiver.inputs[to] = state;
-    const changed = receiver.run();
-    if (!changed) return;
+    if (!receiver.run()) return;
 
     if (this.callStack.has(receiverId))
-      throw new Error("detected infinite loop");
+      throw new Error('detected infinite loop');
     this.callStack.add(receiverId);
 
     receiver.connections.forEach(({ from, to, receiverId }) =>

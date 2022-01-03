@@ -1,6 +1,6 @@
-import { FC } from "react";
-import { Icon } from "react-feather";
-import styles from "./Navigation.module.scss";
+import { FC } from 'react';
+import { Icon } from 'react-feather';
+import styles from './Navigation.module.scss';
 
 export const NavigationButton: FC<{
   icon: Icon;
@@ -9,7 +9,7 @@ export const NavigationButton: FC<{
 }> = (props) => (
   <button
     onClick={props.onClick}
-    className={`${styles.button} ${props.text ? styles.expanded : ""}`}
+    className={`${styles.button} ${props.text ? styles.expanded : ''}`}
   >
     <props.icon className={styles.icon} />
     {props.text && <span className={styles.text}>{props.text}</span>}

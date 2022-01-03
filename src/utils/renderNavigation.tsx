@@ -1,24 +1,24 @@
-import { GitMerge, Home, Plus } from "react-feather";
-import { Navigation } from "../features/navigation/Navigation";
+import { GitMerge, Home, Plus } from 'react-feather';
+import { Navigation } from '../features/navigation/Navigation';
 
 export const renderNavigation = (path: string) => {
   switch (path) {
-    case "/":
+    case '/':
       return <ProjectNavigation />;
-    case "/edit":
+    case '/edit':
       return <EditNavigation />;
   }
 };
 
 const ProjectNavigation = () => (
   <Navigation
-    title={"Projects"}
+    title={'Projects'}
     left={[]}
     right={[
       {
         icon: Plus,
-        text: "New project",
-        onClick: () => console.log("new project clicked")
+        text: 'New project',
+        onClick: () => console.log('new project clicked')
       }
     ]}
   />
@@ -26,17 +26,17 @@ const ProjectNavigation = () => (
 
 const EditNavigation = () => (
   <Navigation
-    title={"My first circuit"}
-    left={[{ icon: Home, onClick: () => console.log("home clicked") }]}
+    title={'My first circuit'}
+    left={[{ icon: Home, onClick: () => console.log('home clicked') }]}
     right={[
       {
         icon: Plus,
-        text: "Create gate",
-        onClick: () => console.log("create gate clicked")
+        text: 'Create gate',
+        onClick: () => console.log('create gate clicked')
       },
       {
         icon: GitMerge,
-        onClick: () => console.log("cleanup clicked")
+        onClick: () => console.log('cleanup clicked')
       }
     ]}
   />

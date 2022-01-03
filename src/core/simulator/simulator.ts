@@ -1,10 +1,9 @@
-import { Circuit } from "./circuit";
-import { v4 as uuid } from "uuid";
-import { getElementType } from "./utils/type";
-import { Input } from "./input";
-import { Output } from "./output";
-import { BaseGate } from "./base-gate";
-import { CutomGate } from "./cutom-gate";
+import { Circuit } from './circuit';
+import { v4 as uuid } from 'uuid';
+import { CircuitElement } from './elements/element';
+import { BaseGate, gatesOptions, isBaseGate } from './elements/base-gate';
+import { CutomGate } from './elements/cutom-gate';
+import { deserialize, loadFromLocalStorage } from './util/serialization';
 
 /** Represents a connection request. */
 interface ConnectRequest {
@@ -17,24 +16,30 @@ interface ConnectRequest {
 export class Simulator {
   circuit = new Circuit();
 
-  /** Adds a new gate to the simulator's circuit. */
   add(element: string) {
     const id = uuid();
-    const type = getElementType(element);
 
-    switch (type) {
-      case "input":
-        this.circuit.inputs.set(id, new Input(id));
+    switch (element) {
+      case 'input': {
+        const input = new CircuitElement(id, element);
+        input.states[0] = false;
+        this.circuit.inputs.set(id, input);
         break;
-      case "output":
-        this.circuit.outputs.set(id, new Output(id));
+      }
+      case 'output':
+        this.circuit.outputs.set(id, new CircuitElement(id, element));
         break;
-      case "base":
-        this.circuit.gates.set(id, new BaseGate(id, element));
-        break;
-      case "custom":
-        this.circuit.gates.set(id, new CutomGate(id, element));
-        break;
+      default: {
+        if (isBaseGate(element)) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const options = gatesOptions.get(element)!;
+          this.circuit.gates.set(id, new BaseGate(id, options));
+        } else {
+          const serialized = loadFromLocalStorage(element);
+          const deserialized = deserialize(serialized);
+          this.circuit.gates.set(id, new CutomGate(id, element, deserialized));
+        }
+      }
     }
 
     return id;
@@ -42,23 +47,31 @@ export class Simulator {
 
   toggle(id: string) {
     const input = this.circuit.inputs.get(id);
-    if (!input) throw new Error("input not found");
+    if (!input) throw new Error('input not found');
     input.states[0] = true;
   }
 
-  /** Connects two gates together. */
   connect({ emitterId, receiverId, from, to }: ConnectRequest) {
     const emitter =
       this.circuit.gates.get(emitterId) ?? this.circuit.inputs.get(emitterId);
+
     const receiver =
       this.circuit.gates.get(receiverId) ??
       this.circuit.outputs.get(receiverId);
 
     if (!emitter || !receiver) {
-      throw new Error("unable to get gates");
+      throw new Error('unable to get gates');
     }
 
     emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();
+  }
+
+  disconnect() {
+    // TODO: disconnect gates from eachother
+  }
+
+  remove() {
+    // TODO: remove gate from the circuit
   }
 }
