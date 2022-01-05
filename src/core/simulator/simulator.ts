@@ -5,10 +5,16 @@ import { BaseGate, gatesOptions, isBaseGate } from './elements/base-gate';
 import { CutomGate } from './elements/cutom-gate';
 import { deserialize, loadFromLocalStorage } from './util/serialization';
 
-/** Represents a connection request. */
 interface ConnectRequest {
   emitterId: string;
   receiverId: string;
+  from: number;
+  to: number;
+}
+
+interface DisconnectRequest {
+  gateId: string;
+  targetId: string;
   from: number;
   to: number;
 }
@@ -52,26 +58,31 @@ export class Simulator {
   }
 
   connect({ emitterId, receiverId, from, to }: ConnectRequest) {
-    const emitter =
-      this.circuit.gates.get(emitterId) ?? this.circuit.inputs.get(emitterId);
-
-    const receiver =
-      this.circuit.gates.get(receiverId) ??
-      this.circuit.outputs.get(receiverId);
-
-    if (!emitter || !receiver) {
-      throw new Error('unable to get gates');
-    }
+    const emitter = this.circuit.getEmitter(emitterId);
+    const receiver = this.circuit.getReceiver(receiverId);
+    if (!emitter || !receiver) throw new Error('unable to get gates');
 
     emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();
   }
 
-  disconnect() {
-    // TODO: disconnect gates from eachother
+  disconnect({ gateId, targetId, from, to }: DisconnectRequest) {
+    const gate = this.circuit.getEmitter(gateId);
+    const target = this.circuit.getReceiver(targetId);
+
+    target.inputs[to] = false;
+
+    gate.connections = gate.connections.filter(
+      (connection) =>
+        connection.receiverId != targetId &&
+        connection.from == from &&
+        connection.to == to
+    );
+
+    this.circuit.update(target);
   }
 
-  remove() {
+  remove(id: string) {
     // TODO: remove gate from the circuit
   }
 }

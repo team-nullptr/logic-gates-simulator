@@ -14,12 +14,42 @@ export const App = () => {
 
     const a = simulator.add('input');
     simulator.toggle(a);
+    const b = simulator.add('input');
 
-    const c = simulator.add('nor');
+    const c = simulator.add('nand');
+    const d = simulator.add('nand');
 
     simulator.connect({
       emitterId: a,
       receiverId: c,
+      from: 0,
+      to: 0
+    });
+
+    simulator.connect({
+      emitterId: b,
+      receiverId: d,
+      from: 0,
+      to: 1
+    });
+
+    simulator.connect({
+      emitterId: c,
+      receiverId: d,
+      from: 0,
+      to: 0
+    });
+
+    simulator.connect({
+      emitterId: d,
+      receiverId: c,
+      from: 0,
+      to: 1
+    });
+
+    simulator.disconnect({
+      gateId: a,
+      targetId: c,
       from: 0,
       to: 0
     });

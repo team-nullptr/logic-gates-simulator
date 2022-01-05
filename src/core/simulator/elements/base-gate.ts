@@ -1,10 +1,10 @@
 import { Gate } from '../types/gate';
 
-export type BaseGateType = 'not' | 'or' | 'and';
+export type BaseGateType = 'not' | 'or' | 'and' | 'nand';
 
 /* checks if gate is base gate */
 export const isBaseGate = (gate: string): gate is BaseGateType => {
-  return gate === 'not' || gate === 'or' || gate === 'and';
+  return gate === 'not' || gate === 'or' || gate === 'and' || gate === 'nand';
 };
 
 export interface BaseGateOptions {
@@ -23,6 +23,10 @@ export const gatesOptions = new Map<BaseGateType, BaseGateOptions>([
   [
     'and',
     { type: 'and', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }
+  ],
+  [
+    'nand',
+    { type: 'nand', inputsCount: 2, handler: ([a, b]: boolean[]) => !(a && b) }
   ]
 ]);
 
