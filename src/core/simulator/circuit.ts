@@ -6,40 +6,41 @@ export class Circuit {
   readonly gates = new Map<string, Gate>();
   readonly outputs = new Map<string, CircuitElement>();
 
-  simulate() {
+  /**
+   * Simulates the whole circuit starting from inputs.
+   */
+  simulate(): void {
     this.inputs.forEach((input) => this.update(input));
   }
 
-  find(id: string) {
+  /**
+   * Updates the circuit starting from a specific element.
+   */
+  update(element: CircuitElement): void {
+    if (element instanceof Gate) element.run();
+
+    element.connections.forEach(({ receiverId, from, to }) => {
+      const receiver = this.find(receiverId);
+
+      if (!receiver) throw new Error(`Element not found ${receiverId}`);
+
+      receiver.inputs[to] = element.states[from];
+      setTimeout(() => this.update(receiver), 100);
+    });
+  }
+
+  /**
+   * Finds an element in the circuit.
+   * @param id Id of the searched element.
+   * @returns Circuit element or undefined if element wasn't found.
+   */
+  find(id: string): CircuitElement | undefined {
     const element = [
       ...this.inputs.values(),
       ...this.gates.values(),
       ...this.outputs.values()
     ].find((element) => element.id === id);
 
-    if (!element) throw new Error('element not found');
     return element;
-  }
-
-  update(element: CircuitElement) {
-    if (element instanceof Gate) element.run();
-
-    element.connections.forEach(({ receiverId, from, to }) => {
-      const receiver = this.getReceiver(receiverId);
-      receiver.inputs[to] = element.states[from];
-      setTimeout(() => this.update(receiver), 100);
-    });
-  }
-
-  getEmitter(id: string) {
-    const emitter = this.gates.get(id) ?? this.inputs.get(id);
-    if (!emitter) throw new Error('gate not found');
-    return emitter;
-  }
-
-  getReceiver(id: string) {
-    const receiver = this.gates.get(id) ?? this.outputs.get(id);
-    if (!receiver) throw new Error('gate not found');
-    return receiver;
   }
 }

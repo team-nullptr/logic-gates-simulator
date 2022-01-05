@@ -13,7 +13,7 @@ interface ConnectRequest {
 }
 
 interface DisconnectRequest {
-  gateId: string;
+  elementId: string;
   targetId: string;
   from: number;
   to: number;
@@ -51,38 +51,57 @@ export class Simulator {
     return id;
   }
 
-  toggle(id: string) {
-    const input = this.circuit.inputs.get(id);
-    if (!input) throw new Error('input not found');
-    input.states[0] = true;
+  /**
+   * Toggles element state to true.
+   * @param id Id of an element.
+   */
+  toggle(id: string): void {
+    const element = this.circuit.find(id);
+
+    if (!element) throw new Error(`Element not found: ${id}`);
+    if (element.type !== 'input')
+      throw new Error("Only input's state can be toggled");
+
+    element.states[0] = true;
   }
 
-  connect({ emitterId, receiverId, from, to }: ConnectRequest) {
-    const emitter = this.circuit.getEmitter(emitterId);
-    const receiver = this.circuit.getReceiver(receiverId);
-    if (!emitter || !receiver) throw new Error('unable to get gates');
+  /**
+   * Connects two gates together.
+   * @param request Information required to connect two gates together.
+   */
+  connect({ emitterId, receiverId, from, to }: ConnectRequest): void {
+    const emitter = this.circuit.find(emitterId);
+
+    if (!emitter || !this.circuit.find(receiverId))
+      throw new Error(`Element not found: ${emitter ? emitterId : receiverId}`);
 
     emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();
   }
 
-  disconnect({ gateId, targetId, from, to }: DisconnectRequest) {
-    const gate = this.circuit.getEmitter(gateId);
-    const target = this.circuit.getReceiver(targetId);
+  /**
+   * Disconnects two gates from each other.
+   * @param request Information required to disconnect the gates.
+   */
+  disconnect({ elementId, targetId, from, to }: DisconnectRequest): void {
+    const element = this.circuit.find(elementId);
+    const target = this.circuit.find(targetId);
 
-    target.inputs[to] = false;
+    if (!target || !element)
+      throw new Error(`Element not found: ${element ? targetId : elementId}`);
 
-    gate.connections = gate.connections.filter(
+    element.connections = element.connections.filter(
       (connection) =>
         connection.receiverId != targetId &&
         connection.from == from &&
         connection.to == to
     );
 
+    target.inputs[to] = false;
     this.circuit.update(target);
   }
 
-  remove(id: string) {
+  remove(id: string): void {
     // TODO: remove gate from the circuit
   }
 }
