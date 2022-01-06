@@ -48,7 +48,7 @@ export const App = () => {
     });
 
     simulator.disconnect({
-      gateId: a,
+      elementId: a,
       targetId: c,
       from: 0,
       to: 0
