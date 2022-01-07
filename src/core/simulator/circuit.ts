@@ -14,7 +14,7 @@ export class Circuit {
   }
 
   /**
-   * Updates the circuit starting from a specific element.
+   * Updates the circuit starting from the element.
    */
   update(element: CircuitElement): void {
     if (element instanceof Gate) element.run();
@@ -35,12 +35,10 @@ export class Circuit {
    * @returns Circuit element or undefined if element wasn't found.
    */
   find(id: string): CircuitElement | undefined {
-    const element = [
+    return [
       ...this.inputs.values(),
       ...this.gates.values(),
       ...this.outputs.values()
     ].find((element) => element.id === id);
-
-    return element;
   }
 }

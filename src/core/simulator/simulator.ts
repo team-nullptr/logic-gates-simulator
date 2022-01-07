@@ -22,30 +22,22 @@ interface DisconnectRequest {
 export class Simulator {
   circuit = new Circuit();
 
+  /**
+   * Adds the element to the circuit.
+   * @param element added element
+   */
   add(element: string) {
     const id = uuid();
 
     switch (element) {
-      case 'input': {
-        const input = new CircuitElement(id, element);
-        input.states[0] = false;
-        this.circuit.inputs.set(id, input);
+      case 'input':
+        this.addInput(id, element);
         break;
-      }
       case 'output':
-        this.circuit.outputs.set(id, new CircuitElement(id, element));
+        this.addOutput(id, element);
         break;
-      default: {
-        if (isBaseGate(element)) {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const options = gatesOptions.get(element)!;
-          this.circuit.gates.set(id, new BaseGate(id, options));
-        } else {
-          const serialized = loadFromLocalStorage(element);
-          const deserialized = deserialize(serialized);
-          this.circuit.gates.set(id, new CutomGate(id, element, deserialized));
-        }
-      }
+      default:
+        this.addGate(id, element);
     }
 
     return id;
@@ -103,5 +95,27 @@ export class Simulator {
 
   remove(id: string): void {
     // TODO: remove gate from the circuit
+  }
+
+  private addInput(id: string, element: string): void {
+    const input = new CircuitElement(id, element);
+    input.states[0] = false;
+    this.circuit.inputs.set(id, input);
+  }
+
+  private addOutput(id: string, element: string): void {
+    this.circuit.outputs.set(id, new CircuitElement(id, element));
+  }
+
+  private addGate(id: string, element: string): void {
+    if (isBaseGate(element)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const options = gatesOptions.get(element)!;
+      this.circuit.gates.set(id, new BaseGate(id, options));
+    } else {
+      const serialized = loadFromLocalStorage(element);
+      const deserialized = deserialize(serialized);
+      this.circuit.gates.set(id, new CutomGate(id, element, deserialized));
+    }
   }
 }
