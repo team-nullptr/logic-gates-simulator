@@ -4,57 +4,60 @@ import styles from './App.module.scss';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { renderNavigation } from './utils/renderNavigation';
 import { useEffect } from 'react';
-import { Simulator } from './core/simulator/simulator';
+import { Circuit } from './core/simulator/circuit';
 
 export const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const simulator = new Simulator();
+    const circuit = new Circuit();
 
-    const a = simulator.add('input');
-    simulator.toggle(a);
-    const b = simulator.add('input');
+    const a = circuit.add('input');
+    circuit.toggle(a);
+    const b = circuit.add('input');
 
-    const c = simulator.add('nand');
-    const d = simulator.add('nand');
+    const c = circuit.add('nand');
+    const d = circuit.add('nand');
 
-    simulator.connect({
+    circuit.connect({
       emitterId: a,
       receiverId: c,
       from: 0,
       to: 0
     });
 
-    simulator.connect({
+    circuit.connect({
       emitterId: b,
       receiverId: d,
       from: 0,
       to: 1
     });
 
-    simulator.connect({
+    circuit.connect({
       emitterId: c,
       receiverId: d,
       from: 0,
       to: 0
     });
 
-    simulator.connect({
+    circuit.connect({
       emitterId: d,
       receiverId: c,
       from: 0,
       to: 1
     });
 
-    simulator.disconnect({
+    circuit.disconnect({
       elementId: a,
       targetId: c,
       from: 0,
       to: 0
     });
 
-    console.log(simulator.circuit);
+    // console.log(circuit.allElements);
+
+    circuit.remove(d);
+    console.log(circuit.allElements);
   });
 
   return (
