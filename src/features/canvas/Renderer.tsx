@@ -1,4 +1,5 @@
 import { Vector } from "./types/Vector";
+import { Manager } from "./Manager";
 
 export class Renderer {
   private running = true;
@@ -8,7 +9,10 @@ export class Renderer {
   private previous: Vector = [0, 0];
   private offset: Vector = [0, 0];
 
-  constructor(private readonly canvas: HTMLCanvasElement) {
+  constructor(
+    private readonly canvas: HTMLCanvasElement,
+    private readonly manager: Manager
+  ) {
     this.ctx = canvas.getContext("2d")!;
     this.initialize();
     this.render();
