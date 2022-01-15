@@ -1,5 +1,6 @@
 import { Vector } from "./types/Vector";
 import { Manager } from "./Manager";
+import { renderGate } from "./renderers/gate";
 
 export class Renderer {
   private running = true;
@@ -32,8 +33,15 @@ export class Renderer {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.setTransform(1, 0, 0, 1, ...this.offset);
 
+    this.renderGates();
+
     requestAnimationFrame(this.render);
   };
+
+  private renderGates() {
+    const gates = this.manager.gates;
+    gates.forEach((gate) => renderGate(gate, this.ctx));
+  }
 
   private initialize() {
     this.canvas.addEventListener("mousedown", this.handleMouseDown);
