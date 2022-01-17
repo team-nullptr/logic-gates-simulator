@@ -1,4 +1,4 @@
-import { Gate } from "./types/Gate";
+import { Gate } from "../../common/Gate";
 
 export class Manager {
   get gates(): Gate[] {

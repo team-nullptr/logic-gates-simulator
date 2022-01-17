@@ -1,4 +1,4 @@
-import { Gate } from "../types/Gate";
+import { Gate } from "../../../common/Gate";
 import { BoundingBox } from "../types/BoundingBox";
 
 export const getGateBoundary = (gate: Gate): BoundingBox => {

@@ -1,13 +1,11 @@
 import { useEffect, useRef } from "react";
 import { Renderer } from "./Renderer";
 import styles from "./Canvas.module.scss";
-import { Manager } from "./Manager";
+import { Manager } from "../editor/Manager";
 
-export const Canvas = () => {
-  let renderer: Renderer;
-
+export const Canvas = ({ manager }: { manager: Manager }) => {
   const ref = useRef<HTMLCanvasElement>(null);
-  const manager = new Manager();
+  let renderer: Renderer;
 
   useEffect(() => {
     renderer = new Renderer(ref.current!, manager);

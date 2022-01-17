@@ -1,5 +1,5 @@
-import { Vector } from "./types/Vector";
-import { Manager } from "./Manager";
+import { Vector } from "../../common/Vector";
+import { Manager } from "../editor/Manager";
 import { renderGate } from "./renderers/gate";
 
 export class Renderer {

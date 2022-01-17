@@ -1,4 +1,4 @@
-import { Gate } from "../types/Gate";
+import { Gate } from "../../../common/Gate";
 import { getGateBoundary } from "../utils/block";
 
 export const renderGate = (gate: Gate, ctx: CanvasRenderingContext2D) => {

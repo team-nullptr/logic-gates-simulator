@@ -1,4 +1,4 @@
-import { Vector } from "./Vector";
+import { Vector } from "../../../common/Vector";
 import { Area } from "./Area";
 
 export interface BoundingBox {
