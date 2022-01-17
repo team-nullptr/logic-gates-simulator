@@ -1,7 +1,7 @@
-import { Gate } from "../../common/Gate";
+import { Block } from "../../common/Block";
 
 export class Manager {
-  get gates(): Gate[] {
+  get gates(): Block[] {
     return [];
   }
 }

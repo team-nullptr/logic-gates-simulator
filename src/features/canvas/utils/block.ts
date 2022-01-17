@@ -1,16 +1,15 @@
-import { Gate } from "../../../common/Gate";
+import { Block } from "../../../common/Block";
 import { BoundingBox } from "../types/BoundingBox";
 
-export const getGateBoundary = (gate: Gate): BoundingBox => {
-  const { special, inputs, outputs } = gate;
+export const getGateBoundary = (gate: Block): BoundingBox => {
+  const { inputs, outputs } = gate;
 
   const [x, y] = gate.position.map((v) => v * 48);
 
-  const width = special ? 48 : 96;
   const height = Math.max(inputs.length, outputs.length, 2) * 24;
 
   return {
-    area: [x, y, x + width, y + height],
-    size: [width, height],
+    area: [x, y, x + 48, y + height],
+    size: [48, height],
   };
 };
