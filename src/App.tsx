@@ -12,8 +12,21 @@ export const App = () => {
   useEffect(() => {
     const circuit = new Circuit();
 
+    const g = circuit.add('input-group');
+    const ge = circuit.find(g);
+    if (ge) {
+      ge.states[0] = true;
+      ge.states[1] = true;
+      ge.states[2] = false;
+      ge.states[3] = true;
+    }
+
     const a = circuit.add('input');
-    circuit.toggle(a);
+
+    // a element
+    const ae = circuit.find(a);
+    if (ae) ae.states[0] = true;
+
     const b = circuit.add('input');
 
     const c = circuit.add('nand');
@@ -47,16 +60,15 @@ export const App = () => {
       to: 1
     });
 
-    circuit.disconnect({
-      elementId: a,
-      targetId: c,
-      from: 0,
-      to: 0
-    });
+    // circuit.disconnect({
+    //   elementId: a,
+    //   targetId: c,
+    //   from: 0,
+    //   to: 0
+    // });
 
     // console.log(circuit.allElements);
 
-    circuit.remove(d);
     console.log(circuit.allElements);
   });
 

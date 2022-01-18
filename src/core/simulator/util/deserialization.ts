@@ -1,6 +1,6 @@
 import { BaseGate, gatesOptions, isBaseGate } from '../elements/base-gate';
 import { CutomGate } from '../elements/cutom-gate';
-import { CircuitElement } from '../elements/element';
+import { Element } from '../elements/element';
 import { Connection } from '../types/connection';
 import { Gate } from '../types/gate';
 
@@ -20,14 +20,14 @@ export interface SerializedCustomGate {
 }
 
 export interface DeserializedCustomGate {
-  inputs: CircuitElement[];
+  inputs: Element[];
   gates: Gate[];
-  outputs: CircuitElement[];
+  outputs: Element[];
 }
 
 export const loadFromLocalStorage = (element: string): SerializedCustomGate => {
   const raw = localStorage.getItem(element);
-  if (!raw) throw new Error('failed to load custom gate');
+  if (!raw) throw new Error(`failed to load custom gate: ${element}`);
   return JSON.parse(raw);
 };
 
@@ -41,7 +41,7 @@ export const deserialize = (
   };
 
   serialized.inputs.forEach(({ id, connections }) => {
-    const input = new CircuitElement(id, 'input');
+    const input = new Element(id, 'input');
     input.connections.push(...connections);
     deserialized.inputs.push(input);
   });
@@ -50,6 +50,7 @@ export const deserialize = (
     let gate: Gate;
 
     if (isBaseGate(element)) {
+      // TODO: probably should handle the error when options are missing.
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const options = gatesOptions.get(element)!;
       gate = new BaseGate(id, options);
@@ -64,7 +65,7 @@ export const deserialize = (
   });
 
   serialized.outputs.forEach(({ id }) => {
-    const output = new CircuitElement(id, 'output');
+    const output = new Element(id, 'output');
     deserialized.outputs.push(output);
   });
 

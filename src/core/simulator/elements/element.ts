@@ -1,6 +1,6 @@
 import { Connection } from '../types/connection';
 
-export class CircuitElement {
+export class Element {
   states: boolean[] = [];
   inputs: boolean[] = [];
   connections: Connection[] = [];

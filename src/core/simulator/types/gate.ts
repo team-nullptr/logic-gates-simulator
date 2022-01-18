@@ -1,6 +1,6 @@
-import { CircuitElement } from '../elements/element';
+import { Element } from '../elements/element';
 
-export abstract class Gate extends CircuitElement {
+export abstract class Gate extends Element {
   constructor(id: string, type: string) {
     super(id, type);
   }

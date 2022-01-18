@@ -1,9 +1,10 @@
 import { v4 as uuid } from 'uuid';
 import { BaseGate, gatesOptions, isBaseGate } from './elements/base-gate';
 import { CutomGate } from './elements/cutom-gate';
-import { CircuitElement } from './elements/element';
+import { Element } from './elements/element';
 import { Gate } from './types/gate';
-import { deserialize, loadFromLocalStorage } from './util/serialization';
+import { inputType } from './types/elements';
+import { deserialize, loadFromLocalStorage } from './util/deserialization';
 
 interface ConnectRequest {
   emitterId: string;
@@ -20,14 +21,14 @@ interface DisconnectRequest {
 }
 
 export class Circuit {
-  readonly inputs = new Map<string, CircuitElement>();
+  readonly inputs = new Map<string, Element>();
   readonly gates = new Map<string, Gate>();
-  readonly outputs = new Map<string, CircuitElement>();
+  readonly outputs = new Map<string, Element>();
 
   /**
    * All elements in the circuit.
    */
-  get allElements(): CircuitElement[] {
+  get allElements(): Element[] {
     return [
       ...this.inputs.values(),
       ...this.gates.values(),
@@ -45,7 +46,7 @@ export class Circuit {
   /**
    * Updates the circuit starting from the element.
    */
-  update(element: CircuitElement): void {
+  update(element: Element): void {
     if (element instanceof Gate) element.run();
 
     element.connections.forEach(({ receiverId, from, to }) => {
@@ -65,25 +66,12 @@ export class Circuit {
   add(element: string) {
     const id = uuid();
 
-    if (element === 'input') this.addInput(id);
+    if (element === 'input' || element === 'input-group')
+      this.addInput(id, element as inputType);
     else if (element === 'output') this.addOutput(id);
     else this.addGate(id, element);
 
     return id;
-  }
-
-  /**
-   * Toggles element state to true.
-   * @param id Id of an element.
-   */
-  toggle(id: string): void {
-    const element = this.find(id);
-
-    if (!element) throw new Error(`Element not found: ${id}`);
-    if (element.type !== 'input')
-      throw new Error("Only input's state can be toggled");
-
-    element.states[0] = true;
   }
 
   /**
@@ -155,7 +143,7 @@ export class Circuit {
    * @param id Id of the searched element.
    * @returns Circuit element or undefined if element wasn't found.
    */
-  find(id: string): CircuitElement | undefined {
+  find(id: string): Element | undefined {
     return this.allElements.find((element) => element.id === id);
   }
 
@@ -163,8 +151,8 @@ export class Circuit {
    * Adds input to the simulator's circuit.
    * @param id Id of the inserted input.
    */
-  private addInput(id: string): void {
-    const input = new CircuitElement(id, 'input');
+  private addInput(id: string, type: inputType): void {
+    const input = new Element(id, type);
     input.states[0] = false;
     this.inputs.set(id, input);
   }
@@ -174,7 +162,7 @@ export class Circuit {
    * @param id Id of the inserted element.
    */
   private addOutput(id: string): void {
-    this.outputs.set(id, new CircuitElement(id, 'output'));
+    this.outputs.set(id, new Element(id, 'output'));
   }
 
   /**
