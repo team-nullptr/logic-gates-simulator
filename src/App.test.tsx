@@ -1,3 +1,3 @@
-test("jest is working fine!", () => {
+test('jest is working fine!', () => {
   expect(true).toBe(true);
 });

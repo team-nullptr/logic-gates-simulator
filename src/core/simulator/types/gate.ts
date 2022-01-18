@@ -1,12 +1,10 @@
-import { Connection } from "./connection";
+import { Element } from '../elements/element';
 
-/** Represents a valid gate object. */
-export interface Gate {
-  id: string;
-  inputs: boolean[];
-  states: boolean[];
-  connections: Connection[];
+export abstract class Gate extends Element {
+  constructor(id: string, type: string) {
+    super(id, type);
+  }
 
-  /** Executes the gate. */
-  run(): boolean;
+  /** Executes the gate. If state has changed returns true otherwise false. */
+  abstract run(): boolean;
 }

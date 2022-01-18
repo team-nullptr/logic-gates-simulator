@@ -1,5 +1,5 @@
-import { ListHeader } from "./ListHeader";
-import styles from "./Sidebar.module.scss";
+import { ListHeader } from './ListHeader';
+import styles from './Sidebar.module.scss';
 
 export const Sidebar = () => (
   <div className={styles.sidebar}>

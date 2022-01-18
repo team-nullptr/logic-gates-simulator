@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { NavigationItem } from "./NavigationItem";
-import styles from "./Navigation.module.scss";
-import { NavigationButton } from "./NavigationButton";
+import { FC } from 'react';
+import { NavigationItem } from './NavigationItem';
+import styles from './Navigation.module.scss';
+import { NavigationButton } from './NavigationButton';
 
 type NavigationProps = {
   title: string;
