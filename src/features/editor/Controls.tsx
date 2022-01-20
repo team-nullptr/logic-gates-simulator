@@ -19,11 +19,13 @@ export const Controls = (props: {
         if (button.type === "single") {
           return (
             <Button
-              letter={button.letter}
-              state={button.value}
+              color="hsl(266deg 99% 64%)"
+              active={button.value}
               onClick={(v) => console.log("new state", v)}
               key={button.id}
-            />
+            >
+              {button.letter}
+            </Button>
           );
         }
 

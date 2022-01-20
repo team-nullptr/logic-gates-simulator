@@ -27,11 +27,13 @@ export const ButtonGroup = (props: {
       <div className={styles.wrapper}>
         {states.map((state, i) => (
           <Button
-            letter={i.toString()}
-            state={state}
+            color="hsl(266deg 99% 64%)"
+            active={state}
             onClick={() => handleClick(i)}
             key={i}
-          />
+          >
+            {i.toString()}
+          </Button>
         ))}
       </div>
     </div>
