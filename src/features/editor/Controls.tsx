@@ -1,14 +1,11 @@
 import styles from "./Controls.module.scss";
-import { CompoundButton } from "./types/CompoundButton";
-import { SingleButton } from "./types/SingleButton";
 import { Button } from "./Button";
 import { ButtonGroup } from "./ButtonGroup";
 import { Plus } from "react-feather";
-
-type ButtonsType = (CompoundButton | SingleButton)[];
+import { FrameButton } from "./types/FrameButton";
 
 export const Controls = (props: {
-  buttons: ButtonsType;
+  buttons: FrameButton[];
   section: "inputs" | "outputs";
 }) => {
   return (

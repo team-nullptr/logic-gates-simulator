@@ -7,5 +7,4 @@ export interface Block {
   position: Vector;
   readonly inputs: boolean[];
   readonly outputs: boolean[];
-  readonly control: boolean;
 }

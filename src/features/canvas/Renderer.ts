@@ -1,5 +1,5 @@
 import { Vector } from "../../common/Vector";
-import { Manager } from "../editor/Manager";
+import { Adapter } from "../editor/Adapter";
 import { renderGate } from "./renderers/gate";
 
 export class Renderer {
@@ -12,7 +12,7 @@ export class Renderer {
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
-    private readonly manager: Manager
+    private readonly adapter: Adapter
   ) {
     this.ctx = canvas.getContext("2d")!;
     this.initialize();
@@ -39,7 +39,7 @@ export class Renderer {
   };
 
   private renderGates() {
-    const gates = this.manager.gates;
+    const gates = this.adapter.gates;
     gates.forEach((gate) => renderGate(gate, this.ctx));
   }
 
