@@ -3,6 +3,7 @@ import { CompoundButton } from "./types/CompoundButton";
 import { SingleButton } from "./types/SingleButton";
 import { Button } from "./Button";
 import { ButtonGroup } from "./ButtonGroup";
+import { Plus } from "react-feather";
 
 type ButtonsType = (CompoundButton | SingleButton)[];
 
@@ -37,6 +38,13 @@ export const Controls = (props: {
           />
         );
       })}
+      <Button
+        color="hsl(136deg 100% 59%)"
+        active={false}
+        onClick={(v) => console.log("new state", v)}
+      >
+        <Plus width={20} />
+      </Button>
     </div>
   );
 };
