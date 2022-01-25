@@ -1,3 +1,4 @@
+import { Circuit } from '../circuit';
 import { BaseGate, gatesOptions, isBaseGate } from '../elements/base-gate';
 import { CutomGate } from '../elements/cutom-gate';
 import { Element } from '../elements/element';
@@ -25,12 +26,64 @@ export interface DeserializedCustomGate {
   outputs: Element[];
 }
 
-export const loadFromLocalStorage = (element: string): SerializedCustomGate => {
-  const raw = localStorage.getItem(element);
-  if (!raw) throw new Error(`failed to load custom gate: ${element}`);
-  return JSON.parse(raw);
+export type SavedGates = {
+  [key: string]: SerializedCustomGate;
 };
 
+/**
+ * Loads serialized gate from local storage.
+ * @param element element (gate)
+ * @returns serialized gate
+ */
+export const loadFromLocalStorage = (element: string): SerializedCustomGate => {
+  const raw = localStorage.getItem('saved-gates');
+  if (!raw) throw new Error(`failed to load saved gates`);
+
+  const gate = (JSON.parse(raw) as SavedGates)[element];
+  if (!gate) throw new Error('gate not found');
+
+  return gate;
+};
+
+/**
+ * serializes circuit.
+ * @param name gate name
+ * @param circuit circuit
+ */
+export const serialize = (name: string, circuit: Circuit) => {
+  const serialized: SerializedCustomGate = {
+    inputs: [],
+    gates: [],
+    outputs: []
+  };
+
+  circuit.inputs.forEach(({ id, connections }) =>
+    serialized.inputs.push({ id, connections })
+  );
+
+  circuit.gates.forEach(({ id, type, connections }) =>
+    serialized.gates.push({ id, element: type, connections })
+  );
+
+  circuit.outputs.forEach(({ id }) => serialized.outputs.push({ id }));
+
+  const savedGates = localStorage.getItem('saved-gates');
+  if (!savedGates) throw new Error('failed to load stored gates.');
+
+  localStorage.setItem(
+    'saved-gates',
+    JSON.stringify({
+      ...JSON.parse(savedGates),
+      [name]: serialized
+    })
+  );
+};
+
+/**
+ * deserializes serialized gate.
+ * @param serialized serialized gate
+ * @returns deserialized gate
+ */
 export const deserialize = (
   serialized: SerializedCustomGate
 ): DeserializedCustomGate => {

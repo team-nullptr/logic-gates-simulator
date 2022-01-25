@@ -4,7 +4,7 @@ import { CutomGate } from './elements/cutom-gate';
 import { Element } from './elements/element';
 import { Gate } from './types/gate';
 import { inputType } from './types/elements';
-import { deserialize, loadFromLocalStorage } from './util/deserialization';
+import { deserialize, loadFromLocalStorage } from './util/serialization';
 
 interface ConnectRequest {
   emitterId: string;
