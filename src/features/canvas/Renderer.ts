@@ -30,7 +30,8 @@ export class Renderer {
   private render = () => {
     if (!this.running) return;
 
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const { e, f } = this.ctx.getTransform();
+    this.ctx.clearRect(-e, -f, this.canvas.width, this.canvas.height);
     this.ctx.setTransform(1, 0, 0, 1, ...this.offset);
 
     this.renderGates();

@@ -6,10 +6,10 @@ export const getGateBoundary = (gate: Block): BoundingBox => {
 
   const [x, y] = gate.position.map((v) => v * 48);
 
-  const height = Math.max(inputs.length, outputs.length, 2) * 24;
+  const height = Math.max(inputs.length, outputs.length, 1) * 48;
 
   return {
-    area: [x, y, x + 48, y + height],
-    size: [48, height],
+    area: [x, y, x + 96, y + height],
+    size: [96, height],
   };
 };
