@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { BaseGate, gatesOptions, isBaseGate } from './elements/base-gate';
-import { CutomGate } from './elements/cutom-gate';
+import { CustomGate } from './elements/custom-gate';
 import { Element } from './elements/element';
 import { Gate } from './types/gate';
 import { inputType } from './types/elements';
@@ -178,7 +178,7 @@ export class Circuit {
     } else {
       const serialized = loadFromLocalStorage(element);
       const deserialized = deserialize(serialized);
-      this.gates.set(id, new CutomGate(id, element, deserialized));
+      this.gates.set(id, new CustomGate(id, element, deserialized));
     }
   }
 }

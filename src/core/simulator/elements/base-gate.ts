@@ -3,8 +3,8 @@ import { Gate } from '../types/gate';
 export type BaseGateType = 'not' | 'or' | 'and' | 'nand';
 
 /* checks if gate is base gate */
-export const isBaseGate = (gate: string): gate is BaseGateType => {
-  return gate === 'not' || gate === 'or' || gate === 'and' || gate === 'nand';
+export const isBaseGate = (type: string): type is BaseGateType => {
+  return !![...gatesOptions.keys()].find((key) => key == type);
 };
 
 export interface BaseGateOptions {

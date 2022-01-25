@@ -2,7 +2,7 @@ import { Gate } from '../types/gate';
 import { Circuit } from '../circuit';
 import { DeserializedCustomGate } from '../util/serialization';
 
-export class CutomGate extends Gate {
+export class CustomGate extends Gate {
   private circuit = new Circuit();
 
   constructor(id: string, type: string, deserialized: DeserializedCustomGate) {

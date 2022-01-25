@@ -1,6 +1,6 @@
 import { Circuit } from '../circuit';
 import { BaseGate, gatesOptions, isBaseGate } from '../elements/base-gate';
-import { CutomGate } from '../elements/cutom-gate';
+import { CustomGate } from '../elements/custom-gate';
 import { Element } from '../elements/element';
 import { Connection } from '../types/connection';
 import { Gate } from '../types/gate';
@@ -110,7 +110,7 @@ export const deserialize = (
     } else {
       const serializedChild = loadFromLocalStorage(element);
       const deserializedChild = deserialize(serializedChild);
-      gate = new CutomGate(id, element, deserializedChild);
+      gate = new CustomGate(id, element, deserializedChild);
     }
 
     gate.connections.push(...connections);
