@@ -1,6 +1,9 @@
 import { Vector } from "../../common/Vector";
 import { Adapter } from "../editor/Adapter";
 import { renderGate } from "./renderers/gate";
+import { getCollisionEffect } from "./utils/block";
+import { Block } from "../../common/Block";
+import { Port } from "./types/Port";
 
 export class Renderer {
   private running = true;
@@ -53,9 +56,25 @@ export class Renderer {
   }
 
   private handleMouseDown = ({ offsetX, offsetY }: MouseEvent) => {
+    const { e, f } = this.ctx.getTransform();
+    const [block, port] = this.checkTarget([offsetX - e, offsetY - f]);
+
+    console.warn(block, port);
+
     this.dragging = true;
     this.previous = [offsetX, offsetY];
   };
+
+  private checkTarget([x, y]: Vector): [block?: Block, port?: Port] {
+    for (const block of this.adapter.gates) {
+      const effect = getCollisionEffect(block, [x, y]);
+      if (!effect) continue;
+      if (effect === true) return [block];
+      return [block, effect];
+    }
+
+    return [];
+  }
 
   private handleMouseMove = ({ offsetX, offsetY }: MouseEvent) => {
     if (!this.dragging) return;
