@@ -1,9 +1,8 @@
 import { Vector } from "../../common/Vector";
 import { Adapter } from "../editor/Adapter";
 import { renderGate } from "./renderers/gate";
-import { getCollisionEffect } from "./utils/block";
 import { Block } from "../../common/Block";
-import { Port } from "./types/Port";
+import { Connector } from "./types/Connector";
 
 export class Renderer {
   private running = true;
@@ -65,12 +64,12 @@ export class Renderer {
     this.previous = [offsetX, offsetY];
   };
 
-  private checkTarget([x, y]: Vector): [block?: Block, port?: Port] {
+  private checkTarget(other: Vector): [block?: Block, connector?: Connector] {
     for (const block of this.adapter.gates) {
-      const effect = getCollisionEffect(block, [x, y]);
-      if (!effect) continue;
-      if (effect === true) return [block];
-      return [block, effect];
+      const [rectangle, connectors] = block.collides(other);
+
+      if (!rectangle && !connectors) continue;
+      return [block, connectors];
     }
 
     return [];
