@@ -8,9 +8,12 @@ export class Renderer {
   private running = true;
   private readonly ctx: CanvasRenderingContext2D;
 
+  private grabbed: Block | undefined = undefined;
+  private shift: Vector = [0, 0];
+
   private dragging = false;
-  private previous: Vector = [0, 0];
   private offset: Vector = [0, 0];
+  private previous: Vector = [0, 0];
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -56,9 +59,13 @@ export class Renderer {
 
   private handleMouseDown = ({ offsetX, offsetY }: MouseEvent) => {
     const { e, f } = this.ctx.getTransform();
-    const [block, port] = this.checkTarget([offsetX - e, offsetY - f]);
+    const [block] = this.checkTarget([offsetX - e, offsetY - f]);
 
-    console.warn(block, port);
+    if (block) {
+      const [x, y] = block.area;
+      this.grabbed = block;
+      this.shift = [offsetX - x, offsetY - y];
+    }
 
     this.dragging = true;
     this.previous = [offsetX, offsetY];
@@ -77,8 +84,21 @@ export class Renderer {
 
   private handleMouseMove = ({ offsetX, offsetY }: MouseEvent) => {
     if (!this.dragging) return;
-    this.updateOffset([offsetX, offsetY]);
+
+    if (this.grabbed) {
+      this.updatePosition([offsetX, offsetY]);
+    } else {
+      this.updateOffset([offsetX, offsetY]);
+    }
   };
+
+  private updatePosition([x, y]: Vector) {
+    if (!this.grabbed) return;
+
+    const [sx, sy] = this.shift;
+    const position = [x - sx, y - sy].map((v) => Math.round(v / 48));
+    this.grabbed.position = position as Vector;
+  }
 
   private updateOffset([x, y]: Vector) {
     this.offset[0] += x - this.previous[0];
@@ -88,6 +108,7 @@ export class Renderer {
 
   private handleMouseUp = () => {
     this.dragging = false;
+    this.grabbed = undefined;
   };
 
   private resize = () => {
