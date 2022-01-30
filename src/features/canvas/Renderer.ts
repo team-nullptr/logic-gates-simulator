@@ -3,6 +3,7 @@ import { Adapter } from "../editor/Adapter";
 import { renderGate } from "./renderers/gate";
 import { Block } from "../../common/Block";
 import { Connector } from "./types/Connector";
+import { renderConnection } from "./renderers/connection";
 
 export class Renderer {
   private running = true;
@@ -39,10 +40,22 @@ export class Renderer {
     this.ctx.clearRect(-e, -f, this.canvas.width, this.canvas.height);
     this.ctx.setTransform(1, 0, 0, 1, ...this.offset);
 
+    this.renderConnections();
     this.renderGates();
 
     requestAnimationFrame(this.render);
   };
+
+  private renderConnections() {
+    const connections = this.adapter.connections;
+
+    // TODO: Replace array with a map in Adapter.ts
+    const gates = new Map(this.adapter.gates.map((it) => [it.id, it]));
+
+    connections.forEach((connection) =>
+      renderConnection(connection, gates, this.ctx)
+    );
+  }
 
   private renderGates() {
     const gates = this.adapter.gates;

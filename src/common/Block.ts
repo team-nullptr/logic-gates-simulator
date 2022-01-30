@@ -56,6 +56,15 @@ export class Block {
     return [...inputs, ...outputs];
   }
 
+  findConnector(
+    type: "input" | "output",
+    index: number
+  ): Connector | undefined {
+    return this.connectors.find((connector) => {
+      return connector.type === type && connector.index === index;
+    });
+  }
+
   collides(other: Vector): [boolean, Connector?] {
     const over = isOver(other, this.area);
     const connector = this.connectors.find(
