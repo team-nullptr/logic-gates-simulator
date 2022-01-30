@@ -13,4 +13,8 @@ export class Adapter {
   get outputs(): Map<string, FrameButton> {
     return new Map();
   }
+
+  connect(connection: Connection) {
+    this.connections.push(connection);
+  }
 }

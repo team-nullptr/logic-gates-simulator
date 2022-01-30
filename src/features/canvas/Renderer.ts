@@ -4,15 +4,18 @@ import { renderGate } from "./renderers/gate";
 import { Block } from "../../common/Block";
 import { Connector } from "./types/Connector";
 import { renderConnection } from "./renderers/connection";
+import { Connection } from "./types/Connection";
 
 export class Renderer {
   private running = true;
   private readonly ctx: CanvasRenderingContext2D;
 
-  private grabbed: Block | undefined = undefined;
-  private shift: Vector = [0, 0];
+  private grabbed?: Block = undefined;
+  private connecting?: [Block, Connector] = undefined;
 
   private dragging = false;
+  private shift: Vector = [0, 0];
+
   private offset: Vector = [0, 0];
   private previous: Vector = [0, 0];
 
@@ -67,7 +70,12 @@ export class Renderer {
 
   private handleMouseDown = ({ offsetX, offsetY }: MouseEvent) => {
     const { e, f } = this.ctx.getTransform();
-    const [block] = this.checkTarget([offsetX - e, offsetY - f]);
+    const [block, port] = this.checkTarget([offsetX - e, offsetY - f]);
+
+    if (port) {
+      this.connecting = [block!!, port];
+      return;
+    }
 
     if (block) {
       const [x, y] = block.area;
@@ -114,8 +122,22 @@ export class Renderer {
     this.previous = [x, y];
   }
 
-  private handleMouseUp = () => {
+  private handleMouseUp = ({ offsetX, offsetY }: MouseEvent) => {
+    if (this.connecting) {
+      const { e, f } = this.ctx.getTransform();
+      const [block, port] = this.checkTarget([offsetX - e, offsetY - f]);
+
+      if (block && port) {
+        const connection: Connection = {
+          source: [this.connecting[0].id, this.connecting[1].index],
+          receiver: [block.id, port.index],
+        };
+        this.adapter.connect(connection);
+      }
+    }
+
     this.dragging = false;
+    this.connecting = undefined;
     this.grabbed = undefined;
   };
 
