@@ -47,13 +47,8 @@ export class Renderer {
   };
 
   private renderConnections() {
-    const connections = this.adapter.connections;
-
-    // TODO: Replace array with a map in Adapter.ts
-    const gates = new Map(this.adapter.gates.map((it) => [it.id, it]));
-
-    connections.forEach((connection) =>
-      renderConnection(connection, gates, this.ctx)
+    this.adapter.connections.forEach((connection) =>
+      renderConnection(connection, this.adapter.gates, this.ctx)
     );
   }
 
@@ -85,7 +80,7 @@ export class Renderer {
   };
 
   private checkTarget(other: Vector): [block?: Block, connector?: Connector] {
-    for (const block of this.adapter.gates) {
+    for (const block of this.adapter.gates.values()) {
       const [rectangle, connectors] = block.collides(other);
 
       if (!rectangle && !connectors) continue;

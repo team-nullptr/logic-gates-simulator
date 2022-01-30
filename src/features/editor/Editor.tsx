@@ -9,11 +9,17 @@ export const Editor = () => {
 
   return (
     <main className={styles.container}>
-      <Controls buttons={adapter.inputs} section="inputs" />
+      <Controls
+        buttons={Array.from(adapter.inputs.values())}
+        section="inputs"
+      />
       <div className={styles.canvas}>
         <Canvas adapter={adapter} />
       </div>
-      <Controls buttons={adapter.outputs} section="outputs" />
+      <Controls
+        buttons={Array.from(adapter.outputs.values())}
+        section="outputs"
+      />
       <Sidebar />
     </main>
   );

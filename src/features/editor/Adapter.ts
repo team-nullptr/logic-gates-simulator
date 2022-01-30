@@ -3,14 +3,14 @@ import { FrameButton } from "./types/FrameButton";
 import { Connection } from "../canvas/types/Connection";
 
 export class Adapter {
-  public readonly gates: Block[] = [];
+  public readonly gates = new Map<string, Block>();
   public readonly connections: Connection[] = [];
 
-  get inputs(): FrameButton[] {
-    return [];
+  get inputs(): Map<string, FrameButton> {
+    return new Map();
   }
 
-  get outputs(): FrameButton[] {
-    return [];
+  get outputs(): Map<string, FrameButton> {
+    return new Map();
   }
 }
