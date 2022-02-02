@@ -22,7 +22,7 @@ export const renderConnection = (
   renderPath(ctx, path);
 };
 
-const renderPath = (ctx: CanvasRenderingContext2D, path: Vector[]) => {
+export const renderPath = (ctx: CanvasRenderingContext2D, path: Vector[]) => {
   const curved = curve(path);
 
   const start = path[0];

@@ -3,8 +3,9 @@ import { Adapter } from "../editor/Adapter";
 import { renderGate } from "./renderers/gate";
 import { Block } from "../../common/Block";
 import { Connector } from "./types/Connector";
-import { renderConnection } from "./renderers/connection";
+import { renderConnection, renderPath } from "./renderers/connection";
 import { Connection } from "./types/Connection";
+import { route } from "./utils/path";
 
 export class Renderer {
   private running = true;
@@ -15,6 +16,8 @@ export class Renderer {
 
   private dragging = false;
   private shift: Vector = [0, 0];
+
+  private mouse: Vector = [0, 0];
 
   private offset: Vector = [0, 0];
   private previous: Vector = [0, 0];
@@ -53,6 +56,16 @@ export class Renderer {
     this.adapter.connections.forEach((connection) =>
       renderConnection(connection, this.adapter.gates, this.ctx)
     );
+
+    if (!this.connecting) return;
+
+    const begin = this.connecting[1].position;
+
+    const [mx, my] = this.mouse;
+    const [ox, oy] = this.offset;
+    const end: Vector = [mx - ox, my - oy];
+    const path = route(begin, end);
+    renderPath(this.ctx, path);
   }
 
   private renderGates() {
@@ -99,6 +112,7 @@ export class Renderer {
   }
 
   private handleMouseMove = ({ offsetX, offsetY }: MouseEvent) => {
+    this.mouse = [offsetX, offsetY];
     if (!this.dragging) return;
 
     if (this.grabbed) {
