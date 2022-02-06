@@ -37,7 +37,7 @@ export type SavedGates = {
  */
 export const loadFromLocalStorage = (element: string): SerializedCustomGate => {
   const raw = localStorage.getItem('saved-gates');
-  if (!raw) throw new Error(`failed to load saved gates`);
+  if (!raw) throw new Error('failed to load saved gates');
 
   const gate = (JSON.parse(raw) as SavedGates)[element];
   if (!gate) throw new Error('gate not found');

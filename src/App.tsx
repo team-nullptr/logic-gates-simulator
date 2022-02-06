@@ -6,11 +6,14 @@ import { renderNavigation } from './utils/renderNavigation';
 import { useEffect } from 'react';
 import { Circuit } from './core/simulator/circuit';
 import { serialize } from './core/simulator/util/serialization';
+import { fetchGates } from './core/simulator/util/fetch-gates';
 
 export const App = () => {
   const location = useLocation();
 
   useEffect(() => {
+    console.log(fetchGates());
+
     // TODO: Find a better way to initialize storage.
     localStorage.setItem('saved-gates', JSON.stringify({}));
 
