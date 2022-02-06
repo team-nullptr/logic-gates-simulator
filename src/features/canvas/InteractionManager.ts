@@ -1,13 +1,19 @@
 import { Vector } from "../../common/Vector";
 import { Adapter } from "../editor/Adapter";
-import { add, subtract } from "../../common/utils";
+import { subtract } from "../../common/utils";
+import { Tool } from "./tools/Tool";
+import { Interaction } from "./types/Interaction";
+import { ToolFactory } from "./tools/ToolFactory";
+import { findToolName } from "./utils";
+import { Target } from "./types/Target";
 
 export class InteractionManager {
   offset: Vector;
 
   private readonly canvas: HTMLCanvasElement;
   private pressed = false;
-  private mouse: Vector = [0, 0];
+
+  private tool!: Tool;
 
   constructor(
     private readonly ctx: CanvasRenderingContext2D,
@@ -27,8 +33,19 @@ export class InteractionManager {
     removeEventListener("mouseup", this.handleMouseUp);
   }
 
-  private resolve(at: Vector): unknown {
-    // TODO:
+  private resolve(at: Vector): Target {
+    const gates = this.source.gates.values();
+    for (const block of gates) {
+      const [collides, connector] = block.collides(at);
+      if (!collides) continue;
+
+      if (connector) {
+        return connector;
+      } else {
+        return block;
+      }
+    }
+
     return undefined;
   }
 
@@ -38,26 +55,35 @@ export class InteractionManager {
     addEventListener("mouseup", this.handleMouseUp);
   }
 
+  private constructMouseEvent(mouse: Vector): Interaction {
+    const position = subtract(mouse, this.offset);
+    const target = this.resolve(position);
+    return { mouse, position, target, manager: this };
+  }
+
   private handleMouseDown = ({ offsetX, offsetY }: MouseEvent): void => {
     this.pressed = true;
-    this.mouse = [offsetX, offsetY];
+
+    const event = this.constructMouseEvent([offsetX, offsetY]);
+    const target = event.target;
+
+    const toolName = findToolName(target);
+    this.tool = ToolFactory.get(toolName);
+
+    this.tool.handleMouseDown(event);
   };
 
   private handleMouseMove = ({ offsetX, offsetY }: MouseEvent): void => {
-    const previous = this.mouse;
-    this.mouse = [offsetX, offsetY];
-
     if (!this.pressed) return;
 
-    const resolved = this.resolve(this.mouse);
-
-    if (resolved === undefined) {
-      const difference = subtract(this.mouse, previous);
-      this.offset = add(this.offset, difference);
-    }
+    const event = this.constructMouseEvent([offsetX, offsetY]);
+    this.tool.handleMouseMove(event);
   };
 
-  private handleMouseUp = (): void => {
+  private handleMouseUp = ({ offsetX, offsetY }: MouseEvent): void => {
     this.pressed = false;
+
+    const event = this.constructMouseEvent([offsetX, offsetY]);
+    this.tool.handleMouseUp(event);
   };
 }

@@ -1,5 +1,14 @@
 import { Vector } from "../../../common/Vector";
 import { Area } from "../types/Area";
+import { ToolType } from "../tools/ToolFactory";
+import { Block } from "../../../common/Block";
+import { Target } from "../types/Target";
+
+export const findToolName = (target: Target): ToolType => {
+  if (target === undefined) return "pan";
+  if (target instanceof Block) return "move";
+  return "connect";
+};
 
 export const isOver = (point: Vector, area: Area): boolean => {
   const [x, y, tx, ty] = area;
