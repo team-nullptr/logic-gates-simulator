@@ -1,10 +1,10 @@
 import { v4 as uuid } from 'uuid';
 import { BaseGate, gatesOptions, isBaseGate } from './elements/base-gate';
-import { CutomGate } from './elements/cutom-gate';
+import { CustomGate } from './elements/custom-gate';
 import { Element } from './elements/element';
 import { Gate } from './types/gate';
 import { inputType } from './types/elements';
-import { deserialize, loadFromLocalStorage } from './util/deserialization';
+import { deserialize, loadFromLocalStorage } from './util/serialization';
 
 interface ConnectRequest {
   emitterId: string;
@@ -176,9 +176,13 @@ export class Circuit {
       const options = gatesOptions.get(element)!;
       this.gates.set(id, new BaseGate(id, options));
     } else {
-      const serialized = loadFromLocalStorage(element);
-      const deserialized = deserialize(serialized);
-      this.gates.set(id, new CutomGate(id, element, deserialized));
+      const serializedGates = loadFromLocalStorage();
+
+      const serializedGate = serializedGates[element];
+      if (!serializedGate) throw new Error('gate not found');
+
+      const deserialized = deserialize(serializedGate, serializedGates);
+      this.gates.set(id, new CustomGate(id, element, deserialized));
     }
   }
 }
