@@ -9,32 +9,59 @@ export const isBaseGate = (type: string): type is BaseGateType => {
 
 export interface BaseGateOptions {
   type: string;
+  color: string;
   inputsCount: number;
   handler: (input: boolean[]) => boolean;
 }
 
 /* options for base gates */
 export const gatesOptions = new Map<BaseGateType, BaseGateOptions>([
-  ['not', { type: 'not', inputsCount: 1, handler: ([a]: boolean[]) => !a }],
+  [
+    'not',
+    {
+      type: 'not',
+      color: '#f7e813',
+      inputsCount: 1,
+      handler: ([a]: boolean[]) => !a
+    }
+  ],
   [
     'or',
-    { type: 'not', inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }
+    {
+      type: 'not',
+      color: '#13f750',
+      inputsCount: 2,
+      handler: ([a, b]: boolean[]) => a || b
+    }
   ],
   [
     'and',
-    { type: 'and', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }
+    {
+      type: 'and',
+      color: '#1398f7',
+      inputsCount: 2,
+      handler: ([a, b]: boolean[]) => a && b
+    }
   ],
   [
     'nand',
-    { type: 'nand', inputsCount: 2, handler: ([a, b]: boolean[]) => !(a && b) }
+    {
+      type: 'nand',
+      color: '#ba13f7',
+      inputsCount: 2,
+      handler: ([a, b]: boolean[]) => !(a && b)
+    }
   ]
 ]);
 
 export class BaseGate extends Gate {
   readonly handler: (inputs: boolean[]) => boolean;
 
-  constructor(id: string, { type, inputsCount, handler }: BaseGateOptions) {
-    super(id, type);
+  constructor(
+    id: string,
+    { type, color, inputsCount, handler }: BaseGateOptions
+  ) {
+    super(id, type, color);
     for (let i = 0; i < inputsCount; i++) this.inputs.push(false);
     this.handler = handler;
   }

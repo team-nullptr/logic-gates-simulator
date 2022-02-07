@@ -176,8 +176,12 @@ export class Circuit {
       const options = gatesOptions.get(element)!;
       this.gates.set(id, new BaseGate(id, options));
     } else {
-      const serialized = loadFromLocalStorage(element);
-      const deserialized = deserialize(serialized);
+      const serializedGates = loadFromLocalStorage();
+
+      const serializedGate = serializedGates[element];
+      if (!serializedGate) throw new Error('gate not found');
+
+      const deserialized = deserialize(serializedGate, serializedGates);
       this.gates.set(id, new CustomGate(id, element, deserialized));
     }
   }

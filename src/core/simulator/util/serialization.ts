@@ -6,6 +6,7 @@ import { Connection } from '../types/connection';
 import { Gate } from '../types/gate';
 
 export interface SerializedCustomGate {
+  color: string;
   inputs: {
     id: string;
     connections: Connection[];
@@ -21,6 +22,7 @@ export interface SerializedCustomGate {
 }
 
 export interface DeserializedCustomGate {
+  color: string;
   inputs: Element[];
   gates: Gate[];
   outputs: Element[];
@@ -35,14 +37,14 @@ export type SavedGates = {
  * @param element element (gate)
  * @returns serialized gate
  */
-export const loadFromLocalStorage = (element: string): SerializedCustomGate => {
+export const loadFromLocalStorage = (): SavedGates => {
   const raw = localStorage.getItem('saved-gates');
   if (!raw) throw new Error('failed to load saved gates');
 
-  const gate = (JSON.parse(raw) as SavedGates)[element];
-  if (!gate) throw new Error('gate not found');
+  const gates = JSON.parse(raw) as SavedGates;
+  if (!gates) throw new Error('gate not found');
 
-  return gate;
+  return gates;
 };
 
 /**
@@ -50,8 +52,9 @@ export const loadFromLocalStorage = (element: string): SerializedCustomGate => {
  * @param name gate name
  * @param circuit circuit
  */
-export const serialize = (name: string, circuit: Circuit) => {
+export const serialize = (name: string, color: string, circuit: Circuit) => {
   const serialized: SerializedCustomGate = {
+    color,
     inputs: [],
     gates: [],
     outputs: []
@@ -81,25 +84,28 @@ export const serialize = (name: string, circuit: Circuit) => {
 
 /**
  * deserializes serialized gate.
- * @param serialized serialized gate
+ * @param serializedGate serialized gate
+ * @param serializedGates all gates
  * @returns deserialized gate
  */
 export const deserialize = (
-  serialized: SerializedCustomGate
+  serializedGate: SerializedCustomGate,
+  serializedGates: SavedGates
 ): DeserializedCustomGate => {
   const deserialized: DeserializedCustomGate = {
+    color: serializedGate.color,
     inputs: [],
     gates: [],
     outputs: []
   };
 
-  serialized.inputs.forEach(({ id, connections }) => {
+  serializedGate.inputs.forEach(({ id, connections }) => {
     const input = new Element(id, 'input');
     input.connections.push(...connections);
     deserialized.inputs.push(input);
   });
 
-  serialized.gates.forEach(({ id, element, connections }) => {
+  serializedGate.gates.forEach(({ id, element, connections }) => {
     let gate: Gate;
 
     if (isBaseGate(element)) {
@@ -108,8 +114,10 @@ export const deserialize = (
       const options = gatesOptions.get(element)!;
       gate = new BaseGate(id, options);
     } else {
-      const serializedChild = loadFromLocalStorage(element);
-      const deserializedChild = deserialize(serializedChild);
+      const serializedChild = serializedGates[element];
+      if (!serializedChild) throw new Error('gate not found');
+
+      const deserializedChild = deserialize(serializedChild, serializedGates);
       gate = new CustomGate(id, element, deserializedChild);
     }
 
@@ -117,7 +125,7 @@ export const deserialize = (
     deserialized.gates.push(gate);
   });
 
-  serialized.outputs.forEach(({ id }) => {
+  serializedGate.outputs.forEach(({ id }) => {
     const output = new Element(id, 'output');
     deserialized.outputs.push(output);
   });

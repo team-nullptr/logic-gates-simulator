@@ -5,17 +5,21 @@ import { DeserializedCustomGate } from '../util/serialization';
 export class CustomGate extends Gate {
   private circuit = new Circuit();
 
-  constructor(id: string, type: string, deserialized: DeserializedCustomGate) {
-    super(id, type);
+  constructor(
+    id: string,
+    type: string,
+    { color, inputs, gates, outputs }: DeserializedCustomGate
+  ) {
+    super(id, type, color);
 
-    deserialized.inputs.forEach((input) => {
+    inputs.forEach((input) => {
       this.inputs.push(false);
       this.circuit.inputs.set(input.id, input);
     });
 
-    deserialized.gates.forEach((gate) => this.circuit.gates.set(gate.id, gate));
+    gates.forEach((gate) => this.circuit.gates.set(gate.id, gate));
 
-    deserialized.outputs.forEach((output) => {
+    outputs.forEach((output) => {
       this.states.push(false);
       this.circuit.outputs.set(output.id, output);
     });

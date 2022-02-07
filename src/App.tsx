@@ -12,18 +12,15 @@ export const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log(fetchGates());
-
     // TODO: Find a better way to initialize storage.
     localStorage.setItem('saved-gates', JSON.stringify({}));
 
     const circuit = new Circuit();
-
     circuit.add('input');
-
-    serialize('dupa', circuit);
+    serialize('dupa', '#000000', circuit);
 
     console.log(circuit);
+    console.log(fetchGates());
   });
 
   return (

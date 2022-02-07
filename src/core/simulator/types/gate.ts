@@ -1,7 +1,7 @@
 import { Element } from '../elements/element';
 
 export abstract class Gate extends Element {
-  constructor(id: string, type: string) {
+  constructor(id: string, type: string, public readonly color: string) {
     super(id, type);
   }
 
