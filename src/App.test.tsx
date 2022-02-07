@@ -1,3 +1,6 @@
+import { render, screen } from '@testing-library/react';
+
 test('jest is working fine!', () => {
-  expect(true).toBe(true);
+  render(<a>hello</a>);
+  expect(screen.getByText('hello')).toHaveTextContent('hello');
 });
