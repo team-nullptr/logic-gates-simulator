@@ -3,34 +3,38 @@ import { Adapter } from "../editor/Adapter";
 import { subtract } from "../../common/utils";
 import { Tool } from "./tools/Tool";
 import { Interaction } from "./types/Interaction";
-import { ToolFactory } from "./tools/ToolFactory";
-import { findToolName } from "./utils";
 import { Target } from "./types/Target";
 
+type InteractionListener = (interaction: Interaction) => void;
+
 export class InteractionManager {
-  offset: Vector;
+  tool?: Tool;
+  private readonly listeners = new Set<InteractionListener>();
 
   private readonly canvas: HTMLCanvasElement;
   private pressed = false;
-
-  private tool!: Tool;
 
   constructor(
     private readonly ctx: CanvasRenderingContext2D,
     private readonly source: Adapter
   ) {
     this.canvas = ctx.canvas;
-
-    const { e, f } = ctx.getTransform();
-    this.offset = [e, f];
-
     this.init();
   }
 
   destroy(): void {
+    this.listeners.clear();
     this.canvas.removeEventListener("mousedown", this.handleMouseDown);
     this.canvas.removeEventListener("mousemove", this.handleMouseMove);
     removeEventListener("mouseup", this.handleMouseUp);
+  }
+
+  addEventListener(type: "interaction", fn: InteractionListener): void {
+    this.listeners.add(fn);
+  }
+
+  removeEventListener(type: "interaction", fn: InteractionListener): void {
+    this.listeners.delete(fn);
   }
 
   private resolve(at: Vector): Target {
@@ -56,25 +60,21 @@ export class InteractionManager {
   }
 
   private constructMouseEvent(mouse: Vector): Interaction {
-    const position = subtract(mouse, this.offset);
+    const position = subtract(mouse, this.source.offset);
     const target = this.resolve(position);
-    return { mouse, position, target, manager: this };
+    return { mouse, position, target };
   }
 
   private handleMouseDown = ({ offsetX, offsetY }: MouseEvent): void => {
     this.pressed = true;
 
-    const event = this.constructMouseEvent([offsetX, offsetY]);
-    const target = event.target;
-
-    const toolName = findToolName(target);
-    this.tool = ToolFactory.get(toolName);
-
-    this.tool.handleMouseDown(event);
+    const interaction = this.constructMouseEvent([offsetX, offsetY]);
+    this.listeners.forEach((listener) => listener(interaction));
   };
 
   private handleMouseMove = ({ offsetX, offsetY }: MouseEvent): void => {
     if (!this.pressed) return;
+    if (!this.tool) return;
 
     const event = this.constructMouseEvent([offsetX, offsetY]);
     this.tool.handleMouseMove(event);
@@ -83,6 +83,7 @@ export class InteractionManager {
   private handleMouseUp = ({ offsetX, offsetY }: MouseEvent): void => {
     this.pressed = false;
 
+    if (!this.tool) return;
     const event = this.constructMouseEvent([offsetX, offsetY]);
     this.tool.handleMouseUp(event);
   };

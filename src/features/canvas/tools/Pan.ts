@@ -10,9 +10,11 @@ export class PanTool extends Tool {
     this.previous = mouse;
   }
 
-  handleMouseMove({ mouse, manager }: Interaction) {
+  handleMouseMove({ mouse }: Interaction) {
     const difference = subtract(mouse, this.previous);
-    manager.offset = add(manager.offset, difference);
+
+    if (!this.source) return;
+    this.source.offset = add(this.source.offset, difference);
 
     this.previous = mouse;
   }
