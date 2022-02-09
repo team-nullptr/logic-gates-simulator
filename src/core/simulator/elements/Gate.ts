@@ -1,4 +1,4 @@
-import { Element } from '../elements/element';
+import { Element } from './Element';
 
 export abstract class Gate extends Element {
   constructor(id: string, type: string, public readonly color: string) {

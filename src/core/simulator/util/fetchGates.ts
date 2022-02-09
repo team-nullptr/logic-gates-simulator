@@ -1,4 +1,4 @@
-import { gatesOptions } from '../elements/base-gate';
+import { gatesOptions } from '../elements/BaseGate';
 import { loadFromLocalStorage } from './serialization';
 
 /**

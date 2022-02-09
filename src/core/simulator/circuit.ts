@@ -1,10 +1,7 @@
+import { Element } from './elements/Element';
+import { Gate } from './elements/Gate';
+import { ElementFactory } from './elements/ElementFactory';
 import { v4 as uuid } from 'uuid';
-import { BaseGate, gatesOptions, isBaseGate } from './elements/base-gate';
-import { CustomGate } from './elements/custom-gate';
-import { Element } from './elements/element';
-import { Gate } from './types/gate';
-import { inputType } from './types/elements';
-import { deserialize, loadFromLocalStorage } from './util/serialization';
 
 interface ConnectRequest {
   emitterId: string;
@@ -39,21 +36,19 @@ export class Circuit {
   /**
    * Simulates the whole circuit starting from inputs.
    */
-  simulate(): void {
+  private simulate(): void {
     this.inputs.forEach((input) => this.update(input));
   }
 
   /**
    * Updates the circuit starting from the element.
    */
-  update(element: Element): void {
+  private update(element: Element): void {
     if (element instanceof Gate) element.run();
 
     element.connections.forEach(({ receiverId, from, to }) => {
       const receiver = this.find(receiverId);
-
       if (!receiver) throw new Error(`Element not found ${receiverId}`);
-
       receiver.inputs[to] = element.states[from];
       setTimeout(() => this.update(receiver), 100);
     });
@@ -61,15 +56,23 @@ export class Circuit {
 
   /**
    * Adds the element to the circuit.
-   * @param element added element
+   * @param type added element type
    */
-  add(element: string) {
+  add(type: string) {
     const id = uuid();
 
-    if (element === 'input' || element === 'input-group')
-      this.addInput(id, element as inputType);
-    else if (element === 'output') this.addOutput(id);
-    else this.addGate(id, element);
+    switch (type) {
+      case 'input':
+      case 'input-group':
+        this.inputs.set(id, ElementFactory.createInput(id, type));
+        break;
+      case 'output':
+        this.outputs.set(id, ElementFactory.createOutput(id));
+        break;
+      default:
+        this.gates.set(id, ElementFactory.createGate(id, type));
+        break;
+    }
 
     return id;
   }
@@ -145,44 +148,5 @@ export class Circuit {
    */
   find(id: string): Element | undefined {
     return this.allElements.find((element) => element.id === id);
-  }
-
-  /**
-   * Adds input to the simulator's circuit.
-   * @param id Id of the inserted input.
-   */
-  private addInput(id: string, type: inputType): void {
-    const input = new Element(id, type);
-    input.states[0] = false;
-    this.inputs.set(id, input);
-  }
-
-  /**
-   * Adds output to the simulator's circuit.
-   * @param id Id of the inserted element.
-   */
-  private addOutput(id: string): void {
-    this.outputs.set(id, new Element(id, 'output'));
-  }
-
-  /**
-   * Adds gate to the simulator's circuit.
-   * @param id Id of the inserted element.
-   * @param element Type of the inserted element.
-   */
-  private addGate(id: string, element: string): void {
-    if (isBaseGate(element)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const options = gatesOptions.get(element)!;
-      this.gates.set(id, new BaseGate(id, options));
-    } else {
-      const serializedGates = loadFromLocalStorage();
-
-      const serializedGate = serializedGates[element];
-      if (!serializedGate) throw new Error('gate not found');
-
-      const deserialized = deserialize(serializedGate, serializedGates);
-      this.gates.set(id, new CustomGate(id, element, deserialized));
-    }
   }
 }

@@ -1,5 +1,5 @@
-import { Gate } from '../types/gate';
-import { Circuit } from '../circuit';
+import { Gate } from './Gate';
+import { Circuit } from '../Circuit';
 import { DeserializedCustomGate } from '../util/serialization';
 
 export class CustomGate extends Gate {

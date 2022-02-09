@@ -1,9 +1,9 @@
-import { Circuit } from '../circuit';
-import { BaseGate, gatesOptions, isBaseGate } from '../elements/base-gate';
-import { CustomGate } from '../elements/custom-gate';
-import { Element } from '../elements/element';
-import { Connection } from '../types/connection';
-import { Gate } from '../types/gate';
+import { Circuit } from '../Circuit';
+import { BaseGate, gatesOptions, isBaseGate } from '../elements/BaseGate';
+import { CustomGate } from '../elements/CustomGate';
+import { Element } from '../elements/Element';
+import { Connection } from '../types/Connection';
+import { Gate } from '../elements/Gate';
 
 export interface SerializedCustomGate {
   color: string;

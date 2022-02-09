@@ -1,4 +1,4 @@
-import { Connection } from '../types/connection';
+import { Connection } from '../types/Connection';
 
 export class Element {
   states: boolean[] = [];

@@ -4,9 +4,7 @@ import styles from './App.module.scss';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { renderNavigation } from './utils/renderNavigation';
 import { useEffect } from 'react';
-import { Circuit } from './core/simulator/circuit';
-import { serialize } from './core/simulator/util/serialization';
-import { fetchGates } from './core/simulator/util/fetch-gates';
+import { Circuit } from './core/simulator/Circuit';
 
 export const App = () => {
   const location = useLocation();
@@ -16,18 +14,66 @@ export const App = () => {
     localStorage.setItem('saved-gates', JSON.stringify({}));
 
     const circuit = new Circuit();
-    circuit.add('input');
-    serialize('dupa', '#000000', circuit);
 
-    console.log(circuit);
-    console.log(fetchGates());
+    const a = circuit.add('input');
+    const b = circuit.add('input');
+
+    const c = circuit.add('or');
+    const d = circuit.add('not');
+
+    const e = circuit.add('or');
+    const f = circuit.add('not');
+
+    circuit.connect({
+      emitterId: f,
+      receiverId: c,
+      from: 0,
+      to: 1
+    });
+
+    circuit.connect({
+      emitterId: b,
+      receiverId: e,
+      from: 0,
+      to: 1
+    });
+
+    circuit.connect({
+      emitterId: c,
+      receiverId: d,
+      from: 0,
+      to: 0
+    });
+
+    circuit.connect({
+      emitterId: a,
+      receiverId: c,
+      from: 0,
+      to: 0
+    });
+
+    circuit.connect({
+      emitterId: d,
+      receiverId: e,
+      from: 0,
+      to: 0
+    });
+
+    circuit.connect({
+      emitterId: e,
+      receiverId: f,
+      from: 0,
+      to: 0
+    });
+
+    console.log(circuit.allElements);
   });
 
   return (
     <div className={styles.container}>
       {renderNavigation(location.pathname)}
       <Routes>
-        <Route path="/" element={<h1>Projects</h1>} />
+        <Route path="/" element={<p>a</p>} />
         <Route path="/edit" element={<Editor />} />
       </Routes>
     </div>

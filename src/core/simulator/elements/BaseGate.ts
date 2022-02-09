@@ -1,4 +1,4 @@
-import { Gate } from '../types/gate';
+import { Gate } from './Gate';
 
 export type BaseGateType = 'not' | 'or' | 'and' | 'nand';
 
@@ -28,7 +28,7 @@ export const gatesOptions = new Map<BaseGateType, BaseGateOptions>([
   [
     'or',
     {
-      type: 'not',
+      type: 'or',
       color: '#13f750',
       inputsCount: 2,
       handler: ([a, b]: boolean[]) => a || b
