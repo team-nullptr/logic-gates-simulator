@@ -1,5 +1,5 @@
-import { InputType } from '../types/inputType';
-import { deserialize, loadFromLocalStorage } from '../util/serialization';
+import { InputType } from '../types/InputType';
+import { deserialize, fetchSavedGates } from '../util/serialization';
 import { BaseGate, gatesOptions, isBaseGate } from './BaseGate';
 import { CustomGate } from './CustomGate';
 import { Element } from './Element';
@@ -22,7 +22,7 @@ export class ElementFactory {
       return new BaseGate(id, options);
     }
 
-    const serializedGates = loadFromLocalStorage();
+    const serializedGates = fetchSavedGates();
     const serializedGate = serializedGates[type];
     if (!serializedGate) throw new Error('gate not found');
 

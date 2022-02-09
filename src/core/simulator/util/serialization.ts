@@ -37,7 +37,7 @@ export type SavedGates = {
  * @param element element (gate)
  * @returns serialized gate
  */
-export const loadFromLocalStorage = (): SavedGates => {
+export const fetchSavedGates = (): SavedGates => {
   const raw = localStorage.getItem('saved-gates');
   if (!raw) throw new Error('failed to load saved gates');
 

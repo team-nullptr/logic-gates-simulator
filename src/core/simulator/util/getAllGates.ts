@@ -1,11 +1,11 @@
 import { gatesOptions } from '../elements/BaseGate';
-import { loadFromLocalStorage } from './serialization';
+import { fetchSavedGates } from './serialization';
 
 /**
  * Returns all available gates.
  */
-export const fetchGates = () => {
-  const serializedGates = loadFromLocalStorage();
+export const getAllGates = () => {
+  const serializedGates = fetchSavedGates();
 
   const base = [...gatesOptions.values()].map(
     ({ type, color, inputsCount }) => ({
