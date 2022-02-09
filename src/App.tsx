@@ -15,7 +15,16 @@ export const App = () => {
 
     const circuit = new Circuit();
 
+    circuit.subscribe(() => {
+      console.log(circuit.allElements);
+    });
+
     const a = circuit.add('input');
+
+    // toggle input a
+    const ae = circuit.find(a);
+    ae!.states[0] = true;
+
     const b = circuit.add('input');
 
     const c = circuit.add('or');
@@ -25,17 +34,10 @@ export const App = () => {
     const f = circuit.add('not');
 
     circuit.connect({
-      emitterId: f,
+      emitterId: a,
       receiverId: c,
       from: 0,
-      to: 1
-    });
-
-    circuit.connect({
-      emitterId: b,
-      receiverId: e,
-      from: 0,
-      to: 1
+      to: 0
     });
 
     circuit.connect({
@@ -46,17 +48,10 @@ export const App = () => {
     });
 
     circuit.connect({
-      emitterId: a,
-      receiverId: c,
-      from: 0,
-      to: 0
-    });
-
-    circuit.connect({
-      emitterId: d,
+      emitterId: b,
       receiverId: e,
       from: 0,
-      to: 0
+      to: 1
     });
 
     circuit.connect({
@@ -66,7 +61,19 @@ export const App = () => {
       to: 0
     });
 
-    console.log(circuit.allElements);
+    circuit.connect({
+      emitterId: f,
+      receiverId: c,
+      from: 0,
+      to: 1
+    });
+
+    circuit.connect({
+      emitterId: d,
+      receiverId: e,
+      from: 0,
+      to: 0
+    });
   });
 
   return (
