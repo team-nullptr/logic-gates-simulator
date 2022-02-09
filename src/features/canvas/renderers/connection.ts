@@ -1,24 +1,12 @@
-import { Block } from "../../../common/Block";
-import { Connection } from "../types/Connection";
 import { curve, route } from "../utils/path";
 import { Vector } from "../../../common/Vector";
+import { Connector } from "../types/Connector";
 
 export const renderConnection = (
-  { source, receiver }: Connection,
-  gates: Map<string, Block>,
+  [start, end]: [Required<Connector>, Required<Connector> | Vector],
   ctx: CanvasRenderingContext2D
 ) => {
-  const input = gates.get(source[0]);
-  const output = gates.get(receiver[0]);
-
-  if (!input || !output) return;
-
-  const start = input.findConnector("output", source[1]);
-  const end = output.findConnector("input", receiver[1]);
-
-  if (!start || !end) return;
-
-  const path = route(start.position, end.position);
+  const path = route(start.position, Array.isArray(end) ? end : end.position);
   renderPath(ctx, path);
 };
 

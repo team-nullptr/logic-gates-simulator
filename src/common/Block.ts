@@ -29,37 +29,17 @@ export class Block {
     return [x, y, x + w, y + h];
   }
 
-  get connectors(): Connector[] {
-    const [x, y, tx] = this.area;
-    const h = this.size[1];
+  get connectors(): Required<Connector>[] {
+    const inputs = this.distributeConnectors("input");
+    const outputs = this.distributeConnectors("output");
 
-    const inputs: Connector[] = distributePoints(
-      [x, y],
-      h,
-      this.inputs.length
-    ).map((position, index) => ({
-      position,
-      index,
-      type: "input",
-    }));
-
-    const outputs: Connector[] = distributePoints(
-      [tx, y],
-      h,
-      this.outputs.length
-    ).map((position, index) => ({
-      position,
-      index,
-      type: "output",
-    }));
-
-    return [...inputs, ...outputs];
+    return inputs.concat(outputs);
   }
 
   findConnector(
     type: "input" | "output",
     index: number
-  ): Connector | undefined {
+  ): Required<Connector> | undefined {
     return this.connectors.find((connector) => {
       return connector.type === type && connector.index === index;
     });
@@ -72,5 +52,23 @@ export class Block {
     );
 
     return [over, connector];
+  }
+
+  private distributeConnectors(type: Connector["type"]): Required<Connector>[] {
+    const [sx, y, tx] = this.area;
+
+    const h = this.size[1];
+    const x = type === "input" ? sx : tx;
+
+    const offset = [x, y];
+    const count = type === "input" ? this.inputs.length : this.outputs.length;
+
+    const points = distributePoints(offset as Vector, h, count);
+    return points.map((position, i) => ({
+      block: this,
+      position,
+      type,
+      index: i,
+    }));
   }
 }

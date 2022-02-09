@@ -1,4 +1,3 @@
-export interface Connection {
-  source: [id: string, port: number];
-  receiver: [id: string, port: number];
-}
+import { Connector } from "./Connector";
+
+export type Connection = [source: Connector, receiver: Connector];
