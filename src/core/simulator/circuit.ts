@@ -17,10 +17,17 @@ interface DisconnectRequest {
   to: number;
 }
 
+export type CircuitSubscriber = () => void;
+
 export class Circuit {
   readonly inputs = new Map<string, Element>();
   readonly gates = new Map<string, Gate>();
   readonly outputs = new Map<string, Element>();
+
+  private readonly callStack = new Set<string>();
+
+  // TODO: Probably it is a good idea to allow for subscribing to specific events like error or warnig in order to display them to the user.
+  private readonly subscribers = new Map<string, CircuitSubscriber>();
 
   /**
    * All elements in the circuit.
@@ -34,10 +41,27 @@ export class Circuit {
   }
 
   /**
+   * Allows to subscribe to circuit state changes.
+   * @param subscriber subscriber that will be called.
+   */
+  subscribe(subscriber: CircuitSubscriber) {
+    this.subscribers.set(uuid(), subscriber);
+  }
+
+  private notifySubscribers() {
+    this.subscribers.forEach((subscriber) => subscriber());
+  }
+
+  /**
    * Simulates the whole circuit starting from inputs.
    */
-  private simulate(): void {
-    this.inputs.forEach((input) => this.update(input));
+  simulate(): void {
+    console.log('simulation');
+    this.inputs.forEach((input) => {
+      console.log('new input path');
+      this.callStack.clear();
+      this.update(input);
+    });
   }
 
   /**
@@ -46,11 +70,17 @@ export class Circuit {
   private update(element: Element): void {
     if (element instanceof Gate) element.run();
 
+    this.notifySubscribers();
+
     element.connections.forEach(({ receiverId, from, to }) => {
       const receiver = this.find(receiverId);
       if (!receiver) throw new Error(`Element not found ${receiverId}`);
+
+      if (this.callStack.has(receiverId)) return;
+      this.callStack.add(receiverId);
+
       receiver.inputs[to] = element.states[from];
-      setTimeout(() => this.update(receiver), 100);
+      this.update(receiver);
     });
   }
 
