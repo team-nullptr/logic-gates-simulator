@@ -6,8 +6,16 @@ export const renderConnection = (
   [start, end]: [Required<Connector>, Required<Connector> | Vector],
   ctx: CanvasRenderingContext2D
 ) => {
-  const path = route(start.position, Array.isArray(end) ? end : end.position);
+  const ends: [Vector, Vector] = [getVector(start), getVector(end)];
+  if (start.type === "input") ends.reverse();
+
+  const path = route(...ends);
   renderPath(ctx, path);
+};
+
+const getVector = (value: Required<Connector> | Vector): Vector => {
+  if (Array.isArray(value)) return value;
+  return value.position;
 };
 
 export const renderPath = (ctx: CanvasRenderingContext2D, path: Vector[]) => {

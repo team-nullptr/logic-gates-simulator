@@ -13,11 +13,19 @@ export const towards = (from: Vector, to: Vector): Vector => {
   const [x, y] = from;
   const [tx, ty] = to;
 
-  if (x === tx) {
-    const diff = ty > y ? 12 : -12;
-    return [x, y + diff];
-  } else {
-    const diff = tx > x ? 12 : -12;
-    return [x + diff, y];
+  const vertical = x === tx;
+
+  if (vertical) {
+    const position = calculatePointPosition(y, ty);
+    return [x, position];
   }
+
+  const position = calculatePointPosition(x, tx);
+  return [position, y];
+};
+
+const calculatePointPosition = (from: number, to: number): number => {
+  const center = (from + to) / 2;
+  if (from < to) return Math.min(from + 12, center);
+  return Math.max(from - 12, center);
 };

@@ -41,11 +41,10 @@ export class InteractionManager {
     const gates = this.source.gates.values();
     for (const block of gates) {
       const [collides, connector] = block.collides(at);
-      if (!collides) continue;
 
       if (connector) {
         return connector;
-      } else {
+      } else if (collides) {
         return block;
       }
     }
