@@ -16,7 +16,14 @@ export class Renderer {
   }
 
   private renderConnections(ctx: CanvasRenderingContext2D) {
-    const connections = this.source.connections;
+    const { connections, connecting } = this.source;
+
+    if (connecting) {
+      const { block, type, index } = connecting[0];
+      const start = block.findConnector(type, index)!;
+      renderConnection([start, connecting[1]], ctx);
+    }
+
     connections.forEach((it) => {
       const [source, receiver] = it;
 
