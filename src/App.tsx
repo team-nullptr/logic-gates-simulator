@@ -16,7 +16,7 @@ export const App = () => {
     const circuit = new Circuit();
 
     circuit.subscribe(() => {
-      console.log(circuit.allElements);
+      console.log('change!');
     });
 
     const a = circuit.add('input');

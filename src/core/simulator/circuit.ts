@@ -56,9 +56,7 @@ export class Circuit {
    * Simulates the whole circuit starting from inputs.
    */
   simulate(): void {
-    console.log('simulation');
     this.inputs.forEach((input) => {
-      console.log('new input path');
       this.callStack.clear();
       this.update(input);
     });
