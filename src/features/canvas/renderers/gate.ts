@@ -1,5 +1,6 @@
 import { Block } from "../../../common/Block";
 import { Area } from "../types/Area";
+import { drawConnectors } from "./connector";
 
 export const renderGate = (block: Block, ctx: CanvasRenderingContext2D) => {
   const { area } = block;
@@ -7,7 +8,12 @@ export const renderGate = (block: Block, ctx: CanvasRenderingContext2D) => {
   drawRoundedRect(ctx, area, 5);
   drawText(ctx, block);
   drawUnderline(ctx, block);
-  drawConnectors(ctx, block);
+
+  drawConnectors(
+    ctx,
+    block.connectors.map((it) => it.position),
+    block.color
+  );
 };
 
 const drawText = (ctx: CanvasRenderingContext2D, block: Block) => {
@@ -33,17 +39,6 @@ const drawUnderline = (ctx: CanvasRenderingContext2D, block: Block) => {
 
   ctx.fillStyle = color;
   ctx.fillRect(centerX, centerY + 12, 24, 3);
-};
-
-const drawConnectors = (ctx: CanvasRenderingContext2D, block: Block) => {
-  ctx.fillStyle = block.color;
-
-  block.connectors.forEach((block) => {
-    const [x, y] = block.position;
-    ctx.beginPath();
-    ctx.ellipse(x, y, 4, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-  });
 };
 
 const drawRoundedRect = (
