@@ -39,6 +39,15 @@ export class InteractionManager {
 
   private resolve(at: Vector): Target {
     const gates = this.source.gates.values();
+    const buttons = this.source.buttons.values();
+
+    for (const button of buttons) {
+      const connector = button.collides(at);
+      if (button.collides(at)) {
+        return connector;
+      }
+    }
+
     for (const block of gates) {
       const [collides, connector] = block.collides(at);
 
