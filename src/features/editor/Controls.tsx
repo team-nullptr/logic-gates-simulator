@@ -3,15 +3,18 @@ import { Button } from "./Button";
 import { ButtonGroup } from "./ButtonGroup";
 import { Plus } from "react-feather";
 import { FrameButton } from "./types/FrameButton";
+import { MutableRefObject } from "react";
 
 export const Controls = (props: {
   buttons: FrameButton[];
   section: "inputs" | "outputs";
+  scroll: MutableRefObject<number>;
 }) => {
   return (
     <div
       style={{ direction: props.section === "inputs" ? "rtl" : "ltr" }}
       className={styles.container}
+      onScroll={(e) => (props.scroll.current = e.currentTarget.scrollTop)}
     >
       {props.buttons.map((button) => {
         if (button.type === "single") {
