@@ -1,4 +1,4 @@
-import { Block } from "../../../common/Block";
+import { Block } from "../types/Block";
 import { Area } from "../types/Area";
 import { drawConnectors } from "./connector";
 

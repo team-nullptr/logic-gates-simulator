@@ -1,7 +1,7 @@
 import { Vector } from "../../../common/Vector";
 import { Area } from "../types/Area";
 import { ToolType } from "../tools/ToolFactory";
-import { Block } from "../../../common/Block";
+import { Block } from "../types/Block";
 import { Target } from "../types/Target";
 
 export const findToolName = (target: Target): ToolType => {

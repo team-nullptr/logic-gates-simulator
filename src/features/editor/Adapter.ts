@@ -1,4 +1,4 @@
-import { Block } from "../../common/Block";
+import { Block } from "../canvas/types/Block";
 import { FrameButton } from "./types/FrameButton";
 import { Connection } from "../canvas/types/Connection";
 import { Vector } from "../../common/Vector";

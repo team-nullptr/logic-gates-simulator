@@ -1,11 +1,7 @@
-import { Vector } from "./Vector";
-import { Area } from "../features/canvas/types/Area";
-import {
-  distributePoints,
-  getDistance,
-  isOver,
-} from "../features/canvas/utils";
-import { Connector } from "../features/canvas/types/Connector";
+import { Vector } from "../../../common/Vector";
+import { Area } from "./Area";
+import { distributePoints, getDistance, isOver } from "../utils";
+import { Connector } from "./Connector";
 
 export class Block {
   constructor(

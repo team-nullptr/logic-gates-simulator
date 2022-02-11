@@ -1,5 +1,5 @@
 import { Vector } from "../../../common/Vector";
-import { Block } from "../../../common/Block";
+import { Block } from "./Block";
 import { Button } from "./Button";
 
 export interface Connector {

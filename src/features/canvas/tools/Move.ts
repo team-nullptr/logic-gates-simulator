@@ -1,7 +1,7 @@
 import { Tool } from "./Tool";
 import { Interaction } from "../types/Interaction";
 import { Vector } from "../../../common/Vector";
-import { Block } from "../../../common/Block";
+import { Block } from "../types/Block";
 import { subtract } from "../../../common/utils";
 
 const snapToGrid = (position: Vector): Vector => {
