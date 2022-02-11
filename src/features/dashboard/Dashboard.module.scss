@@ -1,0 +1,19 @@
+.container {
+  padding: 50px;
+  width: 100vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.projects {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.header {
+  margin: 0 0 20px 0;
+
+  &__title {
+  }
+}
