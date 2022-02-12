@@ -1,6 +1,5 @@
 import { Block } from "../types/Block";
 import { Area } from "../types/Area";
-import { drawConnectors } from "./connector";
 
 export const renderGate = (block: Block, ctx: CanvasRenderingContext2D) => {
   const { area } = block;
@@ -8,12 +7,6 @@ export const renderGate = (block: Block, ctx: CanvasRenderingContext2D) => {
   drawRoundedRect(ctx, area, 5);
   drawText(ctx, block);
   drawUnderline(ctx, block);
-
-  drawConnectors(
-    ctx,
-    block.connectors.map((it) => it.position),
-    block.color
-  );
 };
 
 const drawText = (ctx: CanvasRenderingContext2D, block: Block) => {

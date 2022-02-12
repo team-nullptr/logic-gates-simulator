@@ -1,31 +1,26 @@
 import styles from "./ButtonGroup.module.scss";
-import { CompoundButton } from "./types/CompoundButton";
 import { Button } from "./Button";
-import { toBinaryArray } from "./utils/binary";
+import { Button as ButtonType } from "../canvas/types/Button";
 
 export const ButtonGroup = (props: {
-  button: CompoundButton;
-  onChange: (value: number) => void;
+  button: ButtonType;
+  onChange: (state: boolean[]) => void;
 }) => {
-  const states = toBinaryArray(props.button.value, props.button.length);
-
   const handleClick = (position: number) => {
-    const copy = states.slice();
+    const copy = props.button.state.slice();
     copy[position] = !copy[position];
-
-    const value = copy
-      .reverse()
-      .map((it) => (it ? 1 : 0))
-      .join("");
-
-    props.onChange(parseInt(value, 2));
+    props.onChange(copy);
   };
+
+  const binary = props.button.state.slice().reverse();
+  const mapped = binary.map((it) => (it ? 1 : 0));
+  const value = parseInt(mapped.join(""), 2);
 
   return (
     <div className={styles.container}>
-      <p className={styles.value}>{props.button.value}</p>
+      <p className={styles.value}>{value}</p>
       <div className={styles.wrapper}>
-        {states.map((state, i) => (
+        {props.button.state.map((state, i) => (
           <Button
             color="hsl(266deg 99% 64%)"
             active={state}

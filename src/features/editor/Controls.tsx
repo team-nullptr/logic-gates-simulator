@@ -2,11 +2,11 @@ import styles from "./Controls.module.scss";
 import { Button } from "./Button";
 import { ButtonGroup } from "./ButtonGroup";
 import { Plus } from "react-feather";
-import { FrameButton } from "./types/FrameButton";
 import { MutableRefObject } from "react";
+import { Button as ButtonType } from "../canvas/types/Button";
 
 export const Controls = (props: {
-  buttons: FrameButton[];
+  buttons: ButtonType[];
   section: "inputs" | "outputs";
   scroll: MutableRefObject<number>;
 }) => {
@@ -21,11 +21,11 @@ export const Controls = (props: {
           return (
             <Button
               color="hsl(266deg 99% 64%)"
-              active={button.value}
+              active={button.state[0]}
               onClick={(v) => console.log("new state", v)}
               key={button.id}
             >
-              {button.letter}
+              {button.slug}
             </Button>
           );
         }

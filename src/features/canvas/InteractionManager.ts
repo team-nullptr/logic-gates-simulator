@@ -49,16 +49,9 @@ export class InteractionManager {
     }
 
     for (const block of gates) {
-      const [collides, connector] = block.collides(at);
-
-      if (connector) {
-        return connector;
-      } else if (collides) {
-        return block;
-      }
+      const result = block.collides(at);
+      if (result) return result;
     }
-
-    return undefined;
   }
 
   private init(): void {

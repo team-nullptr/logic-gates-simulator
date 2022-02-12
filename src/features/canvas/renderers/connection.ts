@@ -1,21 +1,12 @@
 import { curve, route } from "../utils/path";
 import { Vector } from "../../../common/Vector";
-import { Connector } from "../types/Connector";
 
 export const renderConnection = (
-  [start, end]: [Required<Connector>, Required<Connector> | Vector],
+  [start, end]: [Vector, Vector],
   ctx: CanvasRenderingContext2D
 ) => {
-  const ends: [Vector, Vector] = [getVector(start), getVector(end)];
-  if (start.type === "input") ends.reverse();
-
-  const path = route(...ends);
+  const path = route(start, end);
   renderPath(ctx, path);
-};
-
-const getVector = (value: Required<Connector> | Vector): Vector => {
-  if (Array.isArray(value)) return value;
-  return value.position;
 };
 
 export const renderPath = (ctx: CanvasRenderingContext2D, path: Vector[]) => {

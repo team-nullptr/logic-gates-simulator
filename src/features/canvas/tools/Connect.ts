@@ -22,9 +22,12 @@ export class ConnectTool extends Tool {
     const { target } = interaction;
     if (isConnector(target)) {
       const source = this.source.connecting[0];
+      let connection: Connection = { from: source, to: target };
 
-      const connection: Connection = [source, target];
-      if (source.type === "input") connection.reverse();
+      if (source.group.side === "input") {
+        connection = { from: target, to: source };
+      }
+
       this.source.connect(connection);
     }
 

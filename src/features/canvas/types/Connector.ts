@@ -1,21 +1,12 @@
-import { Vector } from "../../../common/Vector";
-import { Block } from "./Block";
-import { Button } from "./Button";
+import { Connectors } from "./Connectors";
 
 export interface Connector {
-  block: Block | Button;
-  position?: Vector;
-  type: "input" | "output";
-  index: number;
+  group: Connectors;
+  at: number;
 }
 
 export const isConnector = (object: any): object is Connector => {
   if (!object) return false;
-  const { block, type, index } = object;
-
-  return (
-    (block instanceof Block || block instanceof Button) &&
-    ["input", "output"].includes(type) &&
-    typeof index === "number"
-  );
+  const { group, at } = object;
+  return typeof at === "number" && group instanceof Connectors;
 };

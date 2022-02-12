@@ -1,53 +1,48 @@
 import { Vector } from "../../../common/Vector";
-import { getDistance } from "../utils";
-import { Target } from "./Target";
+import { Connectors } from "./Connectors";
 import { Connector } from "./Connector";
 
 export class Button {
+  readonly connectors: Connectors;
+  private position!: Vector;
+
   constructor(
     readonly id: string,
-    public position: Vector,
-    private readonly type: "single" | "compound",
-    private readonly side: "input" | "output" = "output",
-    private readonly length: number
-  ) {}
-
-  get connectors(): Required<Connector>[] {
-    const result: Required<Connector>[] = [];
-    const [x, y] = this.position;
-    const offset = this.type === "single" ? 28 : 80;
-
-    for (let i = 0; i < this.length; i++) {
-      const position: Vector = [x, y + offset + i * 48];
-      const type = this.side === "input" ? "output" : "input";
-      result.push({ block: this, position, index: i, type });
-    }
-
-    return result;
+    position: Vector,
+    readonly side: "input" | "output",
+    readonly type: "single" | "compound",
+    public readonly state: boolean[],
+    public slug?: string
+  ) {
+    this.connectors = new Connectors([0, 0], side, state);
+    this.move(position);
   }
 
   get height(): number {
     if (this.type === "single") return 48;
-    return 56 + length * 48;
+    return 56 + this.state.length * 48;
   }
 
-  findConnector(
-    type: "input" | "output",
-    index: number
-  ): Required<Connector> | undefined {
-    return this.connectors.find((connector) => {
-      return connector.type === type && connector.index === index;
-    });
-  }
+  move(to: Vector): void {
+    this.position = to;
 
-  collides(other: Vector): Target | undefined {
-    for (let i = 0; i < this.connectors.length; i++) {
-      const connector = this.connectors[i];
-      if (getDistance(connector.position, other) <= 12) {
-        return connector;
-      }
+    const [x, y] = to;
+    if (this.type === "single") {
+      this.connectors.position = [x, y + 28];
+    } else {
+      const height = this.state.length * 48;
+      const center = y + 56 + height / 2;
+      this.connectors.position = [x, center];
     }
+  }
 
-    return undefined;
+  collides(other: Vector): Connector | undefined {
+    const result = this.connectors.collides(other);
+    if (result === undefined) return undefined;
+    return { group: this.connectors, at: result };
+  }
+
+  render(ctx: CanvasRenderingContext2D): void {
+    this.connectors.render(ctx, "hsl(266,99%,64%)");
   }
 }

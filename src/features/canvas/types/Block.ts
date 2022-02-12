@@ -1,20 +1,34 @@
 import { Vector } from "../../../common/Vector";
 import { Area } from "./Area";
-import { distributePoints, getDistance, isOver } from "../utils";
+import { isOver } from "../utils";
 import { Connector } from "./Connector";
+import { Connectors } from "./Connectors";
+import { Target } from "./Target";
+import { renderGate } from "../renderers/gate";
+import { multiply } from "../../../common/utils";
 
 export class Block {
+  readonly inputs: Connectors;
+  readonly outputs: Connectors;
+
+  private position!: Vector;
+
   constructor(
     readonly id: string,
     public text: string,
     public color: string,
-    public position: Vector,
-    readonly inputs: boolean[],
-    readonly outputs: boolean[]
-  ) {}
+    position: Vector,
+    inputs: boolean[],
+    outputs: boolean[]
+  ) {
+    this.inputs = new Connectors([0, 0], "input", inputs);
+    this.outputs = new Connectors([0, 0], "output", outputs);
+    this.move(position);
+  }
 
   get size(): Vector {
-    const height = Math.max(this.inputs.length, this.outputs.length, 1) * 48;
+    const height =
+      Math.max(this.inputs.states.length, this.outputs.states.length, 1) * 48;
     return [96, height];
   }
 
@@ -25,46 +39,33 @@ export class Block {
     return [x, y, x + w, y + h];
   }
 
-  get connectors(): Required<Connector>[] {
-    const inputs = this.distributeConnectors("input");
-    const outputs = this.distributeConnectors("output");
+  move(to: Vector): void {
+    this.position = to;
 
-    return inputs.concat(outputs);
+    const [x, y] = multiply(to, [48, 48]);
+    const [w, h] = this.size;
+    const center = y + h / 2;
+
+    this.inputs.position = [x, center];
+    this.outputs.position = [x + w, center];
   }
 
-  findConnector(
-    type: "input" | "output",
-    index: number
-  ): Required<Connector> | undefined {
-    return this.connectors.find((connector) => {
-      return connector.type === type && connector.index === index;
-    });
+  collides(other: Vector): Target {
+    const check = (group: Connectors): Connector | undefined => {
+      const result = group.collides(other);
+      if (result !== undefined) return { group, at: result };
+    };
+
+    const result = check(this.inputs) ?? check(this.outputs);
+
+    if (result) return result;
+    if (isOver(other, this.area)) return this;
+    return undefined;
   }
 
-  collides(other: Vector): [boolean, Connector?] {
-    const over = isOver(other, this.area);
-    const connector = this.connectors.find(
-      (it) => getDistance(it.position, other) <= 12
-    );
-
-    return [over, connector];
-  }
-
-  private distributeConnectors(type: Connector["type"]): Required<Connector>[] {
-    const [sx, y, tx] = this.area;
-
-    const h = this.size[1];
-    const x = type === "input" ? sx : tx;
-
-    const offset = [x, y];
-    const count = type === "input" ? this.inputs.length : this.outputs.length;
-
-    const points = distributePoints(offset as Vector, h, count);
-    return points.map((position, i) => ({
-      block: this,
-      position,
-      type,
-      index: i,
-    }));
+  render(ctx: CanvasRenderingContext2D): void {
+    renderGate(this, ctx);
+    this.inputs.render(ctx, this.color);
+    this.outputs.render(ctx, this.color);
   }
 }

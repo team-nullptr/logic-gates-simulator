@@ -18,6 +18,7 @@ const setup = (canvas: HTMLCanvasElement, source: Adapter) => {
   interactionManager = new InteractionManager(canvas.getContext("2d")!, source);
 
   canvasHelper.addEventListener("render", (ctx) => {
+    source.size = [canvas.offsetWidth, canvas.offsetHeight];
     canvasHelper.offset = source.offset;
     renderer.render(ctx);
   });

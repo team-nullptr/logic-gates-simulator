@@ -1,60 +1,42 @@
-import { Block } from "../canvas/types/Block";
-import { FrameButton } from "./types/FrameButton";
 import { Connection } from "../canvas/types/Connection";
 import { Vector } from "../../common/Vector";
 import { Connector } from "../canvas/types/Connector";
 import { MutableRefObject } from "react";
 import { Button } from "../canvas/types/Button";
+import { Block } from "../canvas/types/Block";
 
 export class Adapter {
   offset: Vector = [0, 0];
-  size: Vector = [0, 600];
+  size: Vector = [0, 0];
 
   connecting: [Connector, Vector] | undefined;
 
-  readonly gates = new Map<string, Block>();
-
+  readonly gates: Block[] = [];
   readonly connections: Connection[] = [];
-
-  private readonly __buttons_inputs = new Map<string, Button>();
-
-  private readonly __buttons_outputs = new Map<string, Button>();
+  private readonly _buttons: Button[] = [];
 
   constructor(readonly scrolls: Scrolls) {}
 
-  get inputs(): Map<string, FrameButton> {
-    return new Map();
-  }
-
-  get outputs(): Map<string, FrameButton> {
-    return new Map();
-  }
-
   get buttons(): Button[] {
-    let top = 0;
+    let top = [0, 0];
 
-    for (const input of this.__buttons_inputs.values()) {
-      input.position = [
-        -this.offset[0] + 12,
-        top - this.offset[1] - this.scrolls.inputs.current,
-      ];
-      top += input.height;
+    for (const button of this._buttons) {
+      let position: Vector = [0, 0];
+
+      if (button.side === "output") {
+        position[0] = -this.offset[0] + 12;
+        position[1] = top[0] - this.offset[1] - this.scrolls.inputs.current;
+        top[0] += button.height;
+      } else {
+        position[0] = this.size[0] - this.offset[0] - 12;
+        position[1] = top[1] - this.offset[1] - this.scrolls.outputs.current;
+        top[1] += button.height;
+      }
+
+      button.move(position);
     }
 
-    top = 0;
-
-    for (const output of this.__buttons_outputs.values()) {
-      output.position = [
-        -this.offset[0] + this.size[1],
-        top - this.offset[1] - this.scrolls.outputs.current,
-      ];
-      top += output.height;
-    }
-
-    return [
-      ...this.__buttons_inputs.values(),
-      ...this.__buttons_outputs.values(),
-    ];
+    return this._buttons;
   }
 
   connect(connection: Connection) {

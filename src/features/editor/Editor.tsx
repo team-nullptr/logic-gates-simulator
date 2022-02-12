@@ -14,7 +14,7 @@ export const Editor = () => {
   return (
     <main className={styles.container}>
       <Controls
-        buttons={Array.from(adapter.inputs.values())}
+        buttons={adapter.buttons.filter((it) => it.side === "output")}
         section="inputs"
         scroll={inputScroll}
       />
@@ -22,7 +22,7 @@ export const Editor = () => {
         <Canvas adapter={adapter} />
       </div>
       <Controls
-        buttons={Array.from(adapter.outputs.values())}
+        buttons={adapter.buttons.filter((it) => it.side === "input")}
         section="outputs"
         scroll={outputScroll}
       />

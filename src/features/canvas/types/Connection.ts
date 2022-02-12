@@ -1,3 +1,6 @@
 import { Connector } from "./Connector";
 
-export type Connection = [source: Connector, receiver: Connector];
+export interface Connection {
+  from: Connector;
+  to: Connector;
+}
