@@ -1,12 +1,23 @@
-import { InputType } from '../types/InputType';
-import { deserialize, fetchSavedGates } from '../util/serialization';
-import { BaseGate, gatesOptions, isBaseGate } from './BaseGate';
-import { CustomGate } from './CustomGate';
+import { BaseGate, BaseGateOptions } from './BaseGate';
 import { Element } from './Element';
+import { Gate } from './Gate';
+import { CustomGate, SerializedCustomGate } from './CustomGate';
+import { Circuit } from '../Circuit';
+
+export type InputType = 'input' | 'input-group';
+
+export const baseGates = new Map<string, BaseGateOptions>([
+  ['not', { type: 'not', color: '#f7e813', inputsCount: 1, handler: ([a]: boolean[]) => !a }],
+  ['and', { type: 'and', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
+  ['or', { type: 'or', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }]
+]);
 
 export class ElementFactory {
   static createOutput(id: string): Element {
-    return new Element(id, 'output');
+    const output = new Element(id, 'output');
+    output.inputs[0] = false;
+    output.states[0] = false;
+    return output;
   }
 
   static createInput(id: string, type: InputType): Element {
@@ -15,18 +26,22 @@ export class ElementFactory {
     return input;
   }
 
-  static createGate(id: string, type: string): BaseGate | CustomGate {
-    if (isBaseGate(type)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const options = gatesOptions.get(type)!;
-      return new BaseGate(id, options);
-    }
+  static createBaseGate(id: string, type: string): Gate {
+    const options = baseGates.get(type);
+    if (!options) throw new Error(`Failed to get options for gate of type: ${type}`);
+    return new BaseGate(id, options);
+  }
 
-    const serializedGates = fetchSavedGates();
-    const serializedGate = serializedGates[type];
-    if (!serializedGate) throw new Error('gate not found');
+  static createCustomGate(id: string, type: string, createdGates: Map<string, SerializedCustomGate>): Gate {
+    const serializedGate = createdGates.get(type);
+    if (!serializedGate) throw new Error(`Failed to get serialized custom gate of type: ${type}`);
 
-    const deserialized = deserialize(serializedGate, serializedGates);
-    return new CustomGate(id, type, deserialized);
+    const circuit = new Circuit();
+    circuit.deserialize(serializedGate.circuit, { createdGates });
+
+    return new CustomGate(id, circuit, {
+      type: serializedGate.type,
+      color: serializedGate.color
+    });
   }
 }

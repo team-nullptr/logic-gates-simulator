@@ -1,28 +1,20 @@
-import { Gate } from './Gate';
+import { Gate, GateOptions } from './Gate';
 import { Circuit } from '../Circuit';
-import { DeserializedCustomGate } from '../util/serialization';
+
+import { SerializedCircuit } from '../Circuit';
+
+export interface SerializedCustomGate {
+  type: string;
+  color: string;
+  circuit: SerializedCircuit;
+}
 
 export class CustomGate extends Gate {
-  private circuit = new Circuit();
+  constructor(id: string, private readonly circuit: Circuit, options: GateOptions) {
+    super(id, options);
 
-  constructor(
-    id: string,
-    type: string,
-    { color, inputs, gates, outputs }: DeserializedCustomGate
-  ) {
-    super(id, type, color);
-
-    inputs.forEach((input) => {
-      this.inputs.push(false);
-      this.circuit.inputs.set(input.id, input);
-    });
-
-    gates.forEach((gate) => this.circuit.gates.set(gate.id, gate));
-
-    outputs.forEach((output) => {
-      this.states.push(false);
-      this.circuit.outputs.set(output.id, output);
-    });
+    this.inputs = new Array(circuit.inputs.size).fill(false);
+    this.states = new Array(circuit.outputs.size).fill(false);
   }
 
   run() {

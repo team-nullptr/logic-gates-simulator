@@ -1,4 +1,8 @@
-import { Connection } from '../types/Connection';
+export interface Connection {
+  from: number;
+  to: number;
+  receiverId: string;
+}
 
 export class Element {
   states: boolean[] = [];

@@ -1,18 +1,11 @@
-import {
-  BaseGate,
-  BaseGateOptions,
-  BaseGateType,
-  gatesOptions
-} from '../BaseGate';
+import { BaseGate, BaseGateType, BaseGateOptions } from '../BaseGate';
+import { baseGates } from '../ElementFactory';
 
 describe('Base gates are setup correctly', () => {
-  test.each(['not', 'or', 'and', 'nand'] as BaseGateType[])(
-    'Base gate %s is defined',
-    (type) => {
-      const gate = gatesOptions.get(type);
-      expect(gate).toBeDefined();
-    }
-  );
+  test.each(['not', 'or', 'and'] as BaseGateType[])('Base gate %s is defined', (type) => {
+    const gate = baseGates.get(type);
+    expect(gate).toBeDefined();
+  });
 });
 
 test('Creates base gate correctly', () => {
