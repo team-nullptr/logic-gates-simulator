@@ -32,7 +32,7 @@ export class ElementFactory {
     return new BaseGate(id, options);
   }
 
-  static createCustomGate(id: string, type: string, createdGates: Map<string, SerializedCustomGate>): Gate {
+  static createCustomGate(id: string, type: string, createdGates: Map<string, SerializedCustomGate>): CustomGate {
     const serializedGate = createdGates.get(type);
     if (!serializedGate) throw new Error(`Failed to get serialized custom gate of type: ${type}`);
 

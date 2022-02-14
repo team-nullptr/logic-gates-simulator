@@ -10,7 +10,7 @@ export interface SerializedCustomGate {
 }
 
 export class CustomGate extends Gate {
-  constructor(id: string, private readonly circuit: Circuit, options: GateOptions) {
+  constructor(id: string, readonly circuit: Circuit, options: GateOptions) {
     super(id, options);
 
     this.inputs = new Array(circuit.inputs.size).fill(false);
