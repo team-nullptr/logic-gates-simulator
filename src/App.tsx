@@ -82,51 +82,11 @@ export const App = () => {
       to: 0
     });
 
-    simulator.disconnect({
-      elementId: a,
-      targetId: c,
-      from: 0,
-      to: 0
-    });
-
-    console.log('circuit');
     console.log(simulator.circuit);
 
-    console.log("serialized simulator's circuit");
+    simulator.remove(f);
+
     console.log(simulator.circuit);
-    console.log(simulator.circuit.serialize());
-
-    console.log('creating gate from circuit');
-    simulator.createGate('test-gate', '#8c57cc');
-    console.log(simulator);
-
-    console.log('with test gate in circuit:');
-    const aa = simulator.add('test-gate');
-    console.log(simulator.circuit);
-
-    const bb = simulator.add('input');
-    simulator.toggleInput(bb);
-
-    const cc = simulator.add('input');
-
-    const dd = simulator.add('output');
-    const ee = simulator.add('output');
-
-    simulator.connect({
-      emitterId: bb,
-      receiverId: aa,
-      from: 0,
-      to: 0
-    });
-
-    simulator.connect({
-      emitterId: cc,
-      receiverId: aa,
-      from: 0,
-      to: 1
-    });
-
-    console.log('simulator with custom gate and inputs', simulator);
   });
 
   return (

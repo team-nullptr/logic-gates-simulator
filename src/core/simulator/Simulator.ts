@@ -11,13 +11,6 @@ export interface ConnectRequest {
   to: number;
 }
 
-export interface DisconnectRequest {
-  elementId: string;
-  targetId: string;
-  from: number;
-  to: number;
-}
-
 export class Simulator {
   circuit: Circuit = new Circuit();
   private readonly createdGates = new Map<string, SerializedCustomGate>();
@@ -70,23 +63,38 @@ export class Simulator {
     this.circuit.simulate();
   }
 
-  disconnect({ elementId, targetId, from, to }: DisconnectRequest): void {
-    const element = this.circuit.find(elementId);
-    const target = this.circuit.find(targetId);
+  /**
+   * Removes connection between two elements.
+   * @param elementId Id of the element that will be disconnected.
+   * @param targetId Id of element to which connection is made.
+   * @param from Index of output that starts the connection.
+   * @param to Index of input that ends the connection.
+   */
+  disconnect({ emitterId, receiverId, from, to }: ConnectRequest): void {
+    const emitter = this.circuit.find(emitterId);
+    const receiver = this.circuit.find(receiverId);
 
-    if (!target || !element) throw new Error(`Element not found: ${element ? targetId : elementId}`);
+    if (!emitter) throw new Error(`Element not found: ${emitterId}`);
+    if (!receiver) throw new Error(`Element not found: ${receiverId}`);
 
-    element.connections = element.connections.filter(
-      (connection) => connection.receiverId != targetId && connection.from == from && connection.to == to
+    emitter.connections = emitter.connections.filter(
+      (connection) => connection.receiverId != receiverId && connection.from == from && connection.to == to
     );
 
-    target.inputs[to] = false;
-    this.circuit.update(target);
+    receiver.inputs[to] = false;
+    if (receiver.type === 'output') receiver.states[to] = receiver.inputs[to];
+
+    this.circuit.update(receiver);
   }
 
   remove(id: string): void {
     const element = this.circuit.find(id);
     if (!element) throw new Error(`Element not found: ${id}`);
+
+    // remove all connections to the element.
+    this.circuit.elements.forEach((element) => {
+      element.connections = element.connections.filter((connection) => connection.receiverId !== id);
+    });
 
     // remove all element's connections
     element.connections.forEach(({ receiverId, to }) => {
@@ -94,12 +102,9 @@ export class Simulator {
       if (!receiver) throw new Error(`Element not found: ${receiver}`);
 
       receiver.inputs[to] = false;
-      this.circuit.update(receiver);
-    });
+      if (receiver.type === 'output') receiver.states[to] = receiver.inputs[to];
 
-    // remove all connections to the element.
-    this.circuit.elements.forEach((element) => {
-      element.connections = element.connections.filter((connection) => connection.receiverId !== id);
+      this.circuit.update(receiver);
     });
 
     // remove gate from the circuit.
