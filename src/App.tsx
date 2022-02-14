@@ -13,10 +13,7 @@ export const App = () => {
     const simulator = new Simulator();
 
     const a = simulator.add('input');
-
-    // toggle input a
-    const ae = simulator.circuit.find(a);
-    ae!.states[0] = true;
+    simulator.toggleInput(a);
 
     const b = simulator.add('input');
 
@@ -108,8 +105,7 @@ export const App = () => {
     console.log(simulator.circuit);
 
     const bb = simulator.add('input');
-    const bbe = simulator.circuit.find(bb);
-    bbe!.states[0] = true;
+    simulator.toggleInput(bb);
 
     const cc = simulator.add('input');
 

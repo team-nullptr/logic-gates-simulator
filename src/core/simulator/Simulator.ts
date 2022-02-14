@@ -52,6 +52,14 @@ export class Simulator {
     return id;
   }
 
+  toggleInput(id: string, index = 0) {
+    const input = this.circuit.inputs.get(id);
+    if (!input) throw new Error(`Element not found: ${id}`);
+
+    input.states[index] = !input.states[index];
+    this.circuit.simulate();
+  }
+
   connect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);
 
