@@ -111,8 +111,6 @@ export const App = () => {
         <Route path="/" element={<p>a</p>} />
         <Route path="/edit" element={<Editor />} />
       </Routes>
-      <button onClick={loadProject}>load project</button>
-      <button onClick={addInput}>add input</button>
     </div>
   );
 };
