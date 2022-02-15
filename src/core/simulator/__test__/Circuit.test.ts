@@ -35,7 +35,7 @@ test('Deserializes circuit properly', () => {
 
   const createdGates = new Map<string, SerializedCustomGate>();
 
-  circuit.deserialize(serialized, { createdGates });
+  circuit.deserialize(serialized, createdGates);
 
   expect(circuit.inputs.size).toEqual(2);
   expect(circuit.gates.size).toEqual(1);
