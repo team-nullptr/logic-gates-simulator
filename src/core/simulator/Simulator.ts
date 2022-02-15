@@ -18,7 +18,7 @@ export interface SerializedSimulator {
 
 export class Simulator {
   circuit: Circuit = new Circuit();
-  private readonly createdGates = new Map<string, SerializedCustomGate>();
+  readonly createdGates = new Map<string, SerializedCustomGate>();
 
   createGate(type: string, color: string) {
     const serialized = this.circuit.serialize();
@@ -120,15 +120,16 @@ export class Simulator {
    * Serializes simulator into json object.
    */
   serialize(): SerializedSimulator {
-    // TODO: Currently state of circuit is not saved (all inputs will be turned off etc)
     return { circuit: this.circuit.serialize(), createdGates: [...this.createdGates.entries()] };
   }
 
   /**
    * Deserializes serialized simulator from json object.
    */
-  deserialize({ circuit, createdGates }: SerializedSimulator): void {
-    createdGates.forEach(([id, gate]) => this.createdGates.set(id, gate));
-    this.circuit.deserialize(circuit, this.createdGates);
+  static deserialize({ circuit, createdGates }: SerializedSimulator): Simulator {
+    const simulator = new Simulator();
+    createdGates.forEach(([id, gate]) => simulator.createdGates.set(id, gate));
+    simulator.circuit = Circuit.deserialize(circuit, simulator.createdGates);
+    return simulator;
   }
 }

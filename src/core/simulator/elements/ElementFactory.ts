@@ -36,8 +36,7 @@ export class ElementFactory {
     const serializedGate = createdGates.get(type);
     if (!serializedGate) throw new Error(`Failed to get serialized custom gate of type: ${type}`);
 
-    const circuit = new Circuit();
-    circuit.deserialize(serializedGate.circuit, createdGates);
+    const circuit = Circuit.deserialize(serializedGate.circuit, createdGates);
 
     return new CustomGate(id, circuit, {
       type: serializedGate.type,

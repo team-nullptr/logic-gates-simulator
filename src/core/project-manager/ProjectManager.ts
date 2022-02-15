@@ -25,8 +25,7 @@ export class ProjectManager {
    */
   get projects(): Project[] {
     return Object.values(this.fetchProjects()).map(({ name, modifiedAt, simulator: serializedSim }) => {
-      const simulator = new Simulator();
-      simulator.deserialize(serializedSim);
+      const simulator = Simulator.deserialize(serializedSim);
       return { name, modifiedAt: new Date(modifiedAt), simulator: simulator };
     });
   }
@@ -68,9 +67,8 @@ export class ProjectManager {
     const project = {
       name: serializedProject.name,
       modifiedAt: new Date(serializedProject.modifiedAt),
-      simulator: new Simulator()
+      simulator: Simulator.deserialize(serializedProject.simulator)
     };
-    project.simulator.deserialize(serializedProject.simulator);
 
     return project;
   }

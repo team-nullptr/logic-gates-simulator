@@ -91,27 +91,31 @@ export class Circuit {
   /**
    * Deserializes the object into circuit.
    */
-  deserialize({ inputs, gates, outputs }: SerializedCircuit, createdGates: Map<string, SerializedCustomGate>) {
+  static deserialize({ inputs, gates, outputs }: SerializedCircuit, createdGates: Map<string, SerializedCustomGate>) {
+    const circuit = new Circuit();
+
     inputs.forEach(({ id, type, connections }) => {
       const input = ElementFactory.createInput(id, type as InputType);
       input.connections = connections;
-      this.inputs.set(id, input);
+      circuit.inputs.set(id, input);
     });
 
     gates.forEach(({ id, type, connections }) => {
       if (isBaseGate(type)) {
         const gate = ElementFactory.createBaseGate(id, type);
         gate.connections = connections;
-        this.gates.set(id, gate);
+        circuit.gates.set(id, gate);
       } else {
         const gate = ElementFactory.createCustomGate(id, type, createdGates);
         gate.connections = connections;
-        this.gates.set(id, gate);
+        circuit.gates.set(id, gate);
       }
     });
 
     outputs.forEach(({ id }) => {
-      this.outputs.set(id, ElementFactory.createOutput(id));
+      circuit.outputs.set(id, ElementFactory.createOutput(id));
     });
+
+    return circuit;
   }
 }
