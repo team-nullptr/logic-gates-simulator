@@ -109,8 +109,8 @@ export const App = () => {
     <div className={styles.container}>
       {renderNavigation(location.pathname)}
       <Routes>
-        <Route path='/' element={<Dashboard />} />
-        <Route path='/edit' element={<Editor />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/edit" element={<Editor />} />
       </Routes>
     </div>
   );

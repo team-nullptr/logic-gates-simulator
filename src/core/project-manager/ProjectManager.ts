@@ -23,8 +23,12 @@ export class ProjectManager {
   /**
    * All saved projects.
    */
-  get projects(): SerializedProject[] {
-    return Object.values(this.fetchProjects());
+  get projects(): Project[] {
+    return Object.values(this.fetchProjects()).map(({ name, modifiedAt, simulator: serializedSim }) => {
+      const simulator = new Simulator();
+      simulator.deserialize(serializedSim);
+      return { name, modifiedAt: new Date(modifiedAt), simulator: simulator };
+    });
   }
 
   /**
