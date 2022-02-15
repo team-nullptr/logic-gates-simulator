@@ -47,10 +47,10 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    background: #9748FE;
+    background: #9748fe;
 
     &:hover {
-      filter: grayscale(.16);
+      filter: grayscale(0.16);
     }
 
     .text {

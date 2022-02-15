@@ -12,12 +12,7 @@ type NavigationProps = {
 export const Navigation: FC<NavigationProps> = (props) => {
   const renderActions = (actions: NavigationItem[]) => {
     return actions.map((action, i) => (
-      <NavigationButton
-        icon={action.icon}
-        onClick={action.onClick}
-        text={action.text}
-        key={i}
-      />
+      <NavigationButton icon={action.icon} onClick={action.onClick} text={action.text} key={i} />
     ));
   };
 

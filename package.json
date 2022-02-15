@@ -10,20 +10,24 @@
     "format": "prettier --config .prettierrc 'src/**/*.(ts|tsx)' --write"
   },
   "dependencies": {
+    "color": "^4.2.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-feather": "^2.0.9",
     "react-router-dom": "^6.0.2",
     "sass": "^1.43.4",
+    "styled-components": "^5.3.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.0",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "@types/color": "^3.0.3",
     "@types/jest": "^27.4.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/styled-components": "^5.1.22",
     "@types/uuid": "^8.3.3",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
