@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "color": "^4.2.1",
+    "date-fns": "^2.28.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-feather": "^2.0.9",

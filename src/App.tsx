@@ -6,6 +6,7 @@ import { renderNavigation } from './utils/renderNavigation';
 import { useEffect, useState } from 'react';
 import { ProjectManager } from './core/project-manager/ProjectManager';
 import { Project } from './core/project-manager/ProjectManager';
+import { Dashboard } from './features/dashboard/Dashboard';
 
 export const App = () => {
   const location = useLocation();
@@ -108,8 +109,8 @@ export const App = () => {
     <div className={styles.container}>
       {renderNavigation(location.pathname)}
       <Routes>
-        <Route path="/" element={<p>a</p>} />
-        <Route path="/edit" element={<Editor />} />
+        <Route path='/' element={<Dashboard />} />
+        <Route path='/edit' element={<Editor />} />
       </Routes>
     </div>
   );
