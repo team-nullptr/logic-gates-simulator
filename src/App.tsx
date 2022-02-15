@@ -3,99 +3,106 @@ import { Editor } from './screens/editor/Editor';
 import styles from './App.module.scss';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { renderNavigation } from './utils/renderNavigation';
-import { useEffect } from 'react';
-import { Simulator } from './core/simulator/Simulator';
+import { useEffect, useState } from 'react';
+import { ProjectManager } from './core/project-manager/ProjectManager';
+import { Project } from './core/project-manager/ProjectManager';
 
 export const App = () => {
   const location = useLocation();
+  const [project, setProject] = useState<Project | undefined>();
+
+  const projectManager = new ProjectManager();
 
   useEffect(() => {
-    const simulator = new Simulator();
+    projectManager.createProject('test');
 
-    const a = simulator.add('input');
-    simulator.toggleInput(a);
+    // const a = simulator.add('input');
+    // simulator.toggleInput(a);
+    //
+    // const b = simulator.add('input');
+    //
+    // const c = simulator.add('or');
+    // const d = simulator.add('not');
+    //
+    // const e = simulator.add('or');
+    // const f = simulator.add('not');
+    //
+    // const g = simulator.add('output');
+    // const h = simulator.add('output');
+    //
+    // simulator.connect({
+    //   emitterId: a,
+    //   receiverId: c,
+    //   from: 0,
+    //   to: 0
+    // });
+    //
+    // simulator.connect({
+    //   emitterId: c,
+    //   receiverId: d,
+    //   from: 0,
+    //   to: 0
+    // });
+    //
+    // simulator.connect({
+    //   emitterId: d,
+    //   receiverId: g,
+    //   from: 0,
+    //   to: 0
+    // });
+    //
+    // simulator.connect({
+    //   emitterId: b,
+    //   receiverId: e,
+    //   from: 0,
+    //   to: 1
+    // });
+    //
+    // simulator.connect({
+    //   emitterId: f,
+    //   receiverId: h,
+    //   from: 0,
+    //   to: 0
+    // });
+    //
+    // simulator.connect({
+    //   emitterId: e,
+    //   receiverId: f,
+    //   from: 0,
+    //   to: 0
+    // });
+    //
+    // simulator.connect({
+    //   emitterId: f,
+    //   receiverId: c,
+    //   from: 0,
+    //   to: 1
+    // });
+    //
+    // simulator.connect({
+    //   emitterId: d,
+    //   receiverId: e,
+    //   from: 0,
+    //   to: 0
+    // });
+    //
+    // simulator.remove(f);
+  }, []);
 
-    const b = simulator.add('input');
+  useEffect(() => {
+    console.log('project loaded', project);
+  }, [project]);
 
-    const c = simulator.add('or');
-    const d = simulator.add('not');
+  const loadProject = () => {
+    const project = projectManager.loadProject('test');
+    setProject(project);
+  };
 
-    const e = simulator.add('or');
-    const f = simulator.add('not');
-
-    const g = simulator.add('output');
-    const h = simulator.add('output');
-
-    simulator.connect({
-      emitterId: a,
-      receiverId: c,
-      from: 0,
-      to: 0
-    });
-
-    simulator.connect({
-      emitterId: c,
-      receiverId: d,
-      from: 0,
-      to: 0
-    });
-
-    simulator.connect({
-      emitterId: d,
-      receiverId: g,
-      from: 0,
-      to: 0
-    });
-
-    simulator.connect({
-      emitterId: b,
-      receiverId: e,
-      from: 0,
-      to: 1
-    });
-
-    simulator.connect({
-      emitterId: f,
-      receiverId: h,
-      from: 0,
-      to: 0
-    });
-
-    simulator.connect({
-      emitterId: e,
-      receiverId: f,
-      from: 0,
-      to: 0
-    });
-
-    simulator.connect({
-      emitterId: f,
-      receiverId: c,
-      from: 0,
-      to: 1
-    });
-
-    simulator.connect({
-      emitterId: d,
-      receiverId: e,
-      from: 0,
-      to: 0
-    });
-
-    simulator.remove(f);
-
-    console.log(simulator.circuit);
-
-    const serializedString = JSON.stringify(simulator.serialize());
-    console.log(serializedString);
-
-    const serializedObject = JSON.parse(serializedString);
-    const deserializedSimulator = new Simulator();
-
-    deserializedSimulator.deserialize(serializedObject);
-    deserializedSimulator.circuit.simulate();
-    console.log(deserializedSimulator.circuit);
-  });
+  const addInput = () => {
+    if (!project) return;
+    project.simulator.add('input');
+    projectManager.saveProject(project);
+  };
 
   return (
     <div className={styles.container}>
@@ -104,6 +111,8 @@ export const App = () => {
         <Route path="/" element={<p>a</p>} />
         <Route path="/edit" element={<Editor />} />
       </Routes>
+      <button onClick={loadProject}>load project</button>
+      <button onClick={addInput}>add input</button>
     </div>
   );
 };
