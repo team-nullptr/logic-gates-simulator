@@ -82,11 +82,19 @@ export const App = () => {
       to: 0
     });
 
-    console.log(simulator.circuit);
-
     simulator.remove(f);
 
     console.log(simulator.circuit);
+
+    const serializedString = JSON.stringify(simulator.serialize());
+    console.log(serializedString);
+
+    const serializedObject = JSON.parse(serializedString);
+    const deserializedSimulator = new Simulator();
+
+    deserializedSimulator.deserialize(serializedObject);
+    deserializedSimulator.circuit.simulate();
+    console.log(deserializedSimulator.circuit);
   });
 
   return (

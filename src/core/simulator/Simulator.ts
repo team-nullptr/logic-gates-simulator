@@ -1,4 +1,4 @@
-import { Circuit } from './Circuit';
+import { Circuit, SerializedCircuit } from './Circuit';
 import { isBaseGate } from './elements/BaseGate';
 import { v4 as uuid } from 'uuid';
 import { ElementFactory } from './elements/ElementFactory';
@@ -9,6 +9,11 @@ export interface ConnectRequest {
   receiverId: string;
   from: number;
   to: number;
+}
+
+export interface SerializedSimulator {
+  circuit: SerializedCircuit;
+  createdGates: [string, SerializedCustomGate][];
 }
 
 export class Simulator {
@@ -109,5 +114,21 @@ export class Simulator {
 
     // remove gate from the circuit.
     [this.circuit.inputs, this.circuit.gates, this.circuit.outputs].forEach((set) => set.delete(id));
+  }
+
+  /**
+   * Serializes simulator into json object.
+   */
+  serialize(): SerializedSimulator {
+    // TODO: Currently state of circuit is not saved (all inputs will be turned off etc)
+    return { circuit: this.circuit.serialize(), createdGates: [...this.createdGates.entries()] };
+  }
+
+  /**
+   * Deserializes serialized simulator from json object.
+   */
+  deserialize({ circuit, createdGates }: SerializedSimulator): void {
+    createdGates.forEach(([id, gate]) => this.createdGates.set(id, gate));
+    this.circuit.deserialize(circuit, this.createdGates);
   }
 }

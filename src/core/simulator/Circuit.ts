@@ -20,11 +20,7 @@ export interface SerializedCircuit {
   }[];
 }
 
-export interface DeserializeCircuitOptions {
-  createdGates: Map<string, SerializedCustomGate>;
-}
-
-export class Circuit implements Serializable<SerializedCircuit, DeserializeCircuitOptions> {
+export class Circuit {
   readonly inputs = new Map<string, Element>();
   readonly gates = new Map<string, Gate>();
   readonly outputs = new Map<string, Element>();
@@ -77,6 +73,9 @@ export class Circuit implements Serializable<SerializedCircuit, DeserializeCircu
     return this.elements.find((element) => element.id === id);
   }
 
+  /**
+   * Serializes the circuit to an object, so it can be saved in local storage.
+   */
   serialize(): SerializedCircuit {
     return {
       inputs: [...this.inputs.values()].map(({ id, type, connections }) => ({
@@ -89,7 +88,10 @@ export class Circuit implements Serializable<SerializedCircuit, DeserializeCircu
     };
   }
 
-  deserialize({ inputs, gates, outputs }: SerializedCircuit, { createdGates }: DeserializeCircuitOptions) {
+  /**
+   * Deserializes the object into circuit.
+   */
+  deserialize({ inputs, gates, outputs }: SerializedCircuit, createdGates: Map<string, SerializedCustomGate>) {
     inputs.forEach(({ id, type, connections }) => {
       const input = ElementFactory.createInput(id, type as InputType);
       input.connections = connections;
