@@ -44,6 +44,10 @@ export class ProjectManager {
     localStorage.setItem('projects', JSON.stringify({ ...projects, [serialized.name]: serialized }));
   }
 
+  /**
+   * Creates a new project and saves it in the localStorage.
+   * @param name Name of the project.
+   */
   createProject(name: string) {
     const projects = this.fetchProjects();
 
