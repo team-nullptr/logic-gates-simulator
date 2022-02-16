@@ -52,7 +52,9 @@ class ProjectManager {
    */
   createProject(name: string) {
     // FIXME: Disallow adding projects with the same name
-    this.saveProject({ id: uuid(), name, modifiedAt: new Date(), simulator: new Simulator() });
+    const id = uuid();
+    this.saveProject({ id, name, modifiedAt: new Date(), simulator: new Simulator() });
+    return id;
   }
 
   /**

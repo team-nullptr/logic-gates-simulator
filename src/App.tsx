@@ -1,12 +1,11 @@
 import './main.css';
-import { Editor } from './features/editor/Editor';
 import styles from './App.module.scss';
+import { Editor } from './features/editor/Editor';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { renderNavigation } from './utils/renderNavigation';
 import { useEffect } from 'react';
 import { Dashboard } from './features/dashboard/Dashboard';
-import { ProjectCreate } from './features/project-create/ProjectCreate';
 import { MessageBusRenderer } from './features/message-bus/MessageBusRenderer';
+import { NavigationResolver } from './features/navigation/NavigationResolver';
 
 export const App = () => {
   const location = useLocation();
@@ -89,11 +88,11 @@ export const App = () => {
   return (
     <div className={styles.container}>
       <MessageBusRenderer />
-      {renderNavigation(location.pathname)}
+      <NavigationResolver path={location.pathname} />
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/edit" element={<Editor />} />
-        <Route path="/create" element={<ProjectCreate />} />
+        <Route path="edit/:projectId" element={<Editor />} />
+        <Route path="*" element={<p>Not found</p>} />
       </Routes>
     </div>
   );
