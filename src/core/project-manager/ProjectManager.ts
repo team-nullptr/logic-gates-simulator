@@ -1,12 +1,15 @@
 import { SerializedSimulator, Simulator } from '../simulator/Simulator';
+import { v4 as uuid } from 'uuid';
 
 export interface Project {
+  id: string;
   name: string;
   modifiedAt: Date;
   simulator: Simulator;
 }
 
 export interface SerializedProject {
+  id: string;
   name: string;
   modifiedAt: string;
   simulator: SerializedSimulator;
@@ -24,24 +27,23 @@ export class ProjectManager {
    * All saved projects.
    */
   get projects(): Project[] {
-    return Object.values(this.fetchProjects()).map(({ name, modifiedAt, simulator: serializedSim }) => {
-      const simulator = Simulator.deserialize(serializedSim);
-      return { name, modifiedAt: new Date(modifiedAt), simulator: simulator };
+    return Object.values(this.fetchProjects()).map(({ modifiedAt, simulator, ...meta }) => {
+      return { ...meta, modifiedAt: new Date(modifiedAt), simulator: Simulator.deserialize(simulator) };
     });
   }
 
   /**
    * Saves project in localStorage.
    */
-  saveProject({ name, modifiedAt, simulator }: Project) {
+  saveProject({ modifiedAt, simulator, ...meta }: Project) {
     const serialized: SerializedProject = {
-      name,
+      ...meta,
       modifiedAt: modifiedAt.toString(),
       simulator: simulator.serialize()
     };
 
     const projects = this.fetchProjects();
-    localStorage.setItem('projects', JSON.stringify({ ...projects, [serialized.name]: serialized }));
+    localStorage.setItem('projects', JSON.stringify({ ...projects, [serialized.id]: serialized }));
   }
 
   /**
@@ -49,32 +51,25 @@ export class ProjectManager {
    * @param name Name of the project.
    */
   createProject(name: string) {
-    const projects = this.fetchProjects();
-
-    localStorage.setItem(
-      'projects',
-      JSON.stringify({
-        ...projects,
-        [name]: { name, modifiedAt: new Date().toString(), simulator: new Simulator().serialize() }
-      })
-    );
+    // FIXME: Disallow adding projects with the same name
+    this.saveProject({ id: uuid(), name, modifiedAt: new Date(), simulator: new Simulator() });
   }
 
   /**
    * Loads project from localStorage and makes it the currently project.
-   * @param name Name of the project.
+   * @param id Id of the project.
    */
-  loadProject(name: string): Project {
-    const serializedProject = this.fetchProjects()[name];
+  loadProject(id: string): Project {
+    const serializedProject = this.fetchProjects()[id];
     if (!serializedProject) throw new Error('Unable to find a project');
 
-    const project = {
-      name: serializedProject.name,
-      modifiedAt: new Date(serializedProject.modifiedAt),
-      simulator: Simulator.deserialize(serializedProject.simulator)
-    };
+    const { modifiedAt, simulator, ...meta } = serializedProject;
 
-    return project;
+    return {
+      ...meta,
+      modifiedAt: new Date(modifiedAt),
+      simulator: Simulator.deserialize(simulator)
+    };
   }
 
   /**

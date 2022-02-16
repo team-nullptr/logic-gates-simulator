@@ -10,16 +10,16 @@ export const Dashboard = () => {
 
   return (
     <ProjectManagerProvider>
-      <div className={styles.container}>
+      <main className={styles.container}>
         <header className={styles.header}>
           <h1 className={styles.header__title}>Projects</h1>
         </header>
         <section className={styles.projects}>
           {projects.map((project) => (
-            <Card project={project} key={project.name} />
+            <Card project={project} key={project.id} />
           ))}
         </section>
-      </div>
+      </main>
     </ProjectManagerProvider>
   );
 };

@@ -70,10 +70,6 @@ export class Simulator {
 
   /**
    * Removes connection between two elements.
-   * @param elementId Id of the element that will be disconnected.
-   * @param targetId Id of element to which connection is made.
-   * @param from Index of output that starts the connection.
-   * @param to Index of input that ends the connection.
    */
   disconnect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);

@@ -3,20 +3,15 @@ import { Editor } from './features/editor/Editor';
 import styles from './App.module.scss';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { renderNavigation } from './utils/renderNavigation';
-import { useEffect, useState } from 'react';
-import { ProjectManager } from './core/project-manager/ProjectManager';
-import { Project } from './core/project-manager/ProjectManager';
+import { useEffect } from 'react';
 import { Dashboard } from './features/dashboard/Dashboard';
+import { ProjectCreate } from './features/project-create/ProjectCreate';
 
 export const App = () => {
   const location = useLocation();
-  const [project, setProject] = useState<Project | undefined>();
-
-  const projectManager = new ProjectManager();
 
   useEffect(() => {
-    projectManager.createProject('test');
-
+    // projectManager.createProject('test');
     // const a = simulator.add('input');
     // simulator.toggleInput(a);
     //
@@ -90,27 +85,13 @@ export const App = () => {
     // simulator.remove(f);
   }, []);
 
-  useEffect(() => {
-    console.log('project loaded', project);
-  }, [project]);
-
-  const loadProject = () => {
-    const project = projectManager.loadProject('test');
-    setProject(project);
-  };
-
-  const addInput = () => {
-    if (!project) return;
-    project.simulator.add('input');
-    projectManager.saveProject(project);
-  };
-
   return (
     <div className={styles.container}>
       {renderNavigation(location.pathname)}
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/edit" element={<Editor />} />
+        <Route path="/create" element={<ProjectCreate />} />
       </Routes>
     </div>
   );
