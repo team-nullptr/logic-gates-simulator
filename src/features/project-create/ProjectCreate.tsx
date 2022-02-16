@@ -1,10 +1,9 @@
-import { FormEvent, useContext, useState } from 'react';
-import { Simulator } from '../../core/simulator/Simulator';
-import { ProjectManagerContext, ProjectManagerProvider } from '../../context/projectManagerContext';
+import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { projectManager } from '../../core/project-manager/ProjectManager';
+import { messageBus } from '../message-bus/MessageBus';
 
 export const ProjectCreate = () => {
-  const projectManager = useContext(ProjectManagerContext);
   const navigate = useNavigate();
   const [name, setName] = useState('');
 
@@ -13,6 +12,12 @@ export const ProjectCreate = () => {
 
     try {
       projectManager.createProject(name);
+
+      messageBus.push({
+        type: 'success',
+        body: 'Project created successfully'
+      });
+
       navigate('/');
     } catch (err) {
       console.log('failed to create');
@@ -20,11 +25,9 @@ export const ProjectCreate = () => {
   };
 
   return (
-    <ProjectManagerProvider>
-      <form onSubmit={onSubmit}>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-        <button>create</button>
-      </form>
-    </ProjectManagerProvider>
+    <form onSubmit={onSubmit}>
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+      <button>create</button>
+    </form>
   );
 };

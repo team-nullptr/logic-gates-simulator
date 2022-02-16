@@ -6,6 +6,7 @@ import { renderNavigation } from './utils/renderNavigation';
 import { useEffect } from 'react';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { ProjectCreate } from './features/project-create/ProjectCreate';
+import { MessageBusRenderer } from './features/message-bus/MessageBusRenderer';
 
 export const App = () => {
   const location = useLocation();
@@ -87,6 +88,7 @@ export const App = () => {
 
   return (
     <div className={styles.container}>
+      <MessageBusRenderer />
       {renderNavigation(location.pathname)}
       <Routes>
         <Route path="/" element={<Dashboard />} />

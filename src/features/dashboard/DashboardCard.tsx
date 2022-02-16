@@ -1,4 +1,4 @@
-import styles from './Card.module.scss';
+import styles from './DashboardCard.module.scss';
 import blueprintImage from '../../assets/images/blueprint.png';
 import { Project } from '../../core/project-manager/ProjectManager';
 import { formatRelative } from 'date-fns';
@@ -7,7 +7,7 @@ interface CardProps {
   project: Project;
 }
 
-export const Card = ({ project: { name, modifiedAt } }: CardProps) => {
+export const DashboardCard = ({ project: { name, modifiedAt } }: CardProps) => {
   return (
     <article className={styles.card}>
       <img className={styles.card__image} src={blueprintImage} alt="blueprint" />

@@ -17,7 +17,7 @@ export interface SerializedProject {
 
 type SavedProjects = { [name: string]: SerializedProject };
 
-export class ProjectManager {
+class ProjectManager {
   constructor() {
     // If there aren't any projects saved already create a new projects list
     if (!localStorage.getItem('projects')) localStorage.setItem('projects', JSON.stringify({}));
@@ -83,3 +83,5 @@ export class ProjectManager {
     return JSON.parse(projects) as SavedProjects;
   }
 }
+
+export const projectManager = new ProjectManager();
