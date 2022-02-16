@@ -8,7 +8,10 @@ export const MessageBusRenderer = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    const id = messageBus.subscribe((message) => setMessages((messages) => [...messages, message]));
+    const id = messageBus.subscribe((message) => {
+      setMessages((messages) => [message, ...messages]);
+      setTimeout(() => setMessages((messages) => messages.slice(0, -1)), 1000 * 8);
+    });
     return () => messageBus.unsubscribe(id);
   }, []);
 

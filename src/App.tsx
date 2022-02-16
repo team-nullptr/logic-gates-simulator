@@ -5,7 +5,6 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { MessageBusRenderer } from './features/message-bus/MessageBusRenderer';
-import { NavigationResolver } from './features/navigation/NavigationResolver';
 
 export const App = () => {
   const location = useLocation();
@@ -88,7 +87,6 @@ export const App = () => {
   return (
     <div className={styles.container}>
       <MessageBusRenderer />
-      <NavigationResolver path={location.pathname} />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="edit/:projectId" element={<Editor />} />

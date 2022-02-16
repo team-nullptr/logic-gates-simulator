@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Project, projectManager } from '../../core/project-manager/ProjectManager';
 import { useNavigate, useParams } from 'react-router-dom';
 import { messageBus } from '../message-bus/MessageBus';
+import { EditorNavigation } from './EditorNavigation';
 
 interface EditorPageParams {
   projectId: string;
@@ -36,13 +37,24 @@ export const Editor = () => {
   }, []);
 
   return (
-    <main className={styles.container}>
-      <Controls buttons={adapter.buttons.filter((it) => it.side === 'output')} section="inputs" scroll={inputScroll} />
-      <div className={styles.canvas}>
-        <Canvas adapter={adapter} />
-      </div>
-      <Controls buttons={adapter.buttons.filter((it) => it.side === 'input')} section="outputs" scroll={outputScroll} />
-      <Sidebar />
-    </main>
+    <>
+      <EditorNavigation title={project ? project.name : ''} />
+      <main className={styles.container}>
+        <Controls
+          buttons={adapter.buttons.filter((it) => it.side === 'output')}
+          section="inputs"
+          scroll={inputScroll}
+        />
+        <div className={styles.canvas}>
+          <Canvas adapter={adapter} />
+        </div>
+        <Controls
+          buttons={adapter.buttons.filter((it) => it.side === 'input')}
+          section="outputs"
+          scroll={outputScroll}
+        />
+        <Sidebar />
+      </main>
+    </>
   );
 };

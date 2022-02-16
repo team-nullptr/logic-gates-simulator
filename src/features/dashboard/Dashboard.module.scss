@@ -8,7 +8,7 @@
 .projects {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(5, minmax(250px, 1fr));
 }
 
 .header {
@@ -16,5 +16,11 @@
 
   &__title {
     font-size: 36px;
+  }
+}
+
+@media only screen and(max-width: 800px) {
+  .projects {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
