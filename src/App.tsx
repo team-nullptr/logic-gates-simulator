@@ -1,10 +1,10 @@
-import './main.css';
 import styles from './App.module.scss';
 import { Editor } from './features/editor/Editor';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { MessageBusRenderer } from './features/message-bus/MessageBusRenderer';
+import { GlobalStyle } from './styles/globalStyle';
 
 export const App = () => {
   const location = useLocation();
@@ -85,13 +85,16 @@ export const App = () => {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <MessageBusRenderer />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="edit/:projectId" element={<Editor />} />
-        <Route path="*" element={<p>Not found</p>} />
-      </Routes>
-    </div>
+    <>
+      <GlobalStyle></GlobalStyle>
+      <div className={styles.container}>
+        <MessageBusRenderer />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="edit/:projectId" element={<Editor />} />
+          <Route path="*" element={<p>Not found</p>} />
+        </Routes>
+      </div>
+    </>
   );
 };

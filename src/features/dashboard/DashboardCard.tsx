@@ -1,23 +1,27 @@
-import styles from './DashboardCard.module.scss';
 import blueprintImage from '../../assets/images/blueprint.png';
 import { Project } from '../../core/project-manager/ProjectManager';
+import { StyledCard, StyledImage, StyledDescription, StyledTitle, StyledDate } from './DashboardCard.styles';
 import { formatRelative } from 'date-fns';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface CardProps {
   project: Project;
 }
 
 export const DashboardCard = ({ project: { id, name, modifiedAt } }: CardProps) => {
+  const navigate = useNavigate();
+
+  const openEditor = () => {
+    navigate(`/edit/${id}`);
+  };
+
   return (
-    <Link to={`/edit/${id}`}>
-      <article className={styles.card}>
-        <img className={styles.card__image} src={blueprintImage} alt="blueprint" />
-        <div className={styles.card__meta}>
-          <p className={styles.card__title}>{name}</p>
-          <span className={styles.card__modified}>{formatRelative(modifiedAt, new Date())}</span>
-        </div>
-      </article>
-    </Link>
+    <StyledCard onDoubleClick={openEditor}>
+      <StyledImage src={blueprintImage} alt="blueprint" />
+      <StyledDescription>
+        <StyledTitle>{name}</StyledTitle>
+        <StyledDate>{formatRelative(modifiedAt, new Date())}</StyledDate>
+      </StyledDescription>
+    </StyledCard>
   );
 };
