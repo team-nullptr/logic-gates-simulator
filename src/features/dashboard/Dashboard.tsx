@@ -1,4 +1,4 @@
-import styles from './Dashboard.module.scss';
+import { StyledWrapper, StyledGrid, StyledHeader, StyledTitle } from './Dashboard.styles';
 import { DashboardCard } from './DashboardCard';
 import { useState } from 'react';
 import { Project } from '../../core/project-manager/ProjectManager';
@@ -11,16 +11,16 @@ export const Dashboard = () => {
   return (
     <>
       <DashboardNavigation />
-      <main className={styles.container}>
-        <header className={styles.header}>
-          <h1 className={styles.header__title}>Projects</h1>
-        </header>
-        <section className={styles.projects}>
+      <StyledWrapper>
+        <StyledHeader>
+          <StyledTitle>Projects</StyledTitle>
+        </StyledHeader>
+        <StyledGrid>
           {projects.map((project) => (
             <DashboardCard project={project} key={project.id} />
           ))}
-        </section>
-      </main>
+        </StyledGrid>
+      </StyledWrapper>
     </>
   );
 };
