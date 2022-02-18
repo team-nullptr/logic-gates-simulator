@@ -8,25 +8,25 @@ describe('Simulator works properly', () => {
   });
 
   test('Adds a new input gate properly', () => {
-    simulator.add('input');
+    simulator.addPort('input');
     expect(simulator.circuit.inputs.size).toEqual(1);
   });
 
   test('Adds a new gate properly', () => {
-    simulator.add('not');
+    simulator.addGate('not');
     expect(simulator.circuit.gates.size).toEqual(1);
   });
 
   test('Adds a new output properly', () => {
-    simulator.add('output');
+    simulator.addPort('output');
     expect(simulator.circuit.outputs.size).toEqual(1);
   });
 
   test('Removes an element from the circuit properly', () => {
-    const a = simulator.add('input');
-    const b = simulator.add('input');
-    const c = simulator.add('and');
-    const d = simulator.add('output');
+    const a = simulator.addPort('input');
+    const b = simulator.addPort('input');
+    const c = simulator.addGate('and');
+    const d = simulator.addPort('output');
     simulator.toggleInput(a);
     simulator.toggleInput(b);
 

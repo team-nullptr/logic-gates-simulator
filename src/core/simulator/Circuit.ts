@@ -1,6 +1,6 @@
 import { Connection, Element } from './elements/Element';
 import { Gate } from './elements/Gate';
-import { ElementFactory, InputType } from './elements/ElementFactory';
+import { ElementFactory, InputType, OutputType } from './elements/ElementFactory';
 import { isBaseGate } from './elements/BaseGate';
 import { SerializedCustomGate } from './elements/CustomGate';
 
@@ -9,6 +9,7 @@ export interface SerializedCircuit {
     id: string;
     type: InputType;
     connections: Connection[];
+    connectors: number;
   }[];
   gates: {
     id: string;
@@ -17,6 +18,8 @@ export interface SerializedCircuit {
   }[];
   outputs: {
     id: string;
+    type: OutputType;
+    connectors: number;
   }[];
 }
 
@@ -56,9 +59,9 @@ export class Circuit {
       if (this.callStack.has(receiverId)) return;
       this.callStack.add(receiverId);
 
-      receiver.inputs[to] = element.states[from];
       // If receiver is an output we can just set the state to the receiver input
-      if (receiver.type === 'output') receiver.states = receiver.inputs;
+      if (receiver.type === 'output') receiver.states[to] = element.states[from];
+      else receiver.inputs[to] = element.states[from];
 
       this.update(receiver);
     });
@@ -78,13 +81,18 @@ export class Circuit {
    */
   serialize(): SerializedCircuit {
     return {
-      inputs: [...this.inputs.values()].map(({ id, type, connections }) => ({
+      inputs: [...this.inputs.values()].map(({ id, type, connections, states }) => ({
         id,
         type: type as InputType,
-        connections
+        connections,
+        connectors: states.length
       })),
       gates: [...this.gates.values()].map(({ id, type, connections }) => ({ id, type, connections })),
-      outputs: [...this.outputs.values()].map(({ id }) => ({ id }))
+      outputs: [...this.outputs.values()].map(({ id, type, states }) => ({
+        id,
+        type: type as OutputType,
+        connectors: states.length
+      }))
     };
   }
 
@@ -94,8 +102,8 @@ export class Circuit {
   static deserialize({ inputs, gates, outputs }: SerializedCircuit, createdGates: Map<string, SerializedCustomGate>) {
     const circuit = new Circuit();
 
-    inputs.forEach(({ id, type, connections }) => {
-      const input = ElementFactory.createInput(id, type as InputType);
+    inputs.forEach(({ id, type, connections, connectors }) => {
+      const input = ElementFactory.createPort(id, type as InputType, connectors);
       input.connections = connections;
       circuit.inputs.set(id, input);
     });
@@ -112,8 +120,8 @@ export class Circuit {
       }
     });
 
-    outputs.forEach(({ id }) => {
-      circuit.outputs.set(id, ElementFactory.createOutput(id));
+    outputs.forEach(({ id, type, connectors }) => {
+      circuit.outputs.set(id, ElementFactory.createPort(id, type, connectors));
     });
 
     return circuit;

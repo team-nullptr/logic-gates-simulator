@@ -1,7 +1,7 @@
 import { Circuit, SerializedCircuit } from './Circuit';
 import { isBaseGate } from './elements/BaseGate';
 import { v4 as uuid } from 'uuid';
-import { ElementFactory } from './elements/ElementFactory';
+import { ElementFactory, PortType } from './elements/ElementFactory';
 import { SerializedCustomGate } from './elements/CustomGate';
 
 export interface ConnectRequest {
@@ -30,20 +30,27 @@ export class Simulator {
     this.circuit = new Circuit();
   }
 
-  add(type: string) {
+  addGate(type: string) {
+    const id = uuid();
+
+    if (isBaseGate(type)) this.circuit.gates.set(id, ElementFactory.createBaseGate(id, type));
+    else this.circuit.gates.set(id, ElementFactory.createCustomGate(id, type, this.createdGates));
+
+    return id;
+  }
+
+  // TODO: Maybe it would be better to compute type based on connectors value.
+  addPort(type: PortType, connectors = 1) {
     const id = uuid();
 
     switch (type) {
       case 'input':
       case 'input-group':
-        this.circuit.inputs.set(id, ElementFactory.createInput(id, type));
+        this.circuit.inputs.set(id, ElementFactory.createPort(id, type, connectors));
         break;
       case 'output':
-        this.circuit.outputs.set(id, ElementFactory.createOutput(id));
-        break;
-      default:
-        if (isBaseGate(type)) this.circuit.gates.set(id, ElementFactory.createBaseGate(id, type));
-        else this.circuit.gates.set(id, ElementFactory.createCustomGate(id, type, this.createdGates));
+      case 'output-group':
+        this.circuit.outputs.set(id, ElementFactory.createPort(id, type, connectors));
         break;
     }
 

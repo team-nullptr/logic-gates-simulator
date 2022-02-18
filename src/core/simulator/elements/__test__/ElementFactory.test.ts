@@ -1,15 +1,20 @@
-import { baseGates, ElementFactory, InputType } from '../ElementFactory';
+import { baseGates, ElementFactory } from '../ElementFactory';
 import { SerializedCustomGate } from '../CustomGate';
 
-describe('Element factory creates gates properly', () => {
-  test.each(['input', 'input-group'] as InputType[])('Creates input element of type %i properly', (type) => {
+describe('Element factory creates elements properly', () => {
+  test.each([
+    { type: 'input', connectors: 1 },
+    { type: 'input-group', connectors: 4 },
+    { type: 'output-group', connectors: 4 },
+    { type: 'output', connectors: 4 }
+  ])('Creates port of type %i properly', ({ type, connectors }) => {
     const id = '1';
 
-    const input = ElementFactory.createInput(id, type);
+    const input = ElementFactory.createPort(id, type, connectors);
 
     expect(input.id).toEqual(id);
     expect(input.type).toEqual(type);
-    expect(input.states).toEqual([false]);
+    expect(input.states).toEqual(new Array(connectors).fill(false));
     expect(input.connections).toEqual([]);
   });
 
@@ -26,7 +31,6 @@ describe('Element factory creates gates properly', () => {
     expect(gate.connections).toEqual([]);
   });
 
-  // TODO: Test creating custom gate
   test('Creates custom gate properly', () => {
     const id = '1';
     const createdGates: Map<string, SerializedCustomGate> = new Map<string, SerializedCustomGate>([
@@ -36,9 +40,9 @@ describe('Element factory creates gates properly', () => {
           type: 'circuit',
           color: '#ffddff',
           circuit: {
-            inputs: [{ id: '1', type: 'input', connections: [{ receiverId: '2', from: 0, to: 0 }] }],
+            inputs: [{ id: '1', type: 'input', connectors: 1, connections: [{ receiverId: '2', from: 0, to: 0 }] }],
             gates: [{ id: '2', type: 'not', connections: [{ receiverId: '3', from: 0, to: 0 }] }],
-            outputs: [{ id: '3' }]
+            outputs: [{ id: '3', type: 'output', connectors: 1 }]
           }
         }
       ]
@@ -50,16 +54,5 @@ describe('Element factory creates gates properly', () => {
     expect(gate.inputs.length).toEqual(1);
     expect(gate.circuit.gates.get('2')?.type).toEqual('not');
     expect(gate.inputs.length).toEqual(1);
-  });
-
-  test('Creates output element properly', () => {
-    const id = '1';
-
-    const output = ElementFactory.createOutput(id);
-
-    expect(output.id).toEqual(id);
-    expect(output.inputs).toEqual([false]);
-    expect(output.states).toEqual([false]);
-    expect(output.connections).toEqual([]);
   });
 });

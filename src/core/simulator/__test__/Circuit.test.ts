@@ -1,47 +1,46 @@
 import { Circuit, SerializedCircuit } from '../Circuit';
-import { BaseGate } from '../elements/BaseGate';
-import { baseGates } from '../elements/ElementFactory';
-import { Element } from '../elements/Element';
+import { ElementFactory } from '../elements/ElementFactory';
 import { SerializedCustomGate } from '../elements/CustomGate';
 
 test('Serializes circuit properly', () => {
   const circuit = new Circuit();
-  circuit.inputs.set('1', new Element('1', 'input'));
-  circuit.gates.set('2', new BaseGate('2', baseGates.get('not')!));
-  circuit.outputs.set('3', new Element('3', 'output'));
+  circuit.inputs.set('1', ElementFactory.createPort('1', 'input', 1));
+  circuit.gates.set('2', ElementFactory.createBaseGate('2', 'not'));
+  circuit.outputs.set('3', ElementFactory.createPort('3', 'output', 1));
 
   const expected: SerializedCircuit = {
-    inputs: [{ id: '1', type: 'input', connections: [] }],
+    inputs: [{ id: '1', type: 'input', connectors: 1, connections: [] }],
     gates: [{ id: '2', type: 'not', connections: [] }],
-    outputs: [{ id: '3' }]
+    outputs: [{ id: '3', type: 'output', connectors: 1 }]
   };
 
   const serialized = circuit.serialize();
 
-  expect(JSON.stringify(serialized)).toEqual(JSON.stringify(expected));
+  expect(serialized).toEqual(expected);
 });
 
 test('Deserializes circuit properly', () => {
   const serialized: SerializedCircuit = {
     inputs: [
-      { id: '1', type: 'input', connections: [] },
-      { id: '2', type: 'input', connections: [] }
+      { id: '1', type: 'input', connectors: 1, connections: [] },
+      { id: '2', type: 'input', connectors: 1, connections: [] }
     ],
     gates: [{ id: '3', type: 'not', connections: [] }],
-    outputs: [{ id: '4' }]
+    outputs: [{ id: '4', type: 'output', connectors: 1 }]
   };
 
   const createdGates = new Map<string, SerializedCustomGate>();
   const circuit = Circuit.deserialize(serialized, createdGates);
 
-  expect(circuit.inputs.size).toEqual(2);
-  expect(circuit.gates.size).toEqual(1);
-  expect(circuit.outputs.size).toEqual(1);
+  expect(circuit.inputs.size).toEqual(serialized.inputs.length);
+  expect(circuit.gates.size).toEqual(serialized.gates.length);
+  expect(circuit.outputs.size).toEqual(serialized.outputs.length);
 
   expect(circuit.inputs.has('1')).toBeTruthy();
   expect(circuit.gates.has('3')).toBeTruthy();
   expect(circuit.outputs.has('4')).toBeTruthy();
 
-  expect(circuit.inputs.get('1')?.type).toBe('input');
-  expect(circuit.gates.get('3')?.type).toBe('not');
+  expect(circuit.inputs.get(serialized.inputs[0].id)?.type).toEqual(serialized.inputs[0].type);
+  expect(circuit.gates.get(serialized.gates[0].id)?.type).toEqual(serialized.gates[0].type);
+  expect(circuit.outputs.get(serialized.outputs[0].id)?.type).toEqual(serialized.outputs[0].type);
 });
