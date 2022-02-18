@@ -1,4 +1,4 @@
-import { BaseGate, BaseGateType, BaseGateOptions } from '../BaseGate';
+import { BaseGateType } from '../BaseGate';
 import { baseGates } from '../ElementFactory';
 
 describe('Base gates are setup correctly', () => {
