@@ -1,12 +1,9 @@
-import { Tool } from "./Tool";
-import { Interaction } from "../types/Interaction";
-import { Vector } from "../../../common/Vector";
-import { Block } from "../types/Block";
-import { subtract } from "../../../common/utils";
-
-const snapToGrid = (position: Vector): Vector => {
-  return position.map((it) => Math.round(it / 48)) as Vector;
-};
+import { Tool } from './Tool';
+import { Interaction } from '../types/Interaction';
+import { Vector } from '../../../common/Vector';
+import { Block } from '../types/Block';
+import { subtract } from '../../../common/utils';
+import { snapToGrid } from '../utils';
 
 export class MoveTool extends Tool {
   private offset!: Vector;

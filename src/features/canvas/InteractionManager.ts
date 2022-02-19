@@ -1,9 +1,10 @@
-import { Vector } from "../../common/Vector";
-import { Adapter } from "../editor/Adapter";
-import { subtract } from "../../common/utils";
-import { Tool } from "./tools/Tool";
-import { Interaction } from "./types/Interaction";
-import { Target } from "./types/Target";
+import { Vector } from '../../common/Vector';
+import { Adapter } from '../editor/Adapter';
+import { subtract } from '../../common/utils';
+import { Tool } from './tools/Tool';
+import { Interaction } from './types/Interaction';
+import { Target } from './types/Target';
+import { isGateDataTransfer } from '../../common/GateDataTransfer';
 
 type InteractionListener = (interaction: Interaction) => void;
 
@@ -14,26 +15,25 @@ export class InteractionManager {
   private readonly canvas: HTMLCanvasElement;
   private pressed = false;
 
-  constructor(
-    private readonly ctx: CanvasRenderingContext2D,
-    private readonly source: Adapter
-  ) {
+  constructor(private readonly ctx: CanvasRenderingContext2D, private readonly source: Adapter) {
     this.canvas = ctx.canvas;
     this.init();
   }
 
   destroy(): void {
     this.listeners.clear();
-    this.canvas.removeEventListener("mousedown", this.handleMouseDown);
-    this.canvas.removeEventListener("mousemove", this.handleMouseMove);
-    removeEventListener("mouseup", this.handleMouseUp);
+    this.canvas.removeEventListener('mousedown', this.handleMouseDown);
+    this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+    removeEventListener('mouseup', this.handleMouseUp);
+    this.canvas.removeEventListener('dragover', this.handleDragOver);
+    this.canvas.removeEventListener('drop', this.handleDrop);
   }
 
-  addEventListener(type: "interaction", fn: InteractionListener): void {
+  addEventListener(type: 'interaction', fn: InteractionListener): void {
     this.listeners.add(fn);
   }
 
-  removeEventListener(type: "interaction", fn: InteractionListener): void {
+  removeEventListener(type: 'interaction', fn: InteractionListener): void {
     this.listeners.delete(fn);
   }
 
@@ -55,9 +55,11 @@ export class InteractionManager {
   }
 
   private init(): void {
-    this.canvas.addEventListener("mousedown", this.handleMouseDown);
-    this.canvas.addEventListener("mousemove", this.handleMouseMove);
-    addEventListener("mouseup", this.handleMouseUp);
+    this.canvas.addEventListener('mousedown', this.handleMouseDown);
+    this.canvas.addEventListener('mousemove', this.handleMouseMove);
+    addEventListener('mouseup', this.handleMouseUp);
+    this.canvas.addEventListener('dragover', this.handleDragOver);
+    this.canvas.addEventListener('drop', this.handleDrop);
   }
 
   private constructMouseEvent(mouse: Vector): Interaction {
@@ -87,5 +89,27 @@ export class InteractionManager {
     if (!this.tool) return;
     const event = this.constructMouseEvent([offsetX, offsetY]);
     this.tool.handleMouseUp(event);
+  };
+
+  private handleDragOver = (event: DragEvent) => {
+    if (!event.dataTransfer) return;
+    event.dataTransfer.dropEffect = 'copy';
+    event.preventDefault();
+  };
+
+  private handleDrop = (event: DragEvent) => {
+    if (!event.dataTransfer) return;
+
+    const data = event.dataTransfer.getData('gate/json');
+    const payload = JSON.parse(data);
+
+    if (!payload || !isGateDataTransfer(payload)) return;
+
+    const { id, offset } = payload;
+
+    const mouse: Vector = [event.offsetX, event.offsetY];
+    const corner = subtract(mouse, offset);
+
+    this.source.add(id, corner);
   };
 }

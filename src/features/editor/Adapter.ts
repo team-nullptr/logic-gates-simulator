@@ -5,6 +5,8 @@ import { MutableRefObject } from 'react';
 import { Button } from '../canvas/types/Button';
 import { Block } from '../canvas/types/Block';
 import { Prototype } from '../sidebar/types/Prototype';
+import { subtract } from '../../common/utils';
+import { snapToGrid } from '../canvas/utils';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -46,5 +48,16 @@ export class Adapter {
 
   connect(connection: Connection) {
     this.connections.push(connection);
+  }
+
+  add(type: string, mouse: Vector): boolean {
+    const position = subtract(mouse, this.offset);
+    const snapped = snapToGrid(position);
+
+    // TODO: Fetch data from core
+    const block = new Block('1234', 'text', 'blue', snapped, [true, false], [false]);
+    this.gates.push(block);
+
+    return true;
   }
 }

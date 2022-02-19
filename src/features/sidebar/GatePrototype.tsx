@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { DragEvent, useRef } from 'react';
+import { GateDataTransfer } from '../../common/GateDataTransfer';
 
 const StyledContainer = styled.div`
   background: #181818;
@@ -34,8 +36,21 @@ const StyledContent = styled.p<{ color: string }>`
 `;
 
 export const GatePrototype = (props: { text: string; color: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
+    const { offsetX, offsetY } = event.nativeEvent;
+
+    // TODO: Replace with the actual gate id
+    const payload: GateDataTransfer = { id: 'abcd', offset: [offsetX, offsetY] };
+
+    event.dataTransfer.setData('text/plain', props.text);
+    event.dataTransfer.setData('gate/json', JSON.stringify(payload));
+    event.dataTransfer.effectAllowed = 'copy';
+  };
+
   return (
-    <StyledContainer>
+    <StyledContainer onDragStart={handleDragStart} ref={ref} draggable>
       <StyledContent color={props.color}>{props.text}</StyledContent>
     </StyledContainer>
   );
