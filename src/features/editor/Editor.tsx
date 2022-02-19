@@ -3,7 +3,7 @@ import styles from './Editor.module.scss';
 import { Canvas } from '../canvas/Canvas';
 import { Adapter } from './Adapter';
 import { Controls } from './Controls';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Project, projectManager } from '../../core/project-manager/ProjectManager';
 import { useNavigate, useParams } from 'react-router-dom';
 import { messageBus } from '../message-bus/MessageBus';
@@ -19,10 +19,10 @@ export const Editor = () => {
   const { projectId } = useParams<keyof EditorPageParams>() as EditorPageParams;
   const [project, setProject] = useState<Project>();
 
-  const inputScroll = useRef<number>(0);
-  const outputScroll = useRef<number>(0);
+  const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
+  const scrollsRef = useRef(scrolls);
 
-  const adapter = new Adapter({ inputs: inputScroll, outputs: outputScroll });
+  const adapter = useMemo(() => new Adapter(scrollsRef), []);
 
   useEffect(() => {
     try {
@@ -40,23 +40,29 @@ export const Editor = () => {
   const outputs = adapter.buttons.filter((it) => it.side === 'input');
   const inputs = adapter.buttons.filter((it) => it.side === 'output');
 
+  const scrollHandler = (side: 'inputs' | 'outputs', value: number) => {
+    const updated = { ...scrolls, [side]: value };
+    scrollsRef.current = updated;
+    setScrolls(updated);
+  };
+
   return (
     <>
       <EditorNavigation title={project ? project.name : ''} />
       <main className={styles.container}>
-        <Controls buttons={inputs} section="inputs" onScroll={console.log} />
+        <Controls buttons={inputs} section="inputs" onScroll={(value) => scrollHandler('inputs', value)} />
         <div className={styles.wrapper}>
           <div className={styles.side} style={{ left: 0 }}>
-            <Connectors buttons={inputs} />
+            <Connectors buttons={inputs} top={scrolls.inputs} />
           </div>
           <div className={styles.canvas}>
             <Canvas adapter={adapter} />
           </div>
           <div className={styles.side} style={{ right: 0 }}>
-            <Connectors buttons={outputs} />
+            <Connectors buttons={outputs} top={scrolls.outputs} />
           </div>
         </div>
-        <Controls buttons={outputs} section="outputs" onScroll={console.log} />
+        <Controls buttons={outputs} section="outputs" onScroll={(value) => scrollHandler('outputs', value)} />
         <Sidebar />
       </main>
     </>
