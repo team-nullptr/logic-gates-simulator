@@ -17,6 +17,7 @@
 .side {
   @include full-height;
   z-index: 1;
+  pointer-events: none;
 }
 
 .canvas {
