@@ -4,6 +4,7 @@ import { Connector } from '../canvas/types/Connector';
 import { MutableRefObject } from 'react';
 import { Button } from '../canvas/types/Button';
 import { Block } from '../canvas/types/Block';
+import { Prototype } from '../sidebar/types/Prototype';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -13,9 +14,12 @@ export class Adapter {
 
   readonly gates: Block[] = [];
   readonly connections: Connection[] = [];
+  readonly available: { base: Prototype[]; custom: Prototype[] } = { base: [], custom: [] };
+
   private readonly _buttons: Button[] = [];
 
-  constructor(readonly scrolls: MutableRefObject<{ inputs: number, outputs: number }>) {}
+  constructor(readonly scrolls: MutableRefObject<{ inputs: number; outputs: number }>) {
+  }
 
   get buttons(): Button[] {
     const top = [0, 0];

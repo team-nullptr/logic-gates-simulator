@@ -63,7 +63,7 @@ export const Editor = () => {
           </div>
         </div>
         <Controls buttons={outputs} section="outputs" onScroll={(value) => scrollHandler('outputs', value)} />
-        <Sidebar />
+        <Sidebar source={adapter} />
       </main>
     </>
   );
