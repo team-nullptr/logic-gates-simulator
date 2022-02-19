@@ -6,16 +6,11 @@ export class Renderer {
 
   render(ctx: CanvasRenderingContext2D) {
     this.renderConnections(ctx);
-    this.renderButtons(ctx);
     this.renderGates(ctx);
   }
 
   private renderGates(ctx: CanvasRenderingContext2D) {
     this.source.gates.forEach((it) => it.render(ctx));
-  }
-
-  private renderButtons(ctx: CanvasRenderingContext2D) {
-    this.source.buttons.forEach((it) => it.render(ctx));
   }
 
   private renderConnections(ctx: CanvasRenderingContext2D) {

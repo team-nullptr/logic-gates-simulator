@@ -1,9 +1,8 @@
-.container {
+.buttons {
   display: flex;
   flex-direction: column;
-  min-width: 50px;
   align-items: center;
-  background: black;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }

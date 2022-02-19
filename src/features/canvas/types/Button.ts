@@ -41,8 +41,4 @@ export class Button {
     if (result === undefined) return undefined;
     return { group: this.connectors, at: result };
   }
-
-  render(ctx: CanvasRenderingContext2D): void {
-    this.connectors.render(ctx, "hsl(266,99%,64%)");
-  }
 }
