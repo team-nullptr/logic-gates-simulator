@@ -8,6 +8,7 @@ import { Project, projectManager } from '../../core/project-manager/ProjectManag
 import { useNavigate, useParams } from 'react-router-dom';
 import { messageBus } from '../message-bus/MessageBus';
 import { EditorNavigation } from './EditorNavigation';
+import { Connectors } from './Connectors';
 
 interface EditorPageParams {
   projectId: string;
@@ -36,23 +37,26 @@ export const Editor = () => {
     }
   }, []);
 
+  const outputs = adapter.buttons.filter((it) => it.side === 'input');
+  const inputs = adapter.buttons.filter((it) => it.side === 'output');
+
   return (
     <>
       <EditorNavigation title={project ? project.name : ''} />
       <main className={styles.container}>
-        <Controls
-          buttons={adapter.buttons.filter((it) => it.side === 'output')}
-          section="inputs"
-          scroll={inputScroll}
-        />
-        <div className={styles.canvas}>
-          <Canvas adapter={adapter} />
+        <Controls buttons={inputs} section="inputs" onScroll={console.log} />
+        <div className={styles.wrapper}>
+          <div className={styles.side} style={{ left: 0 }}>
+            <Connectors buttons={inputs} />
+          </div>
+          <div className={styles.canvas}>
+            <Canvas adapter={adapter} />
+          </div>
+          <div className={styles.side} style={{ right: 0 }}>
+            <Connectors buttons={outputs} />
+          </div>
         </div>
-        <Controls
-          buttons={adapter.buttons.filter((it) => it.side === 'input')}
-          section="outputs"
-          scroll={outputScroll}
-        />
+        <Controls buttons={outputs} section="outputs" onScroll={console.log} />
         <Sidebar />
       </main>
     </>
