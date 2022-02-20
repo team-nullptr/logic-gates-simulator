@@ -3,39 +3,16 @@ import styles from './Editor.module.scss';
 import { Canvas } from '../canvas/Canvas';
 import { Adapter } from './Adapter';
 import { Controls } from './Controls';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Project, projectManager } from '../../core/project-manager/ProjectManager';
-import { useNavigate, useParams } from 'react-router-dom';
-import { messageBus } from '../message-bus/MessageBus';
+import { useMemo, useRef, useState } from 'react';
+import { Project } from '../../core/project-manager/ProjectManager';
 import { EditorNavigation } from './EditorNavigation';
 import { Connectors } from './Connectors';
 
-interface EditorPageParams {
-  projectId: string;
-}
-
-export const Editor = () => {
-  const navigate = useNavigate();
-  const { projectId } = useParams<keyof EditorPageParams>() as EditorPageParams;
-  const [project, setProject] = useState<Project>();
-
+export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
   const scrollsRef = useRef(scrolls);
 
   const adapter = useMemo(() => new Adapter(scrollsRef), []);
-
-  useEffect(() => {
-    try {
-      const project = projectManager.loadProject(projectId);
-      setProject(project);
-    } catch (err) {
-      messageBus.push({
-        type: 'error',
-        body: 'Failed to open the project'
-      });
-      navigate('/');
-    }
-  }, []);
 
   const outputs = adapter.buttons.filter((it) => it.side === 'input');
   const inputs = adapter.buttons.filter((it) => it.side === 'output');
@@ -48,7 +25,7 @@ export const Editor = () => {
 
   return (
     <>
-      <EditorNavigation title={project ? project.name : ''} />
+      <EditorNavigation title={project.name} />
       <main className={styles.container}>
         <Controls buttons={inputs} section="inputs" onScroll={(value) => scrollHandler('inputs', value)} />
         <div className={styles.wrapper}>

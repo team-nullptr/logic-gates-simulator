@@ -11,7 +11,7 @@ export const DashboardNavigation = () => {
     try {
       const id = projectManager.createProject('Untitled');
       messageBus.push({ type: 'success', body: 'A new project has been created successfully' });
-      navigate(`/edit/${id}`);
+      navigate(`/editor/${id}`);
     } catch (err) {
       messageBus.push({ type: 'error', body: 'Failed to create a new project' });
     }

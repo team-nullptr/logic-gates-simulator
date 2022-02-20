@@ -2,7 +2,7 @@ import blueprintImage from '../../assets/images/blueprint.png';
 import { Project } from '../../core/project-manager/ProjectManager';
 import { StyledCard, StyledImage, StyledDescription, StyledTitle, StyledDate } from './DashboardCard.styles';
 import { formatRelative } from 'date-fns';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface CardProps {
   project: Project;
@@ -12,7 +12,7 @@ export const DashboardCard = ({ project: { id, name, modifiedAt } }: CardProps) 
   const navigate = useNavigate();
 
   const openEditor = () => {
-    navigate(`/edit/${id}`);
+    navigate(`/editor/${id}`);
   };
 
   return (

@@ -1,11 +1,11 @@
 import styles from './App.module.scss';
-import { Editor } from './features/editor/Editor';
 import { Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { MessageBusRenderer } from './features/message-bus/MessageBusRenderer';
 import { GlobalStyle } from './styles/globalStyle';
 import { Simulator } from './core/simulator/Simulator';
+import { EditorRouter } from './features/editor/EditorRouter';
 
 export const App = () => {
   useEffect(() => {
@@ -87,12 +87,12 @@ export const App = () => {
 
   return (
     <>
-      <GlobalStyle></GlobalStyle>
+      <GlobalStyle />
       <div className={styles.container}>
         <MessageBusRenderer />
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="edit/:projectId" element={<Editor />} />
+          <Route path="editor/:id" element={<EditorRouter />} />
           <Route path="*" element={<p>Not found</p>} />
         </Routes>
       </div>
