@@ -12,7 +12,7 @@ export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
   const scrollsRef = useRef(scrolls);
 
-  const adapter = useMemo(() => new Adapter(scrollsRef), []);
+  const adapter = useMemo(() => new Adapter(project, scrollsRef), []);
 
   const outputs = adapter.buttons.filter((it) => it.side === 'input');
   const inputs = adapter.buttons.filter((it) => it.side === 'output');

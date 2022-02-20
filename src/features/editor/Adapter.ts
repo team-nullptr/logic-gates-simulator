@@ -7,6 +7,12 @@ import { Block } from '../canvas/types/Block';
 import { Prototype } from '../sidebar/types/Prototype';
 import { subtract } from '../../common/utils';
 import { snapToGrid } from '../canvas/utils';
+import { Project } from '../../core/project-manager/ProjectManager';
+
+const baseGates: Prototype[] = [
+  { text: 'not', color: 'red' },
+  { text: 'and', color: 'blue' }
+];
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -16,11 +22,16 @@ export class Adapter {
 
   readonly gates: Block[] = [];
   readonly connections: Connection[] = [];
-  readonly available: { base: Prototype[]; custom: Prototype[] } = { base: [], custom: [] };
-
   private readonly _buttons: Button[] = [];
 
-  constructor(readonly scrolls: MutableRefObject<{ inputs: number; outputs: number }>) {
+  constructor(
+    private readonly project: Project,
+    readonly scrolls: MutableRefObject<{ inputs: number; outputs: number }>
+  ) {}
+
+  get available(): Prototype[] {
+    const gates = this.project.simulator.createdGates.values();
+    return [...gates].map((it) => ({ text: it.type, color: it.color })).concat(baseGates);
   }
 
   get buttons(): Button[] {
@@ -50,14 +61,19 @@ export class Adapter {
     this.connections.push(connection);
   }
 
-  add(type: string, mouse: Vector): boolean {
+  add(type: string, mouse: Vector): void {
     const position = subtract(mouse, this.offset);
     const snapped = snapToGrid(position);
 
-    // TODO: Fetch data from core
-    const block = new Block('1234', 'text', 'blue', snapped, [true, false], [false]);
-    this.gates.push(block);
+    const { simulator } = this.project;
+    const id = simulator.addGate(type);
+    const created = simulator.circuit.find(id);
+    const proto = simulator.createdGates.get(type) ?? baseGates.find((it) => it.text === type);
 
-    return true;
+    if (!proto || !created) return;
+
+    // FIXME: Something's wrong with the outputs - they do not show on the screen
+    const block = new Block(id, type, proto.color, snapped, created.inputs, created.states);
+    this.gates.push(block);
   }
 }
