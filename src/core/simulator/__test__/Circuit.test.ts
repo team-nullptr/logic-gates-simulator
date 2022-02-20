@@ -9,9 +9,9 @@ test('Serializes circuit properly', () => {
   circuit.outputs.set('3', ElementFactory.createPort('3', 'output', 1));
 
   const expected: SerializedCircuit = {
-    inputs: [{ id: '1', type: 'input', connectors: 1, connections: [] }],
+    inputs: [{ id: '1', name: '', type: 'input', connectors: 1, connections: [] }],
     gates: [{ id: '2', type: 'not', connections: [] }],
-    outputs: [{ id: '3', type: 'output', connectors: 1 }]
+    outputs: [{ id: '3', name: '', type: 'output', connectors: 1 }]
   };
 
   const serialized = circuit.serialize();
@@ -22,11 +22,11 @@ test('Serializes circuit properly', () => {
 test('Deserializes circuit properly', () => {
   const serialized: SerializedCircuit = {
     inputs: [
-      { id: '1', type: 'input', connectors: 1, connections: [] },
-      { id: '2', type: 'input', connectors: 1, connections: [] }
+      { id: '1', name: '', type: 'input', connectors: 1, connections: [] },
+      { id: '2', name: 'A', type: 'input', connectors: 1, connections: [] }
     ],
     gates: [{ id: '3', type: 'not', connections: [] }],
-    outputs: [{ id: '4', type: 'output', connectors: 1 }]
+    outputs: [{ id: '4', name: '', type: 'output', connectors: 1 }]
   };
 
   const createdGates = new Map<string, SerializedCustomGate>();
@@ -43,4 +43,8 @@ test('Deserializes circuit properly', () => {
   expect(circuit.inputs.get(serialized.inputs[0].id)?.type).toEqual(serialized.inputs[0].type);
   expect(circuit.gates.get(serialized.gates[0].id)?.type).toEqual(serialized.gates[0].type);
   expect(circuit.outputs.get(serialized.outputs[0].id)?.type).toEqual(serialized.outputs[0].type);
+
+  expect(circuit.inputs.get(serialized.inputs[0].id)?.name).toEqual(serialized.inputs[0].name);
+  expect(circuit.gates.get(serialized.gates[0].id)?.type).toEqual(serialized.gates[0].type);
+  expect(circuit.outputs.get(serialized.outputs[0].id)?.name).toEqual(serialized.outputs[0].name);
 });

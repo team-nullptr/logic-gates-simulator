@@ -4,10 +4,16 @@ export interface Connection {
   receiverId: string;
 }
 
-export class Element {
+export interface Element {
+  id: string;
+  type: string;
+  connections: Connection[];
+  states: boolean[];
+}
+
+export class Port implements Element {
   states: boolean[] = [];
-  inputs: boolean[] = [];
   connections: Connection[] = [];
 
-  constructor(readonly id: string, readonly type: string) {}
+  constructor(readonly id: string, readonly type: string, public name: string) {}
 }

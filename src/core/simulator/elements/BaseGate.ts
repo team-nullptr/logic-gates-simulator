@@ -17,7 +17,7 @@ export class BaseGate extends Gate {
   readonly handler: (inputs: boolean[]) => boolean;
 
   constructor(id: string, { type, color, inputsCount, handler }: BaseGateOptions) {
-    super(id, { type, color });
+    super(id, type, color);
     for (let i = 0; i < inputsCount; i++) this.inputs.push(false);
     this.handler = handler;
   }

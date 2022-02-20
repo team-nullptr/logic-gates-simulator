@@ -1,17 +1,16 @@
-import { Element } from './Element';
+import { Connection, Element } from './Element';
 
 export interface GateOptions {
   type: string;
   color: string;
 }
 
-export abstract class Gate extends Element {
-  public readonly color: string;
+export abstract class Gate implements Element {
+  inputs: boolean[] = [];
+  states: boolean[] = [];
+  connections: Connection[] = [];
 
-  protected constructor(id: string, { type, color }: GateOptions) {
-    super(id, type);
-    this.color = color;
-  }
+  protected constructor(readonly id: string, readonly type: string, readonly color: string) {}
 
   /** Executes the gate. If state has changed returns true otherwise false. */
   abstract run(): boolean;

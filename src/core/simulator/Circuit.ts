@@ -1,4 +1,4 @@
-import { Connection, Element } from './elements/Element';
+import { Connection, Element, Port } from './elements/Element';
 import { Gate } from './elements/Gate';
 import { ElementFactory, InputType, OutputType } from './elements/ElementFactory';
 import { isBaseGate } from './elements/BaseGate';
@@ -8,6 +8,7 @@ export interface SerializedCircuit {
   inputs: {
     id: string;
     type: InputType;
+    name: string;
     connections: Connection[];
     connectors: number;
   }[];
@@ -19,81 +20,19 @@ export interface SerializedCircuit {
   outputs: {
     id: string;
     type: OutputType;
+    name: string;
     connectors: number;
   }[];
 }
 
 export class Circuit {
-  readonly inputs = new Map<string, Element>();
+  readonly inputs = new Map<string, Port>();
   readonly gates = new Map<string, Gate>();
-  readonly outputs = new Map<string, Element>();
+  readonly outputs = new Map<string, Port>();
   private readonly callStack = new Set<string>();
 
-  /**
-   * All elements in the circuit.
-   */
-  get elements(): Element[] {
+  get elements(): (Port | Gate)[] {
     return [...this.inputs.values(), ...this.gates.values(), ...this.outputs.values()];
-  }
-
-  /**
-   * Simulates the whole circuit starting from inputs.
-   */
-  simulate(): void {
-    this.inputs.forEach((input) => {
-      this.callStack.clear();
-      this.update(input);
-    });
-  }
-
-  /**
-   * Updates the circuit starting from the element.
-   */
-  update(element: Element): void {
-    if (element instanceof Gate) element.run();
-
-    element.connections.forEach(({ receiverId, from, to }) => {
-      const receiver = this.find(receiverId);
-      if (!receiver) throw new Error(`Element not found ${receiverId}`);
-
-      if (this.callStack.has(receiverId)) return;
-      this.callStack.add(receiverId);
-
-      // If receiver is an output we can just set the state to the receiver input
-      if (receiver.type === 'output') receiver.states[to] = element.states[from];
-      else receiver.inputs[to] = element.states[from];
-
-      this.update(receiver);
-    });
-  }
-
-  /**
-   * Finds an element in the circuit.
-   * @param id Id of the searched element.
-   * @returns Circuit element or undefined if element wasn't found.
-   */
-  find(id: string): Element | undefined {
-    return this.elements.find((element) => element.id === id);
-  }
-
-  /**
-   * Serializes the circuit to an object, so it can be saved in local storage.
-   */
-  serialize(): SerializedCircuit {
-    return {
-      inputs: [...this.inputs.values()].map(({ id, type, connections, states }) => ({
-        id,
-        type: type as InputType,
-        connections,
-        connectors: states.length
-      })),
-      gates: [...this.gates.values()].map(({ id, type, connections }) => ({ id, type, connections })),
-      outputs: [...this.outputs.values()].map(({ id, type, states }) => ({
-        id,
-        type: type as OutputType,
-        connectors: states.length
-      }))
-    };
   }
 
   /**
@@ -102,8 +41,8 @@ export class Circuit {
   static deserialize({ inputs, gates, outputs }: SerializedCircuit, createdGates: Map<string, SerializedCustomGate>) {
     const circuit = new Circuit();
 
-    inputs.forEach(({ id, type, connections, connectors }) => {
-      const input = ElementFactory.createPort(id, type as InputType, connectors);
+    inputs.forEach(({ id, type, name, connections, connectors }) => {
+      const input = ElementFactory.createPort(id, type as InputType, connectors, name);
       input.connections = connections;
       circuit.inputs.set(id, input);
     });
@@ -120,10 +59,68 @@ export class Circuit {
       }
     });
 
-    outputs.forEach(({ id, type, connectors }) => {
-      circuit.outputs.set(id, ElementFactory.createPort(id, type, connectors));
+    outputs.forEach(({ id, type, name, connectors }) => {
+      circuit.outputs.set(id, ElementFactory.createPort(id, type, connectors, name));
     });
 
     return circuit;
+  }
+
+  /**
+   * Simulates the whole circuit starting from inputs.
+   */
+  simulate(): void {
+    this.inputs.forEach((input) => {
+      this.callStack.clear();
+      this.update(input);
+    });
+  }
+
+  find(id: string): Port | Gate | undefined {
+    return [...this.inputs.values(), ...this.gates.values(), ...this.outputs.values()].find(
+      (element) => element.id === id
+    );
+  }
+
+  /**
+   * Updates the circuit starting from the element.
+   */
+  update(element: Port | Gate): void {
+    if (element instanceof Gate) element.run();
+
+    element.connections.forEach(({ receiverId, from, to }) => {
+      const receiver = this.find(receiverId);
+      if (!receiver) throw new Error(`Element not found ${receiverId}`);
+
+      if (this.callStack.has(receiverId)) return;
+      this.callStack.add(receiverId);
+
+      if (receiver instanceof Gate) receiver.inputs[to] = element.states[from];
+      else receiver.states[to] = element.states[from];
+
+      this.update(receiver);
+    });
+  }
+
+  /**
+   * Serializes the circuit to an object, so it can be saved in local storage.
+   */
+  serialize(): SerializedCircuit {
+    return {
+      inputs: [...this.inputs.values()].map(({ id, type, name, connections, states }) => ({
+        id,
+        name,
+        type: type as InputType,
+        connections,
+        connectors: states.length
+      })),
+      gates: [...this.gates.values()].map(({ id, type, connections }) => ({ id, type, connections })),
+      outputs: [...this.outputs.values()].map(({ id, type, name, states }) => ({
+        id,
+        name,
+        type: type as OutputType,
+        connectors: states.length
+      }))
+    };
   }
 }

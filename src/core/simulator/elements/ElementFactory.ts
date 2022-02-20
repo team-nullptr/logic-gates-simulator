@@ -1,5 +1,5 @@
 import { BaseGate, BaseGateOptions } from './BaseGate';
-import { Element } from './Element';
+import { Element, Port } from './Element';
 import { Gate } from './Gate';
 import { CustomGate, SerializedCustomGate } from './CustomGate';
 import { Circuit } from '../Circuit';
@@ -21,8 +21,8 @@ export class ElementFactory {
     return new BaseGate(id, options);
   }
 
-  static createPort(id: string, type: string, connectors: number) {
-    const port = new Element(id, type);
+  static createPort(id: string, type: string, connectors: number, name = '') {
+    const port = new Port(id, type, name);
     port.states = new Array(connectors).fill(false);
     return port;
   }
