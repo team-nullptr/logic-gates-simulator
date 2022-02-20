@@ -1,5 +1,5 @@
 import { BaseGate, BaseGateOptions } from './BaseGate';
-import { Element, Port } from './Element';
+import { Port } from './Port';
 import { Gate } from './Gate';
 import { CustomGate, SerializedCustomGate } from './CustomGate';
 import { Circuit } from '../Circuit';

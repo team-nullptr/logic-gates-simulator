@@ -1,5 +1,6 @@
-import { Connection, Element, Port } from './elements/Element';
+import { Connection } from './elements/Element';
 import { Gate } from './elements/Gate';
+import { Port } from './elements/Port';
 import { ElementFactory, InputType, OutputType } from './elements/ElementFactory';
 import { isBaseGate } from './elements/BaseGate';
 import { SerializedCustomGate } from './elements/CustomGate';
