@@ -4,10 +4,9 @@ export interface Connection {
   receiverId: string;
 }
 
-export class Element {
-  states: boolean[] = [];
-  inputs: boolean[] = [];
-  connections: Connection[] = [];
-
-  constructor(readonly id: string, readonly type: string) {}
+export interface Element {
+  id: string;
+  type: string;
+  connections: Connection[];
+  states: boolean[];
 }

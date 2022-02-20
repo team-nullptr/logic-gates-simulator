@@ -10,11 +10,17 @@ export interface SerializedCustomGate {
 }
 
 export class CustomGate extends Gate {
-  constructor(id: string, readonly circuit: Circuit, options: GateOptions) {
-    super(id, options);
+  readonly inputsNames: string[];
+  readonly outputsNames: string[];
+
+  constructor(id: string, readonly circuit: Circuit, { type, color }: GateOptions) {
+    super(id, type, color);
 
     this.inputs = new Array(circuit.inputs.size).fill(false);
     this.states = new Array(circuit.outputs.size).fill(false);
+
+    this.inputsNames = [...circuit.inputs.values()].map((input) => input.name);
+    this.outputsNames = [...circuit.outputs.values()].map((output) => output.name);
   }
 
   run() {

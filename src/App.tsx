@@ -24,6 +24,7 @@ export const App = () => {
     const h = simulator.addPort('output');
 
     simulator.toggleInput(a);
+    simulator.renamePort(a, 'A');
 
     simulator.connect({
       emitterId: a,
@@ -82,7 +83,12 @@ export const App = () => {
     });
 
     console.log(simulator.circuit);
-    // simulator.remove(f);
+
+    simulator.createGate('test', '#ff00ff');
+
+    simulator.addGate('test');
+
+    console.log(simulator.circuit);
   }, []);
 
   return (

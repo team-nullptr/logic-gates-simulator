@@ -3,6 +3,7 @@ import { isBaseGate } from './elements/BaseGate';
 import { v4 as uuid } from 'uuid';
 import { ElementFactory, PortType } from './elements/ElementFactory';
 import { SerializedCustomGate } from './elements/CustomGate';
+import { Gate } from './elements/Gate';
 
 export interface ConnectRequest {
   emitterId: string;
@@ -19,6 +20,16 @@ export interface SerializedSimulator {
 export class Simulator {
   circuit: Circuit = new Circuit();
   readonly createdGates = new Map<string, SerializedCustomGate>();
+
+  /**
+   * Deserializes serialized simulator from json object.
+   */
+  static deserialize({ circuit, createdGates }: SerializedSimulator): Simulator {
+    const simulator = new Simulator();
+    createdGates.forEach(([id, gate]) => simulator.createdGates.set(id, gate));
+    simulator.circuit = Circuit.deserialize(circuit, simulator.createdGates);
+    return simulator;
+  }
 
   createGate(type: string, color: string) {
     const serialized = this.circuit.serialize();
@@ -65,6 +76,12 @@ export class Simulator {
     this.circuit.simulate();
   }
 
+  renamePort(id: string, name: string) {
+    const port = this.circuit.inputs.get(id) || this.circuit.outputs.get(id);
+    if (!port) throw new Error('Port not found');
+    port.name = name;
+  }
+
   connect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);
 
@@ -89,8 +106,8 @@ export class Simulator {
       (connection) => connection.receiverId != receiverId && connection.from == from && connection.to == to
     );
 
-    receiver.inputs[to] = false;
-    if (receiver.type === 'output') receiver.states[to] = receiver.inputs[to];
+    if (receiver instanceof Gate) receiver.inputs[to] = false;
+    else receiver.states[to] = false;
 
     this.circuit.update(receiver);
   }
@@ -109,8 +126,8 @@ export class Simulator {
       const receiver = this.circuit.find(receiverId);
       if (!receiver) throw new Error(`Element not found: ${receiver}`);
 
-      receiver.inputs[to] = false;
-      if (receiver.type === 'output') receiver.states[to] = receiver.inputs[to];
+      if (receiver instanceof Gate) receiver.inputs[to] = false;
+      else receiver.states[to] = false;
 
       this.circuit.update(receiver);
     });
@@ -124,15 +141,5 @@ export class Simulator {
    */
   serialize(): SerializedSimulator {
     return { circuit: this.circuit.serialize(), createdGates: [...this.createdGates.entries()] };
-  }
-
-  /**
-   * Deserializes serialized simulator from json object.
-   */
-  static deserialize({ circuit, createdGates }: SerializedSimulator): Simulator {
-    const simulator = new Simulator();
-    createdGates.forEach(([id, gate]) => simulator.createdGates.set(id, gate));
-    simulator.circuit = Circuit.deserialize(circuit, simulator.createdGates);
-    return simulator;
   }
 }

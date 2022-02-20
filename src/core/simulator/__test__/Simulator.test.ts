@@ -1,4 +1,5 @@
 import { Simulator } from '../Simulator';
+import { Gate } from '../elements/Gate';
 
 describe('Simulator works properly', () => {
   let simulator: Simulator;
@@ -27,14 +28,12 @@ describe('Simulator works properly', () => {
     const b = simulator.addPort('input');
     const c = simulator.addGate('and');
     const d = simulator.addPort('output');
-    simulator.toggleInput(a);
-    simulator.toggleInput(b);
 
     simulator.remove(c);
 
     expect(simulator.circuit.find(c)).toBeUndefined();
     expect(simulator.circuit.find(a)?.connections.length).toEqual(0);
     expect(simulator.circuit.find(b)?.connections.length).toEqual(0);
-    expect(simulator.circuit.find(d)?.states[0] && simulator.circuit.find(d)?.inputs[0]).toEqual(false);
+    expect(simulator.circuit.find(d)?.states[0] && (simulator.circuit.find(d) as Gate).inputs[0]).toEqual(false);
   });
 });

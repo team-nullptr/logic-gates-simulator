@@ -40,9 +40,11 @@ describe('Element factory creates elements properly', () => {
           type: 'circuit',
           color: '#ffddff',
           circuit: {
-            inputs: [{ id: '1', type: 'input', connectors: 1, connections: [{ receiverId: '2', from: 0, to: 0 }] }],
+            inputs: [
+              { id: '1', name: '', type: 'input', connectors: 1, connections: [{ receiverId: '2', from: 0, to: 0 }] }
+            ],
             gates: [{ id: '2', type: 'not', connections: [{ receiverId: '3', from: 0, to: 0 }] }],
-            outputs: [{ id: '3', type: 'output', connectors: 1 }]
+            outputs: [{ id: '3', name: '', type: 'output', connectors: 1 }]
           }
         }
       ]
@@ -51,6 +53,8 @@ describe('Element factory creates elements properly', () => {
     const gate = ElementFactory.createCustomGate(id, 'custom', createdGates);
 
     expect(gate.id).toEqual(id);
+    expect(gate.inputsNames).toEqual(['']);
+    expect(gate.outputsNames).toEqual(['']);
     expect(gate.inputs.length).toEqual(1);
     expect(gate.circuit.gates.get('2')?.type).toEqual('not');
     expect(gate.inputs.length).toEqual(1);
