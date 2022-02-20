@@ -1,9 +1,27 @@
 .container {
+  height: calc(100% - 50px);
   display: flex;
+}
+
+.wrapper {
+  position: relative;
+  flex-grow: 1;
+}
+
+@mixin full-height {
+  position: absolute;
+  top: 0;
   height: 100%;
-  overflow-y: auto;
+}
+
+.side {
+  @include full-height;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .canvas {
-  flex-grow: 1;
+  @include full-height;
+  left: 0;
+  width: 100%;
 }

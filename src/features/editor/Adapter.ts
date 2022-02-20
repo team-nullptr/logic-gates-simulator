@@ -15,21 +15,22 @@ export class Adapter {
   readonly connections: Connection[] = [];
   private readonly _buttons: Button[] = [];
 
-  constructor(readonly scrolls: Scrolls) {}
+  constructor(readonly scrolls: MutableRefObject<{ inputs: number, outputs: number }>) {}
 
   get buttons(): Button[] {
     const top = [0, 0];
+    const scrolls = this.scrolls.current;
 
     for (const button of this._buttons) {
       const position: Vector = [0, 0];
 
       if (button.side === 'output') {
         position[0] = -this.offset[0] + 12;
-        position[1] = top[0] - this.offset[1] - this.scrolls.inputs.current;
+        position[1] = top[0] - this.offset[1] - scrolls.inputs;
         top[0] += button.height;
       } else {
         position[0] = this.size[0] - this.offset[0] - 12;
-        position[1] = top[1] - this.offset[1] - this.scrolls.outputs.current;
+        position[1] = top[1] - this.offset[1] - scrolls.outputs;
         top[1] += button.height;
       }
 
@@ -42,9 +43,4 @@ export class Adapter {
   connect(connection: Connection) {
     this.connections.push(connection);
   }
-}
-
-interface Scrolls {
-  inputs: MutableRefObject<number>;
-  outputs: MutableRefObject<number>;
 }

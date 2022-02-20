@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import Color from 'color';
 import { FC } from 'react';
+import { useColor } from './hooks/useColor';
+import { useColorVariant } from './hooks/useColorVariant';
 
 interface StyledButtonProps {
   text: string;
@@ -32,33 +33,12 @@ export const Button: FC<{
   active: boolean;
   onClick: (value: boolean) => void;
 }> = (props) => {
-  const color = Color(props.color);
-  const desaturated = color.saturationl(64);
+  const scheme = useColor(props.color);
+  const [primary, variant, text] = useColorVariant(scheme, props.active);
 
-  const primary = color.toString();
-  const text = desaturated.lightness(21).toString();
-  const activeVariant = desaturated.lightness(54).toString();
-  const inactiveVariant = desaturated.lightness(31).toString();
-
-  const renderActiveButton = () => {
-    return (
-      <StyledButton text={text} primary={primary} primaryVariant={activeVariant}>
-        {props.children}
-      </StyledButton>
-    );
-  };
-
-  const renderInactiveButton = () => {
-    return (
-      <StyledButton text={primary} primary={text} primaryVariant={inactiveVariant}>
-        {props.children}
-      </StyledButton>
-    );
-  };
-
-  if (props.active) {
-    return renderActiveButton();
-  } else {
-    return renderInactiveButton();
-  }
+  return (
+    <StyledButton text={text} primary={primary} primaryVariant={variant}>
+      {props.children}
+    </StyledButton>
+  );
 };
