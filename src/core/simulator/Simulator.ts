@@ -18,8 +18,23 @@ export interface SerializedSimulator {
 }
 
 export class Simulator {
-  circuit: Circuit = new Circuit();
   readonly createdGates = new Map<string, SerializedCustomGate>();
+
+  // TODO: THIS IS REALLY BAD
+  meta:
+    | { mode: 'GATE_EDIT'; editedGate: string; circuit: Circuit; prev: SerializedCircuit }
+    | { mode: 'PROJECT_EDIT'; circuit: Circuit } = {
+    mode: 'PROJECT_EDIT',
+    circuit: new Circuit()
+  };
+
+  get circuit() {
+    return this.meta.circuit;
+  }
+
+  set circuit(circuit: Circuit) {
+    this.meta.circuit = circuit;
+  }
 
   /**
    * Deserializes serialized simulator from json object.
@@ -27,11 +42,14 @@ export class Simulator {
   static deserialize({ circuit, createdGates }: SerializedSimulator): Simulator {
     const simulator = new Simulator();
     createdGates.forEach(([id, gate]) => simulator.createdGates.set(id, gate));
-    simulator.circuit = Circuit.deserialize(circuit, simulator.createdGates);
+    simulator.meta.circuit = Circuit.deserialize(circuit, simulator.createdGates);
     return simulator;
   }
 
   createGate(type: string, color: string) {
+    if (this.meta.mode === 'GATE_EDIT') throw new Error('Cannot create a gate while in GATE_EDIT mode');
+
+    // FIXME: Disallow adding two gates with the same name
     const serialized = this.circuit.serialize();
 
     if (serialized.inputs.length === 0) throw new Error('Gate must have at least one input');
@@ -41,9 +59,32 @@ export class Simulator {
     this.circuit = new Circuit();
   }
 
+  editGate(type: string) {
+    if (this.meta.mode === 'GATE_EDIT') throw new Error('Cannot edit gate while inside GATE_EDIT mode');
+
+    this.meta = { ...this.meta, mode: 'GATE_EDIT', editedGate: type, prev: this.circuit.serialize() };
+
+    const gate = this.createdGates.get(type);
+    if (!gate) throw new Error(`Created gate not found: ${type}`);
+
+    this.circuit = Circuit.deserialize(gate.circuit, this.createdGates);
+  }
+
+  confirmEdit() {
+    if (this.meta.mode === 'PROJECT_EDIT') throw new Error('Cannot confirm edit while inside PROJECT_EDIT mode');
+
+    const gate = this.createdGates.get(this.meta.editedGate);
+    if (!gate) throw new Error('Failed to edit');
+
+    const updatedCircuit = this.meta.circuit.serialize();
+    this.createdGates.set(this.meta.editedGate, { ...gate, circuit: updatedCircuit });
+    this.meta = { mode: 'PROJECT_EDIT', circuit: Circuit.deserialize(this.meta.prev, this.createdGates) };
+  }
+
   addGate(type: string) {
     const id = uuid();
 
+    // TODO: Change based on current mode
     if (isBaseGate(type)) this.circuit.gates.set(id, ElementFactory.createBaseGate(id, type));
     else this.circuit.gates.set(id, ElementFactory.createCustomGate(id, type, this.createdGates));
 
@@ -140,6 +181,9 @@ export class Simulator {
    * Serializes simulator into json object.
    */
   serialize(): SerializedSimulator {
-    return { circuit: this.circuit.serialize(), createdGates: [...this.createdGates.entries()] };
+    return {
+      circuit: this.meta.mode === 'PROJECT_EDIT' ? this.circuit.serialize() : this.meta.prev,
+      createdGates: [...this.createdGates.entries()]
+    };
   }
 }
