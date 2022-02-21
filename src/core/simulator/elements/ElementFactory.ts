@@ -22,9 +22,7 @@ export class ElementFactory {
   }
 
   static createPort(id: string, type: string, connectors: number, name = '') {
-    const port = new Port(id, type, name);
-    port.states = new Array(connectors).fill(false);
-    return port;
+    return new Port(id, type, name, connectors);
   }
 
   static createCustomGate(id: string, type: string, createdGates: Map<string, SerializedCustomGate>): CustomGate {

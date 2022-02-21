@@ -18,7 +18,8 @@ export class BaseGate extends Gate {
 
   constructor(id: string, { type, color, inputsCount, handler }: BaseGateOptions) {
     super(id, type, color);
-    for (let i = 0; i < inputsCount; i++) this.inputs.push(false);
+    this.inputs = new Array(inputsCount).fill(false);
+    this.states = [false];
     this.handler = handler;
   }
 
