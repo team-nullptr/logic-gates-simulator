@@ -1,9 +1,27 @@
 .card {
   display: flex;
-  width: 200px;
-  border-radius: 15px;
-  background: #edf7ee;
-  border: 1px solid #cde5cd;
-  padding: 15px;
-  gap: 20px;
+  width: 256px;
+  padding: 12px 8px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  min-height: 48px;
+
+  &.success {
+    background: #ece0fd;
+    color: rgb(102 1 235);
+  }
+
+  &.error {
+    background: #fde9e9;
+    color: rgb(238 73 73);
+  }
+}
+
+.icon svg {
+  display: block;
+}
+
+.text {
+  word-break: break-word;
 }

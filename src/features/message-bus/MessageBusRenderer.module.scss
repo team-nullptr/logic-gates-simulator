@@ -1,9 +1,10 @@
 .wrapper {
-   position: absolute;
-   padding: 15px;
+   position: fixed;
+   bottom: 8px;
+   left: 11px;
    display: flex;
    flex-direction: column-reverse;
-   width: 100vw;
-   height: 100vh;
+   gap: 4px;
    pointer-events: none;
+   z-index: 1;
 }
