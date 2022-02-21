@@ -15,11 +15,11 @@ export const Controls = (props: {
 
   const renderButton = (button: ButtonType) => {
     if (button.type === 'compound') {
-      return <ButtonGroup button={button} onChange={console.log} key={button.id}/>;
+      return <ButtonGroup button={button} onChange={console.log} key={button.id} />;
     }
 
     return (
-      <Button color="hsl(266deg 99% 64%)" active={button.state[0]} onClick={console.log} key={button.id}>
+      <Button color="#6601EB" active={button.state[0]} onClick={console.log} key={button.id}>
         {button.slug}
       </Button>
     );
@@ -33,8 +33,8 @@ export const Controls = (props: {
   return (
     <div ref={ref} onScroll={handleScroll} className={styles.buttons} style={{ direction }}>
       {props.buttons.map(renderButton)}
-      <Button color="hsl(136deg 100% 59%)" active={false} onClick={console.log}>
-        <Plus width={20}/>
+      <Button color="#089E2F" active={false} onClick={console.log}>
+        <Plus width={20} />
       </Button>
     </div>
   );

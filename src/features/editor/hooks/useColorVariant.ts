@@ -4,6 +4,6 @@ import { ColorVariant } from '../types/ColorVariant';
 export const useColorVariant = (scheme: ColorScheme, active: boolean): ColorVariant => {
   const [primary, dark, light, text] = scheme;
 
-  if (active) return [primary, light, text];
-  return [text, dark, primary];
+  if (active) return [primary, dark, text];
+  return [light, dark, primary];
 };

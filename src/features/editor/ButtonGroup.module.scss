@@ -1,7 +1,5 @@
-$primary: #9748fe;
-
 .container {
-  background: hsl(266deg 56% 12%);
+  background: hsl(265.9,88%,95%);
   border-radius: 5px;
   margin-top: 8px;
   padding-bottom: 4px;
@@ -13,7 +11,7 @@ $primary: #9748fe;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: $primary;
+  color: rgb(102,1,235);
 }
 
 .wrapper {
