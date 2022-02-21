@@ -31,13 +31,13 @@ export const StyledButton = styled.button<StyledButtonProps>`
 export const Button: FC<{
   color: string;
   active: boolean;
-  onClick: (value: boolean) => void;
+  onClick: () => void;
 }> = (props) => {
   const scheme = useColor(props.color);
   const [primary, variant, text] = useColorVariant(scheme, props.active);
 
   return (
-    <StyledButton text={text} primary={primary} primaryVariant={variant}>
+    <StyledButton text={text} primary={primary} primaryVariant={variant} onClick={() => props.onClick()}>
       {props.children}
     </StyledButton>
   );
