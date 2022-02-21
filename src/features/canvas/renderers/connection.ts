@@ -1,10 +1,7 @@
-import { curve, route } from "../utils/path";
-import { Vector } from "../../../common/Vector";
+import { curve, route } from '../utils/path';
+import { Vector } from '../../../common/Vector';
 
-export const renderConnection = (
-  [start, end]: [Vector, Vector],
-  ctx: CanvasRenderingContext2D
-) => {
+export const renderConnection = ([start, end]: [Vector, Vector], ctx: CanvasRenderingContext2D) => {
   const path = route(start, end);
   renderPath(ctx, path);
 };
@@ -15,7 +12,7 @@ export const renderPath = (ctx: CanvasRenderingContext2D, path: Vector[]) => {
   const start = path[0];
   const end = path[path.length - 1];
 
-  ctx.strokeStyle = "#323232";
+  ctx.strokeStyle = '#eee';
   ctx.lineWidth = 2;
 
   ctx.beginPath();

@@ -1,10 +1,10 @@
-import { Block } from "../types/Block";
-import { Area } from "../types/Area";
+import { Block } from '../types/Block';
+import { Area } from '../types/Area';
 
 export const renderGate = (block: Block, ctx: CanvasRenderingContext2D) => {
   const { area } = block;
 
-  drawRoundedRect(ctx, area, 5);
+  drawRoundedRect(ctx, area, 8);
   drawText(ctx, block);
   drawUnderline(ctx, block);
 };
@@ -16,11 +16,11 @@ const drawText = (ctx: CanvasRenderingContext2D, block: Block) => {
   const centerX = (x + tx) / 2;
   const centerY = (y + ty) / 2;
 
-  ctx.fillStyle = "#ddd";
+  ctx.fillStyle = '#000';
   ctx.font = "700 14px 'Ubuntu', sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(text, centerX, centerY);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text.toUpperCase(), centerX, centerY);
 };
 
 const drawUnderline = (ctx: CanvasRenderingContext2D, block: Block) => {
@@ -34,11 +34,7 @@ const drawUnderline = (ctx: CanvasRenderingContext2D, block: Block) => {
   ctx.fillRect(centerX, centerY + 12, 24, 3);
 };
 
-const drawRoundedRect = (
-  ctx: CanvasRenderingContext2D,
-  area: Area,
-  r: number
-) => {
+const drawRoundedRect = (ctx: CanvasRenderingContext2D, area: Area, r: number) => {
   const [x, y, tx, ty] = area;
 
   ctx.beginPath();
@@ -52,6 +48,6 @@ const drawRoundedRect = (
   ctx.lineTo(x, y + r);
   ctx.quadraticCurveTo(x, y, x + r, y);
 
-  ctx.fillStyle = "#1C1B20";
+  ctx.fillStyle = '#fff';
   ctx.fill();
 };

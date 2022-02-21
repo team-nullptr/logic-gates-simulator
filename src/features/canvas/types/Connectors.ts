@@ -1,12 +1,9 @@
-import { Vector } from "../../../common/Vector";
-import { getDistance } from "../utils";
+import { Vector } from '../../../common/Vector';
+import { getDistance } from '../utils';
+import Color from 'color';
 
 export class Connectors {
-  constructor(
-    public position: Vector,
-    readonly side: "input" | "output",
-    readonly states: boolean[]
-  ) {}
+  constructor(public position: Vector, readonly side: 'input' | 'output', readonly states: boolean[]) {}
 
   get items(): Vector[] {
     const [x, y] = this.position;
@@ -20,9 +17,15 @@ export class Connectors {
     }
   }
 
-  render(ctx: CanvasRenderingContext2D, color: string): void {
-    ctx.fillStyle = color;
-    for (const [x, y] of this.items) {
+  render(ctx: CanvasRenderingContext2D, tint: string): void {
+    const color = Color(tint);
+    const positions = this.items;
+
+    for (let i = 0; i < this.states.length; i++) {
+      const [x, y] = positions[i];
+      const state = this.states[i];
+      ctx.fillStyle = (state ? color : color.lightness(90)).toString();
+
       ctx.beginPath();
       ctx.ellipse(x, y, 4, 4, 0, 0, Math.PI * 2);
       ctx.fill();
