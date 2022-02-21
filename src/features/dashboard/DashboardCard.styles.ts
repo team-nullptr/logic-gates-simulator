@@ -8,13 +8,14 @@ export const StyledCard = styled.article`
   aspect-ratio: 4 / 3;
   width: 100%;
   overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid rgb(207, 207, 207);
+  border-radius: 8px;
+  border: 2px solid #fafafa;
 `;
 
 export const StyledImage = styled.img`
   width: 100%;
-  height: 75%;
+  flex-grow: 1;
+  height: 0;
   object-fit: cover;
 `;
 
@@ -23,15 +24,15 @@ export const StyledDescription = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  height: 25%;
-  padding: 0 10px;
-  border-top: 1px solid rgb(207, 207, 207);
+  flex-shrink: 0;
+  padding: 16px 12px;
+  border-top: 2px solid #fafafa;
 `;
 
 export const StyledTitle = styled.p`
   color: black;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 `;
 
 export const StyledDate = styled.span`
