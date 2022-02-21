@@ -3,7 +3,7 @@ import { DragEvent, useRef } from 'react';
 import { GateDataTransfer } from '../../common/GateDataTransfer';
 
 const StyledContainer = styled.div`
-  background: #181818;
+  background: #fafafa;
   width: 100%;
   height: 100%;
   border-radius: 8px;

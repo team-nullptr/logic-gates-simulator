@@ -9,6 +9,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
+    background: #fff;
     font-family: "Ubuntu", "Roboto", sans-serif;
   }
 
