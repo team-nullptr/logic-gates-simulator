@@ -33,7 +33,7 @@ export const Controls = (props: {
   return (
     <div ref={ref} onScroll={handleScroll} className={styles.buttons} style={{ direction }}>
       {props.buttons.map(renderButton)}
-      <AddButton />
+      <AddButton onSelect={console.log} />
     </div>
   );
 };

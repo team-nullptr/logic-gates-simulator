@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { StyledButton } from './Button';
 
 export const ButtonGroup = styled.div<{ color: string; horizontal?: boolean }>`
   background-color: ${(props) => props.color};
@@ -9,7 +10,7 @@ export const ButtonGroup = styled.div<{ color: string; horizontal?: boolean }>`
   gap: 8px;
   flex-direction: ${(props) => (props.horizontal ? 'row' : 'column')};
 
-  > button {
+  ${StyledButton} {
     margin: 0;
   }
 `;
