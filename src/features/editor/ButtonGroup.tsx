@@ -1,28 +1,16 @@
-import styles from './ButtonGroup.module.scss';
-import { Button } from './Button';
-import { Button as ButtonType } from '../canvas/types/Button';
+import styled from 'styled-components';
+import { StyledButton } from './Button';
 
-export const ButtonGroup = (props: { button: ButtonType; onChange: (state: boolean[]) => void }) => {
-  const handleClick = (position: number) => {
-    const copy = props.button.state.slice();
-    copy[position] = !copy[position];
-    props.onChange(copy);
-  };
+export const ButtonGroup = styled.div<{ color: string; horizontal?: boolean }>`
+  background-color: ${(props) => props.color};
+  margin: 8px 4px 0;
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  flex-direction: ${(props) => (props.horizontal ? 'row' : 'column')};
 
-  const binary = props.button.state.slice().reverse();
-  const mapped = binary.map((it) => (it ? 1 : 0));
-  const value = parseInt(mapped.join(''), 2);
-
-  return (
-    <div className={styles.container}>
-      <p className={styles.value}>{value}</p>
-      <div className={styles.wrapper}>
-        {props.button.state.map((state, i) => (
-          <Button color="#6601EB" active={state} onClick={() => handleClick(i)} key={i}>
-            {i.toString()}
-          </Button>
-        ))}
-      </div>
-    </div>
-  );
-};
+  ${StyledButton} {
+    margin: 0;
+  }
+`;

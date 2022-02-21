@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import { Button as ButtonType } from '../canvas/types/Button';
 import { Button } from './Button';
-import { ButtonGroup } from './ButtonGroup';
-import { Plus } from 'react-feather';
+import { BinaryButton } from './BinaryButton';
 import styles from './Controls.module.scss';
+import { AddButton } from './AddButton';
 
 export const Controls = (props: {
   buttons: ButtonType[];
@@ -15,7 +15,7 @@ export const Controls = (props: {
 
   const renderButton = (button: ButtonType) => {
     if (button.type === 'compound') {
-      return <ButtonGroup button={button} onChange={console.log} key={button.id} />;
+      return <BinaryButton state={button.state} onChange={console.log} key={button.id} />;
     }
 
     return (
@@ -33,9 +33,7 @@ export const Controls = (props: {
   return (
     <div ref={ref} onScroll={handleScroll} className={styles.buttons} style={{ direction }}>
       {props.buttons.map(renderButton)}
-      <Button color="#089E2F" active={false} onClick={console.log}>
-        <Plus width={20} />
-      </Button>
+      <AddButton onSelect={console.log} />
     </div>
   );
 };

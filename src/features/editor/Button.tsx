@@ -9,7 +9,7 @@ interface StyledButtonProps {
   primaryVariant: string;
 }
 
-const StyledButton = styled.button<StyledButtonProps>`
+export const StyledButton = styled.button<StyledButtonProps>`
   width: 40px;
   height: 40px;
   border: none;
