@@ -4,6 +4,7 @@ import { Button } from './Button';
 import { ButtonGroup } from './ButtonGroup';
 import { Plus } from 'react-feather';
 import styles from './Controls.module.scss';
+import { AddButton } from './AddButton';
 
 export const Controls = (props: {
   buttons: ButtonType[];
@@ -33,9 +34,7 @@ export const Controls = (props: {
   return (
     <div ref={ref} onScroll={handleScroll} className={styles.buttons} style={{ direction }}>
       {props.buttons.map(renderButton)}
-      <Button color="#089E2F" active={false} onClick={console.log}>
-        <Plus width={20} />
-      </Button>
+      <AddButton />
     </div>
   );
 };
