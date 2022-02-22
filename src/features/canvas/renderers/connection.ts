@@ -1,19 +1,25 @@
 import { curve, route } from '../utils/path';
 import { Vector } from '../../../common/Vector';
 
-export const renderConnection = ([start, end]: [Vector, Vector], ctx: CanvasRenderingContext2D) => {
+export const renderConnection = ([start, end]: [Vector, Vector], state: boolean, ctx: CanvasRenderingContext2D) => {
   const path = route(start, end);
-  renderPath(ctx, path);
+
+  if (state) {
+    renderPath(ctx, path, 'rgb(102 1 235)', 2);
+    renderPath(ctx, path, 'rgb(102 1 235 / 12%)', 8);
+  } else {
+    renderPath(ctx, path, '#eee', 2);
+  }
 };
 
-export const renderPath = (ctx: CanvasRenderingContext2D, path: Vector[]) => {
+export const renderPath = (ctx: CanvasRenderingContext2D, path: Vector[], color: string, width: number) => {
   const curved = curve(path);
 
   const start = path[0];
   const end = path[path.length - 1];
 
-  ctx.strokeStyle = '#eee';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
 
   ctx.beginPath();
   ctx.moveTo(...start);

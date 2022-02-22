@@ -22,19 +22,20 @@ export class Renderer {
       const start = group.items[at];
 
       if (group.side === 'output') {
-        renderConnection([start, end], ctx);
+        renderConnection([start, end], group.states[at], ctx);
       } else {
-        renderConnection([end, start], ctx);
+        renderConnection([end, start], false, ctx);
       }
     }
 
     connections.forEach((it) => {
       const { from, to } = it;
+      const state = from.group.states[from.at];
 
       const start = from.group.items[from.at];
       const end = to.group.items[to.at];
 
-      renderConnection([start, end], ctx);
+      renderConnection([start, end], state, ctx);
     });
   }
 }
