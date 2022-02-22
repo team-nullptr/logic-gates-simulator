@@ -35,13 +35,13 @@ const StyledContent = styled.p<{ color: string }>`
   }
 `;
 
-export const GatePrototype = (props: { text: string; color: string }) => {
-  const { text, color } = props;
+export const GatePrototype = (props: { id: string; text: string; color: string }) => {
+  const { id, text, color } = props;
   const ref = useRef<HTMLDivElement>(null);
 
   const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
     const { offsetX, offsetY } = event.nativeEvent;
-    const payload: GateDataTransfer = { id: text, offset: [offsetX, offsetY] };
+    const payload: GateDataTransfer = { id, offset: [offsetX, offsetY] };
 
     event.dataTransfer.setData('text/plain', text);
     event.dataTransfer.setData('gate/json', JSON.stringify(payload));

@@ -16,11 +16,13 @@ const StyledGrid = styled.div`
 
 export const Sidebar = (props: { source: Adapter }) => {
   const renderPrototypes = (blocks: Prototype[]) => {
-    return blocks.map((it, i) => <GatePrototype text={it.text} color={it.color} key={i} />);
+    return blocks.map((it, i) => <GatePrototype id={it.id} text={it.name} color={it.color} key={i} />);
   };
 
-  return <div className={styles.sidebar}>
-    <ListHeader text="All gates" />
-    <StyledGrid>{renderPrototypes(props.source.available)}</StyledGrid>
-  </div>;
+  return (
+    <div className={styles.sidebar}>
+      <ListHeader text="All gates" />
+      <StyledGrid>{renderPrototypes(props.source.available)}</StyledGrid>
+    </div>
+  );
 };

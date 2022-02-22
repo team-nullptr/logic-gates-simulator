@@ -45,7 +45,13 @@ export const Editor = ({ project }: { project: Project }) => {
 
   return (
     <>
-      <EditorNavigation title={project.name} onCreateGate={() => project.simulator.createGate('test', 'red')} />
+      <EditorNavigation
+        title={project.name}
+        onCreateGate={() => {
+          adapter.createGate(prompt('enter a name')!, prompt('enter a color')!);
+          console.log(project.simulator.createdGates);
+        }}
+      />
       <main className={styles.container}>
         <Controls
           buttons={inputs}

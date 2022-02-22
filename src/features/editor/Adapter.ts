@@ -19,7 +19,7 @@ export class Adapter {
   readonly subscribers = new Set<() => void>();
 
   readonly gates = new Map<string, Block>();
-  readonly connections: Connection[] = [];
+  connections: Connection[] = [];
 
   private readonly _buttons = new Map<string, Button>();
 
@@ -68,7 +68,8 @@ export class Adapter {
   get available(): Prototype[] {
     const gates = this.project.simulator.createdGates;
     return [...gates.values(), ...baseGates.values()].map((it) => ({
-      text: it.type,
+      id: it.type,
+      name: it.name,
       color: it.color
     }));
   }
@@ -134,6 +135,16 @@ export class Adapter {
     });
 
     this.connections.push(connection);
+    this.notify();
+  }
+
+  createGate(name: string, color: string) {
+    this.project.simulator.createGate(name, color);
+
+    this.connections = [];
+    this.gates.clear();
+    this._buttons.clear();
+
     this.notify();
   }
 

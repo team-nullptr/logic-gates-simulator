@@ -27,9 +27,20 @@ class ProjectManager {
    * All saved projects.
    */
   get projects(): Project[] {
-    return Object.values(this.fetchProjects()).map(({ modifiedAt, simulator, ...meta }) => {
+    return Object.values(ProjectManager.fetchProjects()).map(({ modifiedAt, simulator, ...meta }) => {
       return { ...meta, modifiedAt: new Date(modifiedAt), simulator: Simulator.deserialize(simulator) };
     });
+  }
+
+  /**
+   * Fetches all projects saved in localStorage.
+   */
+  static fetchProjects(): SavedProjects {
+    const projects = localStorage.getItem('projects');
+    if (!projects) throw new Error('projects item missing in localStorage');
+
+    // FIXME: handle the error somehow
+    return JSON.parse(projects) as SavedProjects;
   }
 
   /**
@@ -42,7 +53,7 @@ class ProjectManager {
       simulator: simulator.serialize()
     };
 
-    const projects = this.fetchProjects();
+    const projects = ProjectManager.fetchProjects();
     localStorage.setItem('projects', JSON.stringify({ ...projects, [serialized.id]: serialized }));
   }
 
@@ -62,7 +73,7 @@ class ProjectManager {
    * @param id Id of the project.
    */
   loadProject(id: string): Project {
-    const serializedProject = this.fetchProjects()[id];
+    const serializedProject = ProjectManager.fetchProjects()[id];
     if (!serializedProject) throw new Error('Unable to find a project');
 
     const { modifiedAt, simulator, ...meta } = serializedProject;
@@ -75,17 +86,6 @@ class ProjectManager {
       modifiedAt: new Date(modifiedAt),
       simulator: _simulator
     };
-  }
-
-  /**
-   * Fetches all projects saved in localStorage.
-   */
-  private fetchProjects(): SavedProjects {
-    const projects = localStorage.getItem('projects');
-    if (!projects) throw new Error('projects item missing in localStorage');
-
-    // FIXME: handle the error somehow
-    return JSON.parse(projects) as SavedProjects;
   }
 }
 

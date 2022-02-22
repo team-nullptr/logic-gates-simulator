@@ -17,8 +17,8 @@ export class CustomGate extends Gate {
   constructor(id: string, readonly circuit: Circuit, { type, name, color }: GateOptions) {
     super(id, type, name, color);
 
-    this.inputs = new Array(circuit.inputs.size).fill(false);
-    this.states = new Array(circuit.outputs.size).fill(false);
+    circuit.inputs.forEach((it) => this.inputs.push(...new Array(it.connectors).fill(false)));
+    circuit.outputs.forEach((it) => this.states.push(...new Array(it.connectors).fill(false)));
 
     this.inputsNames = [...circuit.inputs.values()].map((input) => input.name);
     this.outputsNames = [...circuit.outputs.values()].map((output) => output.name);
