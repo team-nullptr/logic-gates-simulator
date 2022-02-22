@@ -7,6 +7,7 @@ export interface Connection {
 export interface Element {
   id: string;
   type: string;
+  name: string;
   connections: Connection[];
   states: boolean[];
 }

@@ -16,8 +16,8 @@ export interface BaseGateOptions extends GateOptions {
 export class BaseGate extends Gate {
   readonly handler: (inputs: boolean[]) => boolean;
 
-  constructor(id: string, { type, color, inputsCount, handler }: BaseGateOptions) {
-    super(id, type, color);
+  constructor(id: string, { type, name, color, inputsCount, handler }: BaseGateOptions) {
+    super(id, type, name, color);
     this.inputs = new Array(inputsCount).fill(false);
     this.states = [false];
     this.handler = handler;

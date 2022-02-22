@@ -9,9 +9,9 @@ export type OutputType = 'output' | 'output-group';
 export type PortType = InputType | OutputType;
 
 export const baseGates = new Map<string, BaseGateOptions>([
-  ['not', { type: 'not', color: '#f7e813', inputsCount: 1, handler: ([a]: boolean[]) => !a }],
-  ['and', { type: 'and', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
-  ['or', { type: 'or', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }]
+  ['not', { type: 'not', name: 'not', color: '#f7e813', inputsCount: 1, handler: ([a]: boolean[]) => !a }],
+  ['and', { type: 'and', name: 'and', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
+  ['or', { type: 'or', name: 'or', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }]
 ]);
 
 export class ElementFactory {
@@ -33,6 +33,7 @@ export class ElementFactory {
 
     return new CustomGate(id, circuit, {
       type: serializedGate.type,
+      name: serializedGate.name,
       color: serializedGate.color
     });
   }

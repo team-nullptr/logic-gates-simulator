@@ -25,72 +25,72 @@ export const App = () => {
 
     console.log(simulator.circuit);
 
-    // simulator.toggleInput(a);
-    // simulator.renamePort(a, 'A');
-    //
-    // simulator.connect({
-    //   emitterId: a,
-    //   receiverId: c,
-    //   from: 0,
-    //   to: 0
-    // });
-    //
-    // simulator.connect({
-    //   emitterId: c,
-    //   receiverId: d,
-    //   from: 0,
-    //   to: 0
-    // });
-    //
-    // simulator.connect({
-    //   emitterId: d,
-    //   receiverId: g,
-    //   from: 0,
-    //   to: 0
-    // });
-    //
-    // simulator.connect({
-    //   emitterId: b,
-    //   receiverId: e,
-    //   from: 0,
-    //   to: 1
-    // });
-    //
-    // simulator.connect({
-    //   emitterId: f,
-    //   receiverId: h,
-    //   from: 0,
-    //   to: 0
-    // });
-    //
-    // simulator.connect({
-    //   emitterId: e,
-    //   receiverId: f,
-    //   from: 0,
-    //   to: 0
-    // });
-    //
-    // simulator.connect({
-    //   emitterId: f,
-    //   receiverId: c,
-    //   from: 0,
-    //   to: 1
-    // });
-    //
-    // simulator.connect({
-    //   emitterId: d,
-    //   receiverId: e,
-    //   from: 0,
-    //   to: 0
-    // });
-    //
-    // console.log(simulator.circuit);
-    //
-    // simulator.createGate('test', '#ff00ff');
-    //
-    // simulator.addGate('test');
-    //
-    // console.log(simulator.circuit);
+    simulator.toggleInput(a);
+    simulator.renamePort(a, 'A');
+
+    simulator.connect({
+      emitterId: a,
+      receiverId: c,
+      from: 0,
+      to: 0
+    });
+
+    simulator.connect({
+      emitterId: c,
+      receiverId: d,
+      from: 0,
+      to: 0
+    });
+
+    simulator.connect({
+      emitterId: d,
+      receiverId: g,
+      from: 0,
+      to: 0
+    });
+
+    simulator.connect({
+      emitterId: b,
+      receiverId: e,
+      from: 0,
+      to: 1
+    });
+
+    simulator.connect({
+      emitterId: f,
+      receiverId: h,
+      from: 0,
+      to: 0
+    });
+
+    simulator.connect({
+      emitterId: e,
+      receiverId: f,
+      from: 0,
+      to: 0
+    });
+
+    simulator.connect({
+      emitterId: f,
+      receiverId: c,
+      from: 0,
+      to: 1
+    });
+
+    simulator.connect({
+      emitterId: d,
+      receiverId: e,
+      from: 0,
+      to: 0
+    });
+
+    console.log(simulator.circuit);
+
+    simulator.createGate('test', '#ff00ff');
+    simulator.addGate([...simulator.createdGates.keys()][0]);
+
+    console.log(simulator);
+    console.log(simulator.circuit);
   }, []);
 
   return (

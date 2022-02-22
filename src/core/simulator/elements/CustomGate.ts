@@ -5,6 +5,7 @@ import { SerializedCircuit } from '../Circuit';
 
 export interface SerializedCustomGate {
   type: string;
+  name: string;
   color: string;
   circuit: SerializedCircuit;
 }
@@ -13,8 +14,8 @@ export class CustomGate extends Gate {
   readonly inputsNames: string[];
   readonly outputsNames: string[];
 
-  constructor(id: string, readonly circuit: Circuit, { type, color }: GateOptions) {
-    super(id, type, color);
+  constructor(id: string, readonly circuit: Circuit, { type, name, color }: GateOptions) {
+    super(id, type, name, color);
 
     this.inputs = new Array(circuit.inputs.size).fill(false);
     this.states = new Array(circuit.outputs.size).fill(false);
