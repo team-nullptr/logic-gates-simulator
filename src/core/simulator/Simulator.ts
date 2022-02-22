@@ -17,12 +17,19 @@ export interface SerializedSimulator {
   createdGates: [string, SerializedCustomGate][];
 }
 
+// TODO: Gates needs their own id in addition to their name (type)
+
 export class Simulator {
   readonly createdGates = new Map<string, SerializedCustomGate>();
 
   // TODO: THIS IS REALLY BAD
   meta:
-    | { mode: 'GATE_EDIT'; editedGate: string; circuit: Circuit; prev: SerializedCircuit }
+    | {
+        mode: 'GATE_EDIT';
+        editedGate: string;
+        circuit: Circuit;
+        prev: SerializedCircuit;
+      }
     | { mode: 'PROJECT_EDIT'; circuit: Circuit } = {
     mode: 'PROJECT_EDIT',
     circuit: new Circuit()
@@ -42,7 +49,7 @@ export class Simulator {
   static deserialize({ circuit, createdGates }: SerializedSimulator): Simulator {
     const simulator = new Simulator();
     createdGates.forEach(([id, gate]) => simulator.createdGates.set(id, gate));
-    simulator.meta.circuit = Circuit.deserialize(circuit, simulator.createdGates);
+    simulator.circuit = Circuit.deserialize(circuit, simulator.createdGates);
     return simulator;
   }
 
@@ -51,7 +58,6 @@ export class Simulator {
 
     // FIXME: Disallow adding two gates with the same name
     const serialized = this.circuit.serialize();
-
     if (serialized.inputs.length === 0) throw new Error('Gate must have at least one input');
     if (serialized.outputs.length === 0) throw new Error('Gate must have at least one output');
 
@@ -62,7 +68,12 @@ export class Simulator {
   editGate(type: string) {
     if (this.meta.mode === 'GATE_EDIT') throw new Error('Cannot edit gate while inside GATE_EDIT mode');
 
-    this.meta = { ...this.meta, mode: 'GATE_EDIT', editedGate: type, prev: this.circuit.serialize() };
+    this.meta = {
+      ...this.meta,
+      mode: 'GATE_EDIT',
+      editedGate: type,
+      prev: this.circuit.serialize()
+    };
 
     const gate = this.createdGates.get(type);
     if (!gate) throw new Error(`Created gate not found: ${type}`);
@@ -77,8 +88,16 @@ export class Simulator {
     if (!gate) throw new Error('Failed to edit');
 
     const updatedCircuit = this.meta.circuit.serialize();
-    this.createdGates.set(this.meta.editedGate, { ...gate, circuit: updatedCircuit });
-    this.meta = { mode: 'PROJECT_EDIT', circuit: Circuit.deserialize(this.meta.prev, this.createdGates) };
+
+    this.createdGates.set(this.meta.editedGate, {
+      ...gate,
+      circuit: updatedCircuit
+    });
+
+    this.meta = {
+      mode: 'PROJECT_EDIT',
+      circuit: Circuit.deserialize(this.meta.prev, this.createdGates)
+    };
   }
 
   addGate(type: string) {
@@ -118,6 +137,7 @@ export class Simulator {
   }
 
   renamePort(id: string, name: string) {
+    // TODO: could't it be this.circuit.find?
     const port = this.circuit.inputs.get(id) || this.circuit.outputs.get(id);
     if (!port) throw new Error('Port not found');
     port.name = name;
@@ -138,9 +158,9 @@ export class Simulator {
    */
   disconnect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);
-    const receiver = this.circuit.find(receiverId);
-
     if (!emitter) throw new Error(`Element not found: ${emitterId}`);
+
+    const receiver = this.circuit.find(receiverId);
     if (!receiver) throw new Error(`Element not found: ${receiverId}`);
 
     emitter.connections = emitter.connections.filter(
