@@ -1,17 +1,14 @@
 import { BaseGate, BaseGateOptions } from './BaseGate';
-import { Port } from './Port';
+import { Port, PortType } from './Port';
 import { Gate } from './Gate';
 import { CustomGate, SerializedCustomGate } from './CustomGate';
 import { Circuit } from '../Circuit';
-
-export type InputType = 'input' | 'input-group';
-export type OutputType = 'output' | 'output-group';
-export type PortType = InputType | OutputType;
+import { getRandomLetter } from './util/getRandomLetter';
 
 export const baseGates = new Map<string, BaseGateOptions>([
   ['not', { type: 'not', name: 'not', color: '#f7e813', inputsCount: 1, handler: ([a]: boolean[]) => !a }],
   ['and', { type: 'and', name: 'and', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
-  ['or', { type: 'or', name: 'or', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }]
+  ['or', { type: 'or', name: 'or', color: '#f136d1', inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }]
 ]);
 
 export class ElementFactory {
@@ -21,7 +18,8 @@ export class ElementFactory {
     return new BaseGate(id, options);
   }
 
-  static createPort(id: string, type: string, connectors: number, name = '') {
+  // TODO: Don't generate names for compound (group) ports.
+  static createPort(id: string, type: PortType, connectors: number, name = getRandomLetter()) {
     return new Port(id, type, name, connectors);
   }
 

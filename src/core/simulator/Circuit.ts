@@ -1,14 +1,13 @@
 import { Connection } from './elements/Element';
 import { Gate } from './elements/Gate';
 import { Port } from './elements/Port';
-import { ElementFactory, InputType, OutputType } from './elements/ElementFactory';
+import { ElementFactory } from './elements/ElementFactory';
 import { isBaseGate } from './elements/BaseGate';
 import { SerializedCustomGate } from './elements/CustomGate';
 
 export interface SerializedCircuit {
   inputs: {
     id: string;
-    type: InputType;
     name: string;
     connections: Connection[];
     connectors: number;
@@ -20,7 +19,6 @@ export interface SerializedCircuit {
   }[];
   outputs: {
     id: string;
-    type: OutputType;
     name: string;
     connectors: number;
   }[];
@@ -30,7 +28,6 @@ export class Circuit {
   readonly inputs = new Map<string, Port>();
   readonly gates = new Map<string, Gate>();
   readonly outputs = new Map<string, Port>();
-  private readonly callStack = new Set<string>();
 
   get elements(): (Port | Gate)[] {
     return [...this.inputs.values(), ...this.gates.values(), ...this.outputs.values()];
@@ -42,8 +39,8 @@ export class Circuit {
   static deserialize({ inputs, gates, outputs }: SerializedCircuit, createdGates: Map<string, SerializedCustomGate>) {
     const circuit = new Circuit();
 
-    inputs.forEach(({ id, type, name, connections, connectors }) => {
-      const input = ElementFactory.createPort(id, type as InputType, connectors, name);
+    inputs.forEach(({ id, name, connections, connectors }) => {
+      const input = ElementFactory.createPort(id, 'input', connectors, name);
       input.connections = connections;
       circuit.inputs.set(id, input);
     });
@@ -60,8 +57,8 @@ export class Circuit {
       }
     });
 
-    outputs.forEach(({ id, type, name, connectors }) => {
-      circuit.outputs.set(id, ElementFactory.createPort(id, type, connectors, name));
+    outputs.forEach(({ id, name, connectors }) => {
+      circuit.outputs.set(id, ElementFactory.createPort(id, 'input', connectors, name));
     });
 
     return circuit;
@@ -72,7 +69,6 @@ export class Circuit {
    */
   simulate(): void {
     this.inputs.forEach((input) => {
-      this.callStack.clear();
       this.update(input);
     });
   }
@@ -88,20 +84,21 @@ export class Circuit {
   /**
    * Updates the circuit starting from the element.
    */
-  update(element: Port | Gate): void {
+  update(element: Port | Gate, callStack = new Set<string>()): void {
     if (element instanceof Gate) element.run();
+
+    if (callStack.has(element.id)) return;
+    callStack.add(element.id);
 
     element.connections.forEach(({ receiverId, from, to }) => {
       const receiver = this.find(receiverId);
       if (!receiver) throw new Error(`Element not found ${receiverId}`);
 
-      if (this.callStack.has(receiverId)) return;
-      this.callStack.add(receiverId);
+      if (receiver instanceof Gate) {
+        receiver.inputs[to] = element.states[from];
+      } else receiver.states[to] = element.states[from];
 
-      if (receiver instanceof Gate) receiver.inputs[to] = element.states[from];
-      else receiver.states[to] = element.states[from];
-
-      this.update(receiver);
+      this.update(receiver, new Set<string>(callStack));
     });
   }
 
@@ -113,7 +110,7 @@ export class Circuit {
       inputs: [...this.inputs.values()].map(({ id, type, name, connections, states }) => ({
         id,
         name,
-        type: type as InputType,
+        type: type as 'input',
         connections,
         connectors: states.length
       })),
@@ -121,7 +118,7 @@ export class Circuit {
       outputs: [...this.outputs.values()].map(({ id, type, name, states }) => ({
         id,
         name,
-        type: type as OutputType,
+        type: type as 'output',
         connectors: states.length
       }))
     };

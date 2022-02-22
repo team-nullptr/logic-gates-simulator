@@ -9,17 +9,32 @@ export const Controls = (props: {
   buttons: ButtonType[];
   section: 'inputs' | 'outputs';
   onScroll: (top: number) => void;
+  onAdd: (connectors: number) => void;
+  onToggle: (button: ButtonType, index: number) => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const direction = props.section === 'inputs' ? 'rtl' : 'ltr';
 
   const renderButton = (button: ButtonType) => {
     if (button.type === 'compound') {
-      return <BinaryButton state={button.state} onChange={console.log} key={button.id} />;
+      return (
+        <BinaryButton
+          state={button.state}
+          onChange={(index) => props.onToggle(button, index)}
+          key={button.id}
+          locked={props.section === 'outputs'}
+        />
+      );
     }
 
     return (
-      <Button color="#6601EB" active={button.state[0]} onClick={console.log} key={button.id}>
+      <Button
+        color="#6601EB"
+        active={button.state[0]}
+        onClick={() => props.onToggle(button, 0)}
+        key={button.id}
+        locked={props.section === 'outputs'}
+      >
         {button.slug}
       </Button>
     );
@@ -33,7 +48,7 @@ export const Controls = (props: {
   return (
     <div ref={ref} onScroll={handleScroll} className={styles.buttons} style={{ direction }}>
       {props.buttons.map(renderButton)}
-      <AddButton onSelect={console.log} />
+      <AddButton onSelect={props.onAdd} />
     </div>
   );
 };

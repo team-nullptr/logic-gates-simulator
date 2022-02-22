@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
-import { CanvasHelper } from "./CanvasHelper";
-import styles from "./Canvas.module.scss";
-import { Adapter } from "../editor/Adapter";
-import { Renderer } from "./Renderer";
-import { InteractionManager } from "./InteractionManager";
-import { findToolName } from "./utils";
-import { ToolFactory } from "./tools/ToolFactory";
+import { useEffect, useRef } from 'react';
+import { CanvasHelper } from './CanvasHelper';
+import styles from './Canvas.module.scss';
+import { Adapter } from '../editor/Adapter';
+import { Renderer } from './Renderer';
+import { InteractionManager } from './InteractionManager';
+import { findToolName } from './utils';
+import { ToolFactory } from './tools/ToolFactory';
 
 let canvasHelper: CanvasHelper;
 let renderer: Renderer;
@@ -15,15 +15,16 @@ const setup = (canvas: HTMLCanvasElement, source: Adapter) => {
   renderer = new Renderer(source);
 
   canvasHelper = new CanvasHelper(canvas);
-  interactionManager = new InteractionManager(canvas.getContext("2d")!, source);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  interactionManager = new InteractionManager(canvas.getContext('2d')!, source);
 
-  canvasHelper.addEventListener("render", (ctx) => {
+  canvasHelper.addEventListener('render', (ctx) => {
     source.size = [canvas.offsetWidth, canvas.offsetHeight];
     canvasHelper.offset = source.offset;
     renderer.render(ctx);
   });
 
-  interactionManager.addEventListener("interaction", (interaction) => {
+  interactionManager.addEventListener('interaction', (interaction) => {
     const toolName = findToolName(interaction.target);
     const tool = ToolFactory.get(toolName);
     tool.source = source;
@@ -42,6 +43,7 @@ export const Canvas = ({ adapter }: { adapter: Adapter }) => {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     setup(ref.current!, adapter);
     return destroy;
   }, []);

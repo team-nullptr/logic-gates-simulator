@@ -3,10 +3,11 @@ import styles from './Editor.module.scss';
 import { Canvas } from '../canvas/Canvas';
 import { Adapter } from './Adapter';
 import { Controls } from './Controls';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Project } from '../../core/project-manager/ProjectManager';
 import { EditorNavigation } from './EditorNavigation';
 import { Connectors } from './Connectors';
+import { Button } from '../canvas/types/Button';
 
 export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
@@ -14,8 +15,18 @@ export const Editor = ({ project }: { project: Project }) => {
 
   const adapter = useMemo(() => new Adapter(project, scrollsRef), []);
 
-  const outputs = adapter.buttons.filter((it) => it.side === 'input');
-  const inputs = adapter.buttons.filter((it) => it.side === 'output');
+  const [inputs, setInputs] = useState<Button[]>([]);
+  const [outputs, setOutputs] = useState<Button[]>([]);
+
+  useEffect(() => {
+    const subscriber = () => {
+      setInputs(adapter.inputs);
+      setOutputs(adapter.outputs);
+    };
+
+    adapter.subscribe(subscriber);
+    return () => adapter.unsubscribe(subscriber);
+  }, []);
 
   const scrollHandler = (side: 'inputs' | 'outputs', value: number) => {
     const updated = { ...scrolls, [side]: value };
@@ -25,9 +36,15 @@ export const Editor = ({ project }: { project: Project }) => {
 
   return (
     <>
-      <EditorNavigation title={project.name} />
+      <EditorNavigation title={project.name} onCreateGate={() => project.simulator.createGate('test', 'red')} />
       <main className={styles.container}>
-        <Controls buttons={inputs} section="inputs" onScroll={(value) => scrollHandler('inputs', value)} />
+        <Controls
+          buttons={inputs}
+          section="inputs"
+          onAdd={(connectors) => adapter.addPort('input', connectors)}
+          onToggle={(button, index) => adapter.toggleInput(button.id, index)}
+          onScroll={(value) => scrollHandler('inputs', value)}
+        />
         <div className={styles.wrapper}>
           <div className={styles.side} style={{ left: 0 }}>
             <Connectors buttons={inputs} top={scrolls.inputs} />
@@ -39,7 +56,13 @@ export const Editor = ({ project }: { project: Project }) => {
             <Connectors buttons={outputs} top={scrolls.outputs} />
           </div>
         </div>
-        <Controls buttons={outputs} section="outputs" onScroll={(value) => scrollHandler('outputs', value)} />
+        <Controls
+          buttons={outputs}
+          section="outputs"
+          onAdd={(connectors) => adapter.addPort('output', connectors)}
+          onToggle={(button, index) => adapter.toggleInput(button.id, index)}
+          onScroll={(value) => scrollHandler('outputs', value)}
+        />
         <Sidebar source={adapter} />
       </main>
     </>

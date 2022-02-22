@@ -7,6 +7,7 @@ interface StyledButtonProps {
   text: string;
   primary: string;
   primaryVariant: string;
+  locked: boolean;
 }
 
 export const StyledButton = styled.button<StyledButtonProps>`
@@ -16,12 +17,12 @@ export const StyledButton = styled.button<StyledButtonProps>`
   border-radius: 5px;
   font: inherit;
   font-weight: bold;
-  cursor: pointer;
   flex: none;
   margin: 8px 8px 0;
   outline: none;
   color: ${(props) => props.text};
   background: ${(props) => props.primary};
+  cursor: ${(props) => (props.locked ? 'not-allowed' : 'pointer')};
 
   &:hover {
     background: ${(props) => props.primaryVariant};
@@ -32,12 +33,19 @@ export const Button: FC<{
   color: string;
   active: boolean;
   onClick: () => void;
+  locked?: boolean;
 }> = (props) => {
   const scheme = useColor(props.color);
   const [primary, variant, text] = useColorVariant(scheme, props.active);
 
   return (
-    <StyledButton text={text} primary={primary} primaryVariant={variant} onClick={() => props.onClick()}>
+    <StyledButton
+      text={text}
+      primary={primary}
+      primaryVariant={variant}
+      onClick={() => !props.locked && props.onClick()}
+      locked={!!props.locked}
+    >
       {props.children}
     </StyledButton>
   );

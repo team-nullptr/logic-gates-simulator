@@ -1,7 +1,7 @@
-import { Tool } from "./Tool";
-import { Interaction } from "../types/Interaction";
-import { Vector } from "../../../common/Vector";
-import { add, subtract } from "../../../common/utils";
+import { Tool } from './Tool';
+import { Interaction } from '../types/Interaction';
+import { Vector } from '../../../common/Vector';
+import { add, subtract } from '../../../common/utils';
 
 export class PanTool extends Tool {
   private previous!: Vector;

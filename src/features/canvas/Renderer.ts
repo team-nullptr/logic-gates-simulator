@@ -1,10 +1,11 @@
-import { Adapter } from "../editor/Adapter";
-import { renderConnection } from "./renderers/connection";
+import { Adapter } from '../editor/Adapter';
+import { renderConnection } from './renderers/connection';
 
 export class Renderer {
   constructor(private readonly source: Adapter) {}
 
   render(ctx: CanvasRenderingContext2D) {
+    this.source.updateButtons();
     this.renderConnections(ctx);
     this.renderGates(ctx);
   }
@@ -20,7 +21,7 @@ export class Renderer {
       const [{ group, at }, end] = connecting;
       const start = group.items[at];
 
-      if (group.side === "output") {
+      if (group.side === 'output') {
         renderConnection([start, end], ctx);
       } else {
         renderConnection([end, start], ctx);

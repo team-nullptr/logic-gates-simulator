@@ -91,16 +91,18 @@ export class InteractionManager {
     this.tool.handleMouseUp(event);
   };
 
-  private handleDragOver = (event: DragEvent) => {
+  private handleDragOver = (event: DragEvent): void => {
     if (!event.dataTransfer) return;
     event.dataTransfer.dropEffect = 'copy';
     event.preventDefault();
   };
 
-  private handleDrop = (event: DragEvent) => {
+  private handleDrop = (event: DragEvent): void => {
     if (!event.dataTransfer) return;
 
     const data = event.dataTransfer.getData('gate/json');
+    if (!data) return;
+
     const payload = JSON.parse(data);
 
     if (!payload || !isGateDataTransfer(payload)) return;
@@ -110,6 +112,6 @@ export class InteractionManager {
     const mouse: Vector = [event.offsetX, event.offsetY];
     const corner = subtract(mouse, offset);
 
-    this.source.add(id, corner);
+    this.source.addGate(id, corner);
   };
 }

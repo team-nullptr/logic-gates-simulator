@@ -1,9 +1,11 @@
 import { Circuit, SerializedCircuit } from './Circuit';
 import { isBaseGate } from './elements/BaseGate';
 import { v4 as uuid } from 'uuid';
-import { ElementFactory, PortType } from './elements/ElementFactory';
-import { SerializedCustomGate } from './elements/CustomGate';
+import { ElementFactory } from './elements/ElementFactory';
+import { CustomGate, SerializedCustomGate } from './elements/CustomGate';
 import { Gate } from './elements/Gate';
+import { PortType } from './elements/Port';
+import { Port } from './elements/Port';
 
 export interface ConnectRequest {
   emitterId: string;
@@ -19,9 +21,7 @@ export interface SerializedSimulator {
 
 export class Simulator {
   readonly createdGates = new Map<string, SerializedCustomGate>();
-  readonly subscribers = new Map<string, () => void>();
 
-  // TODO: THIS IS REALLY BAD
   meta:
     | { mode: 'GATE_EDIT'; editedGate: string; circuit: Circuit; prev: SerializedCircuit }
     | { mode: 'PROJECT_EDIT'; circuit: Circuit } = {
@@ -47,20 +47,6 @@ export class Simulator {
     return simulator;
   }
 
-  subscribe(subscriber: () => void) {
-    const id = uuid();
-    this.subscribers.set(id, subscriber);
-    return id;
-  }
-
-  private notify() {
-    this.subscribers.forEach((subscriber) => subscriber());
-  }
-
-  unsubscribe(id: string) {
-    this.subscribers.delete(id);
-  }
-
   createGate(name: string, color: string) {
     if (this.meta.mode === 'GATE_EDIT') throw new Error('Cannot create a gate while in GATE_EDIT mode');
 
@@ -71,8 +57,6 @@ export class Simulator {
     const type = uuid();
     this.createdGates.set(type, { type, name, color, circuit: serialized });
     this.circuit = new Circuit();
-
-    this.notify();
   }
 
   editGate(type: string) {
@@ -118,38 +102,40 @@ export class Simulator {
     if (!gate) throw new Error(`Element does not exist: ${type}`);
 
     this.createdGates.set(type, { ...gate, name });
-    this.notify();
   }
 
   addGate(type: string) {
     const id = uuid();
+    let gate: Gate | CustomGate;
 
     // TODO: Change based on current mode
-    if (isBaseGate(type)) this.circuit.gates.set(id, ElementFactory.createBaseGate(id, type));
-    else this.circuit.gates.set(id, ElementFactory.createCustomGate(id, type, this.createdGates));
+    if (isBaseGate(type)) gate = ElementFactory.createBaseGate(id, type);
+    else gate = ElementFactory.createCustomGate(id, type, this.createdGates);
 
-    return id;
+    this.circuit.gates.set(id, gate);
+    return gate;
   }
 
   // TODO: Maybe it would be better to compute type based on connectors value.
   addPort(type: PortType, connectors = 1) {
     const id = uuid();
 
+    let port: Port;
     switch (type) {
       case 'input':
-      case 'input-group':
-        this.circuit.inputs.set(id, ElementFactory.createPort(id, type, connectors));
+        port = ElementFactory.createPort(id, type, connectors);
+        this.circuit.inputs.set(id, port);
         break;
       case 'output':
-      case 'output-group':
-        this.circuit.outputs.set(id, ElementFactory.createPort(id, type, connectors));
+        port = ElementFactory.createPort(id, type, connectors);
+        this.circuit.outputs.set(id, port);
         break;
     }
 
-    return id;
+    return port;
   }
 
-  toggleInput(id: string, index = 0) {
+  toggleInput(id: string, index: number) {
     const input = this.circuit.inputs.get(id);
     if (!input) throw new Error(`Element not found: ${id}`);
 

@@ -4,9 +4,10 @@ import { GitMerge, Home, Plus } from 'react-feather';
 
 interface EditorNavigationProps {
   title: string;
+  onCreateGate: () => void;
 }
 
-export const EditorNavigation = ({ title }: EditorNavigationProps) => {
+export const EditorNavigation = ({ title, onCreateGate }: EditorNavigationProps) => {
   const navigate = useNavigate();
 
   return (
@@ -17,7 +18,7 @@ export const EditorNavigation = ({ title }: EditorNavigationProps) => {
         {
           icon: Plus,
           text: 'Create gate',
-          onClick: () => console.log('create gate clicked')
+          onClick: onCreateGate
         },
         {
           icon: GitMerge,

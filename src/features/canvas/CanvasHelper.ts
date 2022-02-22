@@ -1,4 +1,4 @@
-import { Vector } from "../../common/Vector";
+import { Vector } from '../../common/Vector';
 
 type RenderListener = (ctx: CanvasRenderingContext2D) => void;
 
@@ -10,7 +10,8 @@ export class CanvasHelper {
   private running = true;
 
   constructor(private readonly canvas: HTMLCanvasElement) {
-    this.ctx = canvas.getContext("2d")!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.ctx = canvas.getContext('2d')!;
     this.initialize();
     this.render();
   }
@@ -18,14 +19,14 @@ export class CanvasHelper {
   destroy(): void {
     this.running = false;
     this.listeners.clear();
-    removeEventListener("resize", this.resize);
+    removeEventListener('resize', this.resize);
   }
 
-  addEventListener(type: "render", fn: RenderListener): void {
+  addEventListener(type: 'render', fn: RenderListener): void {
     this.listeners.add(fn);
   }
 
-  removeEventListener(type: "render", fn: RenderListener): void {
+  removeEventListener(type: 'render', fn: RenderListener): void {
     this.listeners.delete(fn);
   }
 
@@ -42,7 +43,7 @@ export class CanvasHelper {
   };
 
   private initialize(): void {
-    addEventListener("resize", this.resize);
+    addEventListener('resize', this.resize);
     this.resize();
   }
 
