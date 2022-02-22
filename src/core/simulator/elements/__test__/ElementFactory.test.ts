@@ -1,16 +1,15 @@
 import { baseGates, ElementFactory } from '../ElementFactory';
 import { SerializedCustomGate } from '../CustomGate';
+import { PortType } from '../Port';
 
 describe('Element factory creates elements properly', () => {
   test.each([
     { type: 'input', connectors: 1 },
-    { type: 'input-group', connectors: 4 },
-    { type: 'output-group', connectors: 4 },
     { type: 'output', connectors: 4 }
   ])('Creates port of type %i properly', ({ type, connectors }) => {
     const id = '1';
 
-    const input = ElementFactory.createPort(id, type, connectors);
+    const input = ElementFactory.createPort(id, type as PortType, connectors);
 
     expect(input.id).toEqual(id);
     expect(input.type).toEqual(type);
@@ -39,12 +38,11 @@ describe('Element factory creates elements properly', () => {
         {
           type: 'circuit',
           color: '#ffddff',
+          name: 'test',
           circuit: {
-            inputs: [
-              { id: '1', name: '', type: 'input', connectors: 1, connections: [{ receiverId: '2', from: 0, to: 0 }] }
-            ],
+            inputs: [{ id: '1', name: '', connectors: 1, connections: [{ receiverId: '2', from: 0, to: 0 }] }],
             gates: [{ id: '2', type: 'not', connections: [{ receiverId: '3', from: 0, to: 0 }] }],
-            outputs: [{ id: '3', name: '', type: 'output', connectors: 1 }]
+            outputs: [{ id: '3', name: '', connectors: 1 }]
           }
         }
       ]

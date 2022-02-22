@@ -29,11 +29,11 @@ describe('Simulator works properly', () => {
     const c = simulator.addGate('and');
     const d = simulator.addPort('output');
 
-    simulator.remove(c);
+    simulator.remove(c.id);
 
-    expect(simulator.circuit.find(c)).toBeUndefined();
-    expect(simulator.circuit.find(a)?.connections.length).toEqual(0);
-    expect(simulator.circuit.find(b)?.connections.length).toEqual(0);
-    expect(simulator.circuit.find(d)?.states[0] && (simulator.circuit.find(d) as Gate).inputs[0]).toEqual(false);
+    expect(() => simulator.circuit.find(c.id)).toThrow();
+    expect(simulator.circuit.find(a.id)?.connections.length).toEqual(0);
+    expect(simulator.circuit.find(b.id)?.connections.length).toEqual(0);
+    expect(simulator.circuit.find(d.id)?.states[0] && (simulator.circuit.find(d.id) as Gate).inputs[0]).toEqual(false);
   });
 });

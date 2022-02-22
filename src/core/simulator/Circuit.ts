@@ -107,18 +107,16 @@ export class Circuit {
    */
   serialize(): SerializedCircuit {
     return {
-      inputs: [...this.inputs.values()].map(({ id, type, name, connections, states }) => ({
+      inputs: [...this.inputs.values()].map(({ id, name, connections, states }) => ({
         id,
         name,
-        type: type as 'input',
         connections,
         connectors: states.length
       })),
       gates: [...this.gates.values()].map(({ id, type, connections }) => ({ id, type, connections })),
-      outputs: [...this.outputs.values()].map(({ id, type, name, states }) => ({
+      outputs: [...this.outputs.values()].map(({ id, name, states }) => ({
         id,
         name,
-        type: type as 'output',
         connectors: states.length
       }))
     };
