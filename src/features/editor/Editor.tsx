@@ -4,7 +4,7 @@ import { Canvas } from '../canvas/Canvas';
 import { Adapter } from './Adapter';
 import { Controls } from './Controls';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Project } from '../../core/project-manager/ProjectManager';
+import { Project, projectManager } from '../../core/project-manager/ProjectManager';
 import { EditorNavigation } from './EditorNavigation';
 import { Connectors } from './Connectors';
 import { Button } from '../canvas/types/Button';
@@ -15,8 +15,8 @@ export const Editor = ({ project }: { project: Project }) => {
 
   const adapter = useMemo(() => new Adapter(project, scrollsRef), []);
 
-  const [inputs, setInputs] = useState<Button[]>([]);
-  const [outputs, setOutputs] = useState<Button[]>([]);
+  const [inputs, setInputs] = useState<Button[]>(adapter.inputs);
+  const [outputs, setOutputs] = useState<Button[]>(adapter.outputs);
 
   useEffect(() => {
     const subscriber = () => {
@@ -26,6 +26,15 @@ export const Editor = ({ project }: { project: Project }) => {
 
     adapter.subscribe(subscriber);
     return () => adapter.unsubscribe(subscriber);
+  }, []);
+
+  useEffect(() => {
+    const subscriber = () => {
+      projectManager.saveProject(project);
+    };
+
+    project.simulator.subscribe(subscriber);
+    return () => project.simulator.unsubscribe(subscriber);
   }, []);
 
   const scrollHandler = (side: 'inputs' | 'outputs', value: number) => {

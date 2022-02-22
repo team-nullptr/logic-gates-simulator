@@ -67,10 +67,13 @@ class ProjectManager {
 
     const { modifiedAt, simulator, ...meta } = serializedProject;
 
+    const _simulator = Simulator.deserialize(simulator);
+    _simulator.circuit.simulate();
+
     return {
       ...meta,
       modifiedAt: new Date(modifiedAt),
-      simulator: Simulator.deserialize(simulator)
+      simulator: _simulator
     };
   }
 

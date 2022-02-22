@@ -18,23 +18,64 @@ export class Adapter {
   connecting: [Connector, Vector] | undefined;
   readonly subscribers = new Set<() => void>();
 
-  readonly gates: Block[] = [];
+  readonly gates = new Map<string, Block>();
   readonly connections: Connection[] = [];
-  private readonly _buttons: Button[] = [];
+
+  private readonly _buttons = new Map<string, Button>();
 
   constructor(
     private readonly project: Project,
     readonly scrolls: MutableRefObject<{ inputs: number; outputs: number }>
-  ) {}
+  ) {
+    const { gates, inputs, outputs } = project.simulator.circuit;
+
+    //TODO: add project's meta to meta project.meta.name etc
+    //TODO: position the gates (maybe abstract that to separate func vvvvvvv)
+    for (const gate of gates.values()) {
+      const { id, color, inputs, states, name } = gate;
+      const block = new Block(id, name, color, [0, 0], inputs, states);
+      this.gates.set(id, block);
+    }
+
+    for (const input of inputs.values()) {
+      const { id, states, name } = input;
+      const button = new Button(id, [0, 0], 'input', states, name);
+      this._buttons.set(id, button);
+    }
+
+    for (const output of outputs.values()) {
+      const { id, states, name } = output;
+      const button = new Button(id, [0, 0], 'output', states, name);
+      this._buttons.set(id, button);
+    }
+
+    for (const element of [...inputs.values(), ...gates.values()]) {
+      for (const connection of element.connections) {
+        const emitter = this.gates.get(element.id)?.outputs ?? this._buttons.get(element.id)?.connectors;
+        const target =
+          this._buttons.get(connection.receiverId)?.connectors ?? this.gates.get(connection.receiverId)?.inputs;
+
+        if (!emitter || !target) continue;
+
+        this.connections.push({
+          from: { group: emitter, at: connection.from },
+          to: { group: target, at: connection.to }
+        });
+      }
+    }
+  }
 
   get available(): Prototype[] {
     const gates = this.project.simulator.createdGates;
-    return [...gates.values(), ...baseGates.values()].map((it) => ({ text: it.type, color: it.color }));
+    return [...gates.values(), ...baseGates.values()].map((it) => ({
+      text: it.type,
+      color: it.color
+    }));
   }
 
   get buttons(): Button[] {
     this.updateButtons();
-    return this._buttons;
+    return [...this._buttons.values()];
   }
 
   get inputs(): Button[] {
@@ -49,7 +90,7 @@ export class Adapter {
     const top = [0, 0];
     const scrolls = this.scrolls.current;
 
-    for (const button of this._buttons) {
+    for (const button of this._buttons.values()) {
       const position: Vector = [0, 0];
 
       if (button.side === 'input') {
@@ -76,11 +117,11 @@ export class Adapter {
 
   connect(connection: Connection) {
     const output =
-      this.gates.find((it) => it.outputs === connection.from.group) ??
+      [...this.gates.values()].find((it) => it.outputs === connection.from.group) ??
       this.inputs.find((it) => it.connectors === connection.from.group);
 
     const input =
-      this.gates.find((it) => it.inputs === connection.to.group) ??
+      [...this.gates.values()].find((it) => it.inputs === connection.to.group) ??
       this.outputs.find((it) => it.connectors === connection.to.group);
 
     if (!output || !input) return;
@@ -104,15 +145,15 @@ export class Adapter {
     const { id, color, inputs, states, name } = simulator.addGate(type);
 
     const block = new Block(id, name, color, snapped, inputs, states);
-    this.gates.push(block);
+    this.gates.set(id, block);
   }
 
   addPort(type: PortType, connectors: number): void {
     const { simulator } = this.project;
-    const { id, name, states } = simulator.addPort(type, connectors);
+    const { id, states, name } = simulator.addPort(type, connectors);
 
     const button = new Button(id, [0, 0], type, states, name);
-    this.buttons.push(button);
+    this._buttons.set(id, button);
     this.notify();
   }
 
