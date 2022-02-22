@@ -17,19 +17,13 @@ export interface SerializedSimulator {
   createdGates: [string, SerializedCustomGate][];
 }
 
-// TODO: Gates needs their own id in addition to their name (type)
-
 export class Simulator {
   readonly createdGates = new Map<string, SerializedCustomGate>();
+  readonly subscribers = new Map<string, () => void>();
 
   // TODO: THIS IS REALLY BAD
   meta:
-    | {
-        mode: 'GATE_EDIT';
-        editedGate: string;
-        circuit: Circuit;
-        prev: SerializedCircuit;
-      }
+    | { mode: 'GATE_EDIT'; editedGate: string; circuit: Circuit; prev: SerializedCircuit }
     | { mode: 'PROJECT_EDIT'; circuit: Circuit } = {
     mode: 'PROJECT_EDIT',
     circuit: new Circuit()
@@ -53,16 +47,32 @@ export class Simulator {
     return simulator;
   }
 
-  createGate(type: string, color: string) {
+  subscribe(subscriber: () => void) {
+    const id = uuid();
+    this.subscribers.set(id, subscriber);
+    return id;
+  }
+
+  private notify() {
+    this.subscribers.forEach((subscriber) => subscriber());
+  }
+
+  unsubscribe(id: string) {
+    this.subscribers.delete(id);
+  }
+
+  createGate(name: string, color: string) {
     if (this.meta.mode === 'GATE_EDIT') throw new Error('Cannot create a gate while in GATE_EDIT mode');
 
-    // FIXME: Disallow adding two gates with the same name
     const serialized = this.circuit.serialize();
     if (serialized.inputs.length === 0) throw new Error('Gate must have at least one input');
     if (serialized.outputs.length === 0) throw new Error('Gate must have at least one output');
 
-    this.createdGates.set(type, { type, color, circuit: serialized });
+    const type = uuid();
+    this.createdGates.set(type, { type, name, color, circuit: serialized });
     this.circuit = new Circuit();
+
+    this.notify();
   }
 
   editGate(type: string) {
@@ -98,6 +108,17 @@ export class Simulator {
       mode: 'PROJECT_EDIT',
       circuit: Circuit.deserialize(this.meta.prev, this.createdGates)
     };
+  }
+
+  renameCreatedGate(type: string, name: string) {
+    if (this.meta.mode === 'GATE_EDIT' && this.meta.editedGate === type)
+      throw new Error("Cannot edit gate's name while chaging it's definition");
+
+    const gate = this.createdGates.get(type);
+    if (!gate) throw new Error(`Element does not exist: ${type}`);
+
+    this.createdGates.set(type, { ...gate, name });
+    this.notify();
   }
 
   addGate(type: string) {
@@ -137,7 +158,6 @@ export class Simulator {
   }
 
   renamePort(id: string, name: string) {
-    // TODO: could't it be this.circuit.find?
     const port = this.circuit.inputs.get(id) || this.circuit.outputs.get(id);
     if (!port) throw new Error('Port not found');
     port.name = name;
@@ -145,9 +165,7 @@ export class Simulator {
 
   connect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);
-
-    if (!emitter || !this.circuit.find(receiverId))
-      throw new Error(`Element not found: ${emitter ? emitterId : receiverId}`);
+    this.circuit.find(receiverId);
 
     emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();
@@ -158,10 +176,7 @@ export class Simulator {
    */
   disconnect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);
-    if (!emitter) throw new Error(`Element not found: ${emitterId}`);
-
     const receiver = this.circuit.find(receiverId);
-    if (!receiver) throw new Error(`Element not found: ${receiverId}`);
 
     emitter.connections = emitter.connections.filter(
       (connection) => connection.receiverId != receiverId && connection.from == from && connection.to == to
@@ -175,7 +190,6 @@ export class Simulator {
 
   remove(id: string): void {
     const element = this.circuit.find(id);
-    if (!element) throw new Error(`Element not found: ${id}`);
 
     // remove all connections to the element.
     this.circuit.elements.forEach((element) => {
@@ -185,7 +199,6 @@ export class Simulator {
     // remove all element's connections
     element.connections.forEach(({ receiverId, to }) => {
       const receiver = this.circuit.find(receiverId);
-      if (!receiver) throw new Error(`Element not found: ${receiver}`);
 
       if (receiver instanceof Gate) receiver.inputs[to] = false;
       else receiver.states[to] = false;

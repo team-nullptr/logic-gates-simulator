@@ -77,10 +77,12 @@ export class Circuit {
     });
   }
 
-  find(id: string): Port | Gate | undefined {
-    return [...this.inputs.values(), ...this.gates.values(), ...this.outputs.values()].find(
+  find(id: string): Port | Gate {
+    const element = [...this.inputs.values(), ...this.gates.values(), ...this.outputs.values()].find(
       (element) => element.id === id
     );
+    if (!element) throw new Error(`Element not found ${id}`);
+    return element;
   }
 
   /**

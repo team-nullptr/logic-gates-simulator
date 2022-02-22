@@ -87,17 +87,9 @@ export const App = () => {
     console.log(simulator.circuit);
 
     simulator.createGate('test', '#ff00ff');
-    simulator.addGate('test');
+    simulator.addGate([...simulator.createdGates.keys()][0]);
 
-    console.log(simulator.circuit);
-
-    simulator.editGate('test');
-    simulator.renamePort(b, 'B');
-
-    console.log(simulator.circuit);
-
-    simulator.confirmEdit();
-
+    console.log(simulator);
     console.log(simulator.circuit);
   }, []);
 
