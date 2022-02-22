@@ -14,13 +14,12 @@ let interactionManager: InteractionManager;
 const setup = (canvas: HTMLCanvasElement, source: Adapter) => {
   renderer = new Renderer(source);
 
-  canvasHelper = new CanvasHelper(canvas);
+  canvasHelper = new CanvasHelper(canvas, source);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   interactionManager = new InteractionManager(canvas.getContext('2d')!, source);
 
   canvasHelper.addEventListener('render', (ctx) => {
     source.size = [canvas.offsetWidth, canvas.offsetHeight];
-    canvasHelper.offset = source.offset;
     renderer.render(ctx);
   });
 

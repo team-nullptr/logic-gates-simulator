@@ -1,15 +1,13 @@
-import { Vector } from '../../common/Vector';
+import { Adapter } from '../editor/Adapter';
 
 type RenderListener = (ctx: CanvasRenderingContext2D) => void;
 
 export class CanvasHelper {
-  offset: Vector = [0, 0];
-
   private readonly ctx: CanvasRenderingContext2D;
   private readonly listeners = new Set<RenderListener>();
   private running = true;
 
-  constructor(private readonly canvas: HTMLCanvasElement) {
+  constructor(private readonly canvas: HTMLCanvasElement, private readonly source: Adapter) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.ctx = canvas.getContext('2d')!;
     this.initialize();
@@ -33,11 +31,11 @@ export class CanvasHelper {
   private render = (): void => {
     if (!this.running) return;
 
-    const [e, f] = this.offset;
+    const [e, f] = this.source.offset;
     this.ctx.setTransform(1, 0, 0, 1, e, f);
     this.ctx.clearRect(-e, -f, this.canvas.width, this.canvas.height);
 
-    this.listeners.forEach((l) => l(this.ctx));
+    this.listeners.forEach((listener) => listener(this.ctx));
 
     requestAnimationFrame(this.render);
   };
