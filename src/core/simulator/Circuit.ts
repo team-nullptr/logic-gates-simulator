@@ -90,7 +90,9 @@ export class Circuit {
     if (callStack.has(element.id)) return;
     callStack.add(element.id);
 
-    element.connections.forEach(({ receiverId, from, to }) => {
+    element.connections.forEach((conn) => {
+      const { receiverId, from, to } = conn;
+
       const receiver = this.find(receiverId);
       if (!receiver) throw new Error(`Element not found ${receiverId}`);
 
