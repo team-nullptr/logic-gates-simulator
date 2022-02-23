@@ -1,9 +1,16 @@
 import { Vector } from '../../../common/Vector';
 import { getDistance } from '../utils';
 import Color from 'color';
+import { Block } from './Block';
+import { Button } from './Button';
 
 export class Connectors {
-  constructor(public position: Vector, readonly side: 'input' | 'output', readonly states: boolean[]) {}
+  constructor(
+    readonly parent: Block | Button,
+    public position: Vector,
+    readonly side: 'input' | 'output',
+    readonly states: boolean[]
+  ) {}
 
   get items(): Vector[] {
     const [x, y] = this.position;

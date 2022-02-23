@@ -1,11 +1,11 @@
-import { Vector } from "../../../common/Vector";
-import { Area } from "./Area";
-import { isOver } from "../utils";
-import { Connector } from "./Connector";
-import { Connectors } from "./Connectors";
-import { Target } from "./Target";
-import { renderGate } from "../renderers/gate";
-import { multiply } from "../../../common/utils";
+import { Vector } from '../../../common/Vector';
+import { Area } from './Area';
+import { isOver } from '../utils';
+import { Connector } from './Connector';
+import { Connectors } from './Connectors';
+import { Target } from './Target';
+import { renderGate } from '../renderers/gate';
+import { multiply } from '../../../common/utils';
 
 export class Block {
   readonly inputs: Connectors;
@@ -21,14 +21,13 @@ export class Block {
     inputs: boolean[],
     outputs: boolean[]
   ) {
-    this.inputs = new Connectors([0, 0], "input", inputs);
-    this.outputs = new Connectors([0, 0], "output", outputs);
+    this.inputs = new Connectors(this, [0, 0], 'input', inputs);
+    this.outputs = new Connectors(this, [0, 0], 'output', outputs);
     this.move(position);
   }
 
   get size(): Vector {
-    const height =
-      Math.max(this.inputs.states.length, this.outputs.states.length, 1) * 48;
+    const height = Math.max(this.inputs.states.length, this.outputs.states.length, 1) * 48;
     return [96, height];
   }
 

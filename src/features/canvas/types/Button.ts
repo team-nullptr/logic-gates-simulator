@@ -15,7 +15,7 @@ export class Button {
     public slug?: string
   ) {
     const connectorSide = side === 'input' ? 'output' : 'input';
-    this.connectors = new Connectors([0, 0], connectorSide, state);
+    this.connectors = new Connectors(this, [0, 0], connectorSide, state);
     this.type = state.length === 1 ? 'single' : 'compound';
     this.move(position);
   }

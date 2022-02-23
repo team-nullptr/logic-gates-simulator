@@ -5,6 +5,9 @@ import { Tool } from './tools/Tool';
 import { Interaction } from './types/Interaction';
 import { Target } from './types/Target';
 import { isGateDataTransfer } from '../../common/GateDataTransfer';
+import { Block } from './types/Block';
+import { collides } from './renderers/connection';
+import { isConnector } from './types/Connector';
 
 type InteractionListener = (interaction: Interaction) => void;
 
@@ -40,6 +43,7 @@ export class InteractionManager {
   private resolve(at: Vector): Target {
     const gates = this.source.gates.values();
     const buttons = this.source.buttons.values();
+    const connections = this.source.connections;
 
     for (const button of buttons) {
       const connector = button.collides(at);
@@ -51,6 +55,13 @@ export class InteractionManager {
     for (const block of gates) {
       const result = block.collides(at);
       if (result) return result;
+    }
+
+    for (const connection of connections) {
+      const { from, to } = connection;
+      const start = from.group.items[from.at];
+      const end = to.group.items[to.at];
+      if (collides(start, end, at)) return connection;
     }
   }
 
@@ -68,17 +79,30 @@ export class InteractionManager {
     return { mouse, position, target };
   }
 
-  private handleMouseDown = ({ offsetX, offsetY }: MouseEvent): void => {
-    this.pressed = true;
-
+  private handleMouseDown = ({ offsetX, offsetY, button, altKey }: MouseEvent): void => {
     const interaction = this.constructMouseEvent([offsetX, offsetY]);
+
+    const deleteKey = button === 1 || (button === 0 && altKey);
+    const { target } = interaction;
+
+    if (target && deleteKey) {
+      if (target instanceof Block) {
+        this.source.removeGate(target.id);
+      } else if (isConnector(target)) {
+        this.source.disconnectFrom(target);
+      } else {
+        this.source.removeConnection(target);
+      }
+
+      return;
+    }
+
+    this.pressed = true;
     this.listeners.forEach((listener) => listener(interaction));
   };
 
   private handleMouseMove = ({ offsetX, offsetY }: MouseEvent): void => {
-    if (!this.pressed) return;
-    if (!this.tool) return;
-
+    if (!this.pressed || !this.tool) return;
     const event = this.constructMouseEvent([offsetX, offsetY]);
     this.tool.handleMouseMove(event);
   };
@@ -104,7 +128,6 @@ export class InteractionManager {
     if (!data) return;
 
     const payload = JSON.parse(data);
-
     if (!payload || !isGateDataTransfer(payload)) return;
 
     const { id, offset } = payload;
