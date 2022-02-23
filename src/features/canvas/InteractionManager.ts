@@ -5,6 +5,7 @@ import { Tool } from './tools/Tool';
 import { Interaction } from './types/Interaction';
 import { Target } from './types/Target';
 import { isGateDataTransfer } from '../../common/GateDataTransfer';
+import { Block } from './types/Block';
 
 type InteractionListener = (interaction: Interaction) => void;
 
@@ -68,10 +69,23 @@ export class InteractionManager {
     return { mouse, position, target };
   }
 
-  private handleMouseDown = ({ offsetX, offsetY }: MouseEvent): void => {
-    this.pressed = true;
-
+  private handleMouseDown = ({ offsetX, offsetY, button, altKey }: MouseEvent): void => {
     const interaction = this.constructMouseEvent([offsetX, offsetY]);
+
+    const deleteKey = button === 1 || (button === 0 && altKey);
+    const { target } = interaction;
+
+    if (target && deleteKey) {
+      if (target instanceof Block) {
+        this.source.removeGate(target.id);
+      } else {
+        this.source.disconnectFrom(target);
+      }
+
+      return;
+    }
+
+    this.pressed = true;
     this.listeners.forEach((listener) => listener(interaction));
   };
 

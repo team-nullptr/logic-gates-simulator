@@ -10,6 +10,8 @@ import { snapToGrid } from '../canvas/utils';
 import { Project } from '../../core/project-manager/ProjectManager';
 import { baseGates } from '../../core/simulator/elements/ElementFactory';
 import { PortType } from '../../core/simulator/elements/Port';
+import { Connectors } from '../canvas/types/Connectors';
+import { ConnectRequest } from '../../core/simulator/Simulator';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -87,6 +89,11 @@ export class Adapter {
     return this.buttons.filter((it) => it.side === 'output');
   }
 
+  private static connectionToConnectRequest(connection: Connection): ConnectRequest {
+    const { from, to } = connection;
+    return { emitterId: from.group.parent.id, receiverId: to.group.parent.id, from: from.at, to: to.at };
+  }
+
   updateButtons(): void {
     const top = [0, 0];
     const scrolls = this.scrolls.current;
@@ -117,22 +124,8 @@ export class Adapter {
   }
 
   connect(connection: Connection) {
-    const output =
-      [...this.gates.values()].find((it) => it.outputs === connection.from.group) ??
-      this.inputs.find((it) => it.connectors === connection.from.group);
-
-    const input =
-      [...this.gates.values()].find((it) => it.inputs === connection.to.group) ??
-      this.outputs.find((it) => it.connectors === connection.to.group);
-
-    if (!output || !input) return;
-
-    this.project.simulator.connect({
-      emitterId: output.id,
-      receiverId: input.id,
-      from: connection.from.at,
-      to: connection.to.at
-    });
+    const request = Adapter.connectionToConnectRequest(connection);
+    this.project.simulator.connect(request);
 
     this.connections.push(connection);
     this.notify();
@@ -157,6 +150,46 @@ export class Adapter {
 
     const block = new Block(id, name, color, snapped, inputs, states);
     this.gates.set(id, block);
+  }
+
+  removeGate(id: string): void {
+    const gate = this.gates.get(id);
+    if (!gate) return;
+
+    this.disconnectAll(gate.inputs);
+    this.disconnectAll(gate.outputs);
+
+    this.project.simulator.remove(id);
+    this.gates.delete(id);
+  }
+
+  disconnectFrom(connector: Connector): void {
+    const connected = new Set<Connection>();
+
+    const compareConnectors = (a: Connector, b: Connector) => {
+      return a.group === b.group && a.at === b.at;
+    };
+
+    for (const connection of this.connections) {
+      const { from, to } = connection;
+      const isConnected = compareConnectors(from, connector) || compareConnectors(to, connector);
+      if (isConnected) connected.add(connection);
+    }
+
+    this.connections = this.connections.filter((it) => !connected.has(it));
+
+    for (const connection of connected) {
+      const request = Adapter.connectionToConnectRequest(connection);
+      this.project.simulator.disconnect(request);
+    }
+
+    this.notify();
+  }
+
+  disconnectAll(connectors: Connectors): void {
+    for (const i in connectors.states) {
+      this.disconnectFrom({ group: connectors, at: parseInt(i) });
+    }
   }
 
   addPort(type: PortType, connectors: number): void {
