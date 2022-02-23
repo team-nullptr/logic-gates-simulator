@@ -163,6 +163,12 @@ export class Adapter {
     this.gates.delete(id);
   }
 
+  removeConnection(connection: Connection): void {
+    this.connections = this.connections.filter((it) => it !== connection);
+    const request = Adapter.connectionToConnectRequest(connection);
+    this.project.simulator.disconnect(request);
+  }
+
   disconnectFrom(connector: Connector): void {
     const connected = new Set<Connection>();
 

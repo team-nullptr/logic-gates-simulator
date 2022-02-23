@@ -1,13 +1,14 @@
-import { Vector } from "../../../common/Vector";
-import { Area } from "../types/Area";
-import { ToolType } from "../tools/ToolFactory";
-import { Block } from "../types/Block";
-import { Target } from "../types/Target";
+import { Vector } from '../../../common/Vector';
+import { Area } from '../types/Area';
+import { ToolType } from '../tools/ToolFactory';
+import { Block } from '../types/Block';
+import { Target } from '../types/Target';
+import { isConnector } from '../types/Connector';
 
 export const findToolName = (target: Target): ToolType => {
-  if (target === undefined) return "pan";
-  if (target instanceof Block) return "move";
-  return "connect";
+  if (target instanceof Block) return 'move';
+  if (isConnector(target)) return 'connect';
+  return 'pan';
 };
 
 export const isOver = (point: Vector, area: Area): boolean => {
