@@ -127,25 +127,30 @@ export class Adapter {
 
   connect(connection: Connection) {
     const request = Adapter.connectionToConnectRequest(connection);
-    this.project.simulator.connect(request);
 
-    this.connections.push(connection);
-    this.notify();
+    try {
+      this.project.simulator.connect(request);
+      this.connections.push(connection);
+      this.notify();
+    } catch (error) {
+      if (!(error instanceof UserError)) return;
+      messageBus.push({ type: 'error', body: error.message });
+    }
   }
 
   createGate(name: string, color: string) {
     try {
       this.project.simulator.createGate(name, color);
+
+      this.connections = [];
+      this.gates.clear();
+      this._buttons.clear();
+
+      this.notify();
     } catch (error) {
       if (!(error instanceof UserError)) return;
       messageBus.push({ type: 'error', body: error.message });
     }
-
-    this.connections = [];
-    this.gates.clear();
-    this._buttons.clear();
-
-    this.notify();
   }
 
   removeCreatedGate(type: string): void {
@@ -237,6 +242,7 @@ export class Adapter {
   toggleInput(id: string, index: number) {
     this.project.simulator.toggleInput(id, index);
     this.notify();
+    console.log(this.project.simulator.circuit);
   }
 
   private notify() {

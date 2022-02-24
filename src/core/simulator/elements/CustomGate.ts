@@ -27,21 +27,25 @@ export class CustomGate extends Gate {
   }
 
   run() {
-    [...this.circuit.inputs.values()].forEach((input, index) => {
-      input.states = this.inputs.slice(index, index + input.states.length);
+    let currentIndex = 0;
+
+    [...this.circuit.inputs.values()].forEach((input) => {
+      input.states = this.inputs.slice(currentIndex, currentIndex + input.states.length);
+      currentIndex += input.states.length;
     });
 
     this.circuit.simulate();
 
+    currentIndex = 0;
     let changed = false;
-    let currentIndex = 0;
+
     [...this.circuit.outputs.values()].forEach(({ states }) => {
-      for (let i = currentIndex; i < states.length; i++) {
+      for (let i = currentIndex; i < currentIndex + states.length; i++) {
         const previous = this.states[i];
         this.states[i] = states[i - currentIndex];
         changed = changed || previous !== this.states[i];
       }
-      currentIndex = states.length;
+      currentIndex += states.length;
     });
 
     return changed;

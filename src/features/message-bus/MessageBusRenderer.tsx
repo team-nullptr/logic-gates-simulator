@@ -1,8 +1,8 @@
-import styles from './MessageBusRenderer.module.scss';
 import { useEffect, useState } from 'react';
 import { messageBus } from './MessageBus';
 import { Message } from './MessageBus';
 import { MessageBusCard } from './MessageBusCard';
+import { createPortal } from 'react-dom';
 
 export const MessageBusRenderer = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -15,11 +15,13 @@ export const MessageBusRenderer = () => {
     return () => messageBus.unsubscribe(id);
   }, []);
 
-  return (
-    <div className={styles.wrapper}>
+  return createPortal(
+    <>
       {messages.map((message) => (
         <MessageBusCard key={message.id} message={message} />
       ))}
-    </div>
+    </>,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    document.querySelector('#message-bus')!
   );
 };

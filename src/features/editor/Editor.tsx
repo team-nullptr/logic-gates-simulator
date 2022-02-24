@@ -9,10 +9,14 @@ import { Connectors } from './Connectors';
 import { Button } from '../canvas/types/Button';
 import { GateEditorNavigation } from './GateEditorNavigation';
 import { EditorNavigation } from './EditorNavigation';
+import { CreateGateForm, GateCreateHandler } from './CreateGateForm';
+import { messageBus } from '../message-bus/MessageBus';
 
 export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
   const scrollsRef = useRef(scrolls);
+
+  const [createGateFormOpen, setCreateGateFormOpen] = useState(false);
 
   const adapter = useMemo(() => new Adapter(project, scrollsRef), []);
 
@@ -24,8 +28,8 @@ export const Editor = ({ project }: { project: Project }) => {
       setInputs(adapter.inputs);
       setOutputs(adapter.outputs);
     };
-
     adapter.subscribe(subscriber);
+
     return () => adapter.unsubscribe(subscriber);
   }, []);
 
@@ -33,8 +37,8 @@ export const Editor = ({ project }: { project: Project }) => {
     const subscriber = () => {
       projectManager.saveProject(project);
     };
-
     project.simulator.subscribe(subscriber);
+
     return () => project.simulator.unsubscribe(subscriber);
   }, []);
 
@@ -44,6 +48,16 @@ export const Editor = ({ project }: { project: Project }) => {
     setScrolls(updated);
   };
 
+  const gateCreateHandler: GateCreateHandler = ({ name, color }) => {
+    if (!name) {
+      messageBus.push({ type: 'error', body: 'You need to enter a name' });
+      return;
+    }
+
+    adapter.createGate(name, color);
+    setCreateGateFormOpen(false);
+  };
+
   return (
     <>
       <EditorNavigation
@@ -51,7 +65,7 @@ export const Editor = ({ project }: { project: Project }) => {
         onRename={(value) => console.log('gate renamed to', value)}
         onCleanup={() => console.log('cleanup clicked')}
         onCreateGate={() => {
-          adapter.createGate(prompt('enter a name')!, prompt('enter a color')!);
+          setCreateGateFormOpen(true);
           console.log(project.simulator.createdGates);
         }}
       />
@@ -92,6 +106,9 @@ export const Editor = ({ project }: { project: Project }) => {
         />
         <Sidebar available={adapter.available} onDelete={(type) => adapter.removeCreatedGate(type)} />
       </main>
+      {createGateFormOpen && (
+        <CreateGateForm onSubmit={gateCreateHandler} onCancel={() => setCreateGateFormOpen(false)} />
+      )}
     </>
   );
 };

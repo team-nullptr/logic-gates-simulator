@@ -22,7 +22,7 @@ export class Button {
 
   get height(): number {
     if (this.type === 'single') return 48;
-    return 56 + this.state.length * 48;
+    return 80 + this.state.length * 48;
   }
 
   move(to: Vector): void {

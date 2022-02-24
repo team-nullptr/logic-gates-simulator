@@ -57,12 +57,12 @@ export class Simulator {
   }
 
   createGate(name: string, color: string): void {
-    if (this.meta.mode === 'GATE_EDIT') throw new UserError('Cannot create a new gate while editing another one.');
+    if (this.meta.mode === 'GATE_EDIT') throw new UserError('Cannot create a new gate while editing another one');
 
     const serialized = this.circuit.serialize();
 
     if (serialized.inputs.length === 0 || serialized.outputs.length === 0)
-      throw new UserError('Gate must have at least one input and output.');
+      throw new UserError('Gate must have at least one input and output');
 
     const type = uuid();
 
@@ -88,13 +88,6 @@ export class Simulator {
     this.createdGates.delete(type);
     this.notify();
   }
-
-    this.meta = {
-      ...this.meta,
-      mode: 'GATE_EDIT',
-      editedGate: type,
-      prev: this.circuit.serialize()
-    };
 
   renameCreatedGate(type: string, name: string): void {
     const gate = this.createdGates.get(type);
@@ -162,6 +155,11 @@ export class Simulator {
     const emitter = this.circuit.find(emitterId);
     const receiver = this.circuit.find(receiverId);
     if (!emitter || !receiver) return;
+
+    const isDoubler = [...this.circuit.inputs.values(), ...this.circuit.gates.values()].some((it) =>
+      it.connections.some((it) => it.receiverId === receiverId && it.to === to)
+    );
+    if (isDoubler) throw new UserError('You cannot make multiple connections to the same input');
 
     emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();
