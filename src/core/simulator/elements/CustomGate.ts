@@ -8,9 +8,11 @@ export interface SerializedCustomGate {
   name: string;
   color: string;
   circuit: SerializedCircuit;
+  dependencies: string[];
 }
 
 export class CustomGate extends Gate {
+  readonly dependencies: Set<string> = new Set<string>();
   readonly inputsNames: string[];
   readonly outputsNames: string[];
 
@@ -25,8 +27,8 @@ export class CustomGate extends Gate {
   }
 
   run() {
-    [...this.circuit.inputs.values()].forEach((input) => {
-      input.states = this.inputs.slice(0, input.states.length);
+    [...this.circuit.inputs.values()].forEach((input, index) => {
+      input.states = this.inputs.slice(index, index + input.states.length);
     });
 
     this.circuit.simulate();

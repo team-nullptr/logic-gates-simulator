@@ -73,12 +73,10 @@ export class Circuit {
     });
   }
 
-  find(id: string): Port | Gate {
-    const element = [...this.inputs.values(), ...this.gates.values(), ...this.outputs.values()].find(
+  find(id: string): Port | Gate | undefined {
+    return [...this.inputs.values(), ...this.gates.values(), ...this.outputs.values()].find(
       (element) => element.id === id
     );
-    if (!element) throw new Error(`Element not found ${id}`);
-    return element;
   }
 
   /**
@@ -98,7 +96,9 @@ export class Circuit {
 
       if (receiver instanceof Gate) {
         receiver.inputs[to] = element.states[from];
-      } else receiver.states[to] = element.states[from];
+      } else {
+        receiver.states[to] = element.states[from];
+      }
 
       this.update(receiver, new Set<string>(callStack));
     });
