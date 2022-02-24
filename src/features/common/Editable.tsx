@@ -1,7 +1,12 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { StyledInput, StyledSpan } from './Editable.styles';
 
-export const Editable = (props: { value: string; onEdit: (text: string) => void; prefix?: string }) => {
+export const Editable = (props: {
+  value: string;
+  onEdit: (text: string) => void;
+  prefix?: string;
+  prefixColor?: string;
+}) => {
   const [active, setActive] = useState(false);
   const [text, setText] = useState(props.value);
   const ref = useRef<HTMLInputElement>(null);
@@ -27,7 +32,7 @@ export const Editable = (props: { value: string; onEdit: (text: string) => void;
   if (!active) {
     return (
       <StyledSpan onClick={() => setActive(true)}>
-        <span style={{ opacity: 0.4 }}>{props.prefix}</span>
+        <span style={{ opacity: 0.4, color: props.prefixColor ?? '#000' }}>{props.prefix}</span>
         {text}
       </StyledSpan>
     );

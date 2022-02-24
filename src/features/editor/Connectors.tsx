@@ -48,5 +48,5 @@ const StyledConnector = styled.div<{ color: string }>`
 `;
 
 const StyledConnectorGroup = styled.div`
-  padding: 52px 0 4px;
+  padding: 76px 0 4px;
 `;

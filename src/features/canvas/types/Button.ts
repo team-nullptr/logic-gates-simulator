@@ -33,7 +33,7 @@ export class Button {
       this.connectors.position = [x, y + 28];
     } else {
       const height = this.state.length * 48;
-      const center = y + 56 + height / 2;
+      const center = y + 80 + height / 2;
       this.connectors.position = [x, center];
     }
   }

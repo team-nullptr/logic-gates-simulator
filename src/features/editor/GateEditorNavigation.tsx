@@ -17,7 +17,12 @@ export const GateEditorNavigation = (props: GateEditorNavigationProps) => {
       left={[{ icon: ArrowLeft, onClick: () => props.onBack() }]}
       right={[{ icon: GitMerge, onClick: () => props.onCleanup() }]}
     >
-      <Editable value={props.gateName} onEdit={props.onRename} prefix={props.title + ' / '} />
+      <Editable
+        value={props.gateName}
+        onEdit={props.onRename}
+        prefix={props.title + ' / '}
+        prefixColor="rgb(102,1,235)"
+      />
     </Navigation>
   );
 };
