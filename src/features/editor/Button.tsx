@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import { FC } from 'react';
+import { FC, MouseEvent } from 'react';
 import { useColor } from './hooks/useColor';
 import { useColorVariant } from './hooks/useColorVariant';
+import { isDeleteChord } from '../../common/utils';
 
 interface StyledButtonProps {
   text: string;
@@ -33,17 +34,26 @@ export const Button: FC<{
   color: string;
   active: boolean;
   onClick: () => void;
+  onDelete?: () => void;
   locked?: boolean;
 }> = (props) => {
   const scheme = useColor(props.color);
   const [primary, variant, text] = useColorVariant(scheme, props.active);
+
+  const clickHandler = (event: MouseEvent) => {
+    if (isDeleteChord(event)) {
+      props.onDelete?.();
+    } else if (!props.locked) {
+      props.onClick();
+    }
+  };
 
   return (
     <StyledButton
       text={text}
       primary={primary}
       primaryVariant={variant}
-      onClick={() => !props.locked && props.onClick()}
+      onMouseDown={clickHandler}
       locked={!!props.locked}
     >
       {props.children}

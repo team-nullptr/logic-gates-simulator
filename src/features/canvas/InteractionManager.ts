@@ -1,6 +1,6 @@
 import { Vector } from '../../common/Vector';
 import { Adapter } from '../editor/Adapter';
-import { subtract } from '../../common/utils';
+import { isDeleteChord, subtract } from '../../common/utils';
 import { Tool } from './tools/Tool';
 import { Interaction } from './types/Interaction';
 import { Target } from './types/Target';
@@ -79,13 +79,13 @@ export class InteractionManager {
     return { mouse, position, target };
   }
 
-  private handleMouseDown = ({ offsetX, offsetY, button, altKey }: MouseEvent): void => {
-    const interaction = this.constructMouseEvent([offsetX, offsetY]);
+  private handleMouseDown = (event: MouseEvent): void => {
+    const { offsetX, offsetY } = event;
 
-    const deleteKey = button === 1 || (button === 0 && altKey);
+    const interaction = this.constructMouseEvent([offsetX, offsetY]);
     const { target } = interaction;
 
-    if (target && deleteKey) {
+    if (target && isDeleteChord(event)) {
       if (target instanceof Block) {
         this.source.removeGate(target.id);
       } else if (isConnector(target)) {

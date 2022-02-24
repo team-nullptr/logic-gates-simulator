@@ -10,6 +10,7 @@ export const Controls = (props: {
   section: 'inputs' | 'outputs';
   onScroll: (top: number) => void;
   onAdd: (connectors: number) => void;
+  onDelete: (id: string) => void;
   onToggle: (button: ButtonType, index: number) => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -21,6 +22,7 @@ export const Controls = (props: {
         <BinaryButton
           state={button.state}
           onChange={(index) => props.onToggle(button, index)}
+          onDelete={() => props.onDelete(button.id)}
           key={button.id}
           locked={props.section === 'outputs'}
         />
@@ -32,6 +34,7 @@ export const Controls = (props: {
         color="#6601EB"
         active={button.state[0]}
         onClick={() => props.onToggle(button, 0)}
+        onDelete={() => props.onDelete(button.id)}
         key={button.id}
         locked={props.section === 'outputs'}
       >

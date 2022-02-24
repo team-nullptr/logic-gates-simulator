@@ -207,6 +207,18 @@ export class Adapter {
     this.notify();
   }
 
+  removePort(id: string): void {
+    const button = this._buttons.get(id);
+    if (!button) return;
+
+    this.disconnectAll(button.connectors);
+
+    this.project.simulator.remove(id);
+    this._buttons.delete(id);
+
+    this.notify();
+  }
+
   toggleInput(id: string, index: number) {
     this.project.simulator.toggleInput(id, index);
     this.notify();

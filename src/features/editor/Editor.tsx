@@ -57,6 +57,7 @@ export const Editor = ({ project }: { project: Project }) => {
           buttons={inputs}
           section="inputs"
           onAdd={(connectors) => adapter.addPort('input', connectors)}
+          onDelete={(id) => adapter.removePort(id)}
           onToggle={(button, index) => adapter.toggleInput(button.id, index)}
           onScroll={(value) => scrollHandler('inputs', value)}
         />
@@ -75,6 +76,7 @@ export const Editor = ({ project }: { project: Project }) => {
           buttons={outputs}
           section="outputs"
           onAdd={(connectors) => adapter.addPort('output', connectors)}
+          onDelete={(id) => adapter.removePort(id)}
           onToggle={(button, index) => adapter.toggleInput(button.id, index)}
           onScroll={(value) => scrollHandler('outputs', value)}
         />
