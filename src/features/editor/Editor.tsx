@@ -5,9 +5,10 @@ import { Adapter } from './Adapter';
 import { Controls } from './Controls';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Project, projectManager } from '../../core/project-manager/ProjectManager';
-import { EditorNavigation } from './EditorNavigation';
 import { Connectors } from './Connectors';
 import { Button } from '../canvas/types/Button';
+import { GateEditorNavigation } from './GateEditorNavigation';
+import { EditorNavigation } from './EditorNavigation';
 
 export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
@@ -47,10 +48,19 @@ export const Editor = ({ project }: { project: Project }) => {
     <>
       <EditorNavigation
         title={project.name}
+        onRename={(value) => console.log('gate renamed to', value)}
+        onCleanup={() => console.log('cleanup clicked')}
         onCreateGate={() => {
           adapter.createGate(prompt('enter a name')!, prompt('enter a color')!);
           console.log(project.simulator.createdGates);
         }}
+      />
+      <GateEditorNavigation
+        onBack={() => console.log('back clicked')}
+        title={project.name}
+        gateName={'test'}
+        onRename={(value) => console.log('gate renamed to', value)}
+        onCleanup={() => console.log('cleanup clicked')}
       />
       <main className={styles.container}>
         <Controls

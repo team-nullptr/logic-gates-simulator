@@ -1,30 +1,34 @@
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '../navigation/Navigation';
 import { GitMerge, Home, Plus } from 'react-feather';
+import { Editable } from '../common/Editable';
 
 interface EditorNavigationProps {
   title: string;
+  onRename: (to: string) => void;
+  onCleanup: () => void;
   onCreateGate: () => void;
 }
 
-export const EditorNavigation = ({ title, onCreateGate }: EditorNavigationProps) => {
+export const EditorNavigation = (props: EditorNavigationProps) => {
   const navigate = useNavigate();
 
   return (
     <Navigation
-      title={title}
       left={[{ icon: Home, onClick: () => navigate('/') }]}
       right={[
         {
           icon: Plus,
           text: 'Create gate',
-          onClick: onCreateGate
+          onClick: props.onCreateGate
         },
         {
           icon: GitMerge,
-          onClick: () => console.log('cleanup clicked')
+          onClick: props.onCleanup
         }
       ]}
-    />
+    >
+      <Editable value={props.title} onEdit={props.onRename} />
+    </Navigation>
   );
 };
