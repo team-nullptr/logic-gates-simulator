@@ -84,8 +84,10 @@ export class Simulator {
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
-  editGate(type: string) {
-    if (this.meta.mode === 'GATE_EDIT') throw new Error('Cannot edit gate while inside GATE_EDIT mode');
+  removeCreatedGate(type: string) {
+    this.createdGates.delete(type);
+    this.notify();
+  }
 
     this.meta = {
       ...this.meta,
@@ -187,7 +189,7 @@ export class Simulator {
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
-  remove(id: string): void {
+  removeGate(id: string): void {
     const element = this.circuit.find(id);
     if (!element) return;
 

@@ -29,7 +29,7 @@ describe('Simulator works properly', () => {
     const c = simulator.addGate('and');
     const d = simulator.addPort('output');
 
-    simulator.remove(c.id);
+    simulator.removeGate(c.id);
 
     expect(() => simulator.circuit.find(c.id)).toThrow();
     expect(simulator.circuit.find(a.id)?.connections.length).toEqual(0);

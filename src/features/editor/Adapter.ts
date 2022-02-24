@@ -12,6 +12,8 @@ import { baseGates } from '../../core/simulator/elements/ElementFactory';
 import { PortType } from '../../core/simulator/elements/Port';
 import { Connectors } from '../canvas/types/Connectors';
 import { ConnectRequest } from '../../core/simulator/Simulator';
+import { UserError } from '../../core/simulator/elements/util/UserError';
+import { messageBus } from '../message-bus/MessageBus';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -70,7 +72,7 @@ export class Adapter {
   get available(): Prototype[] {
     const gates = this.project.simulator.createdGates;
     return [...gates.values(), ...baseGates.values()].map((it) => ({
-      id: it.type,
+      type: it.type,
       name: it.name,
       color: it.color
     }));
@@ -132,7 +134,12 @@ export class Adapter {
   }
 
   createGate(name: string, color: string) {
-    this.project.simulator.createGate(name, color);
+    try {
+      this.project.simulator.createGate(name, color);
+    } catch (error) {
+      if (!(error instanceof UserError)) return;
+      messageBus.push({ type: 'error', body: error.message });
+    }
 
     this.connections = [];
     this.gates.clear();
@@ -141,13 +148,21 @@ export class Adapter {
     this.notify();
   }
 
+  removeCreatedGate(type: string): void {
+    // TODO:
+    // this.project.simulator.removeCreatedGate(type);
+  }
+
   addGate(type: string, mouse: Vector): void {
     const position = subtract(mouse, this.offset);
     const snapped = snapToGrid(position);
 
     const { simulator } = this.project;
-    const { id, color, inputs, states, name } = simulator.addGate(type);
 
+    const gate = simulator.addGate(type);
+    if (!gate) return;
+
+    const { id, color, inputs, states, name } = gate;
     const block = new Block(id, name, color, snapped, inputs, states);
     this.gates.set(id, block);
   }
@@ -159,7 +174,7 @@ export class Adapter {
     this.disconnectAll(gate.inputs);
     this.disconnectAll(gate.outputs);
 
-    this.project.simulator.remove(id);
+    this.project.simulator.removeGate(id);
     this.gates.delete(id);
   }
 
@@ -213,7 +228,7 @@ export class Adapter {
 
     this.disconnectAll(button.connectors);
 
-    this.project.simulator.remove(id);
+    this.project.simulator.removeGate(id);
     this._buttons.delete(id);
 
     this.notify();

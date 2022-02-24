@@ -1,7 +1,6 @@
 import { ListHeader } from './ListHeader';
 import styles from './Sidebar.module.scss';
 import styled from 'styled-components';
-import { Adapter } from '../editor/Adapter';
 import { Prototype } from './types/Prototype';
 import { GatePrototype } from './GatePrototype';
 
@@ -14,15 +13,15 @@ const StyledGrid = styled.div`
   margin-bottom: 8px;
 `;
 
-export const Sidebar = (props: { source: Adapter }) => {
+export const Sidebar = (props: { available: Prototype[]; onDelete: (type: string) => void }) => {
   const renderPrototypes = (blocks: Prototype[]) => {
-    return blocks.map((it, i) => <GatePrototype id={it.id} text={it.name} color={it.color} key={i} />);
+    return blocks.map((it, i) => <GatePrototype prototype={it} onDelete={() => props.onDelete(it.type)} key={i} />);
   };
 
   return (
     <div className={styles.sidebar}>
       <ListHeader text="All gates" />
-      <StyledGrid>{renderPrototypes(props.source.available)}</StyledGrid>
+      <StyledGrid>{renderPrototypes(props.available)}</StyledGrid>
     </div>
   );
 };

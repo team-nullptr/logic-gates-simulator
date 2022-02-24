@@ -1,6 +1,8 @@
 import styled from 'styled-components';
-import { DragEvent, useRef } from 'react';
+import { DragEvent, MouseEvent, useRef } from 'react';
 import { GateDataTransfer } from '../../common/GateDataTransfer';
+import { Prototype } from './types/Prototype';
+import { isDeleteChord } from '../../common/utils';
 
 const StyledContainer = styled.div`
   background: #fafafa;
@@ -35,22 +37,28 @@ const StyledContent = styled.p<{ color: string }>`
   }
 `;
 
-export const GatePrototype = (props: { id: string; text: string; color: string }) => {
-  const { id, text, color } = props;
+export const GatePrototype = (props: { prototype: Prototype; onDelete: () => void }) => {
+  const { type, name, color } = props.prototype;
   const ref = useRef<HTMLDivElement>(null);
 
   const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
     const { offsetX, offsetY } = event.nativeEvent;
-    const payload: GateDataTransfer = { id, offset: [offsetX, offsetY] };
+    const payload: GateDataTransfer = { type, offset: [offsetX, offsetY] };
 
-    event.dataTransfer.setData('text/plain', text);
+    event.dataTransfer.setData('text/plain', name);
     event.dataTransfer.setData('gate/json', JSON.stringify(payload));
     event.dataTransfer.effectAllowed = 'copy';
   };
 
+  const handleMouseDown = (event: MouseEvent) => {
+    if (!isDeleteChord(event)) return;
+    event.preventDefault();
+    props.onDelete();
+  };
+
   return (
-    <StyledContainer onDragStart={handleDragStart} ref={ref} draggable>
-      <StyledContent color={color}>{text}</StyledContent>
+    <StyledContainer onMouseDown={handleMouseDown} onDragStart={handleDragStart} ref={ref} draggable>
+      <StyledContent color={color}>{name}</StyledContent>
     </StyledContainer>
   );
 };

@@ -130,11 +130,11 @@ export class InteractionManager {
     const payload = JSON.parse(data);
     if (!payload || !isGateDataTransfer(payload)) return;
 
-    const { id, offset } = payload;
+    const { type, offset } = payload;
 
     const mouse: Vector = [event.offsetX, event.offsetY];
     const corner = subtract(mouse, offset);
 
-    this.source.addGate(id, corner);
+    this.source.addGate(type, corner);
   };
 }

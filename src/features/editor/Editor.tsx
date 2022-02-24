@@ -80,7 +80,7 @@ export const Editor = ({ project }: { project: Project }) => {
           onToggle={(button, index) => adapter.toggleInput(button.id, index)}
           onScroll={(value) => scrollHandler('outputs', value)}
         />
-        <Sidebar source={adapter} />
+        <Sidebar available={adapter.available} onDelete={(type) => adapter.removeCreatedGate(type)} />
       </main>
     </>
   );

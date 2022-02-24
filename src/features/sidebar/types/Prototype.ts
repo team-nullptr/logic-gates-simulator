@@ -1,5 +1,5 @@
 export interface Prototype {
-  id: string;
+  type: string;
   name: string;
   color: string;
 }
