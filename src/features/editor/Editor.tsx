@@ -64,6 +64,11 @@ export const Editor = ({ project }: { project: Project }) => {
     setCreateGateFormOpen(false);
   };
 
+  const handleProjectRename = (name: string) => {
+    project.name = name;
+    projectManager.saveProject(project);
+  };
+
   const renderNavigation = () => {
     const { meta } = project.simulator;
 
@@ -71,8 +76,8 @@ export const Editor = ({ project }: { project: Project }) => {
       return (
         <EditorNavigation
           title={project.name}
-          onRename={(value) => console.log('gate renamed to', value)}
-          onCleanup={() => console.log('cleanup clicked')}
+          onRename={handleProjectRename}
+          onCleanup={() => adapter.cleanup()}
           onCreateGate={() => setCreateGateFormOpen(true)}
         />
       );
