@@ -27,7 +27,7 @@ export class ElementFactory {
     const serializedGate = createdGates.get(type)!;
     const circuit = Circuit.deserialize(serializedGate.circuit, createdGates);
 
-    return new CustomGate(id, circuit, {
+    return new CustomGate(id, circuit, new Set<string>(serializedGate.dependencies), {
       type: serializedGate.type,
       name: serializedGate.name,
       color: serializedGate.color

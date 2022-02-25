@@ -19,12 +19,17 @@ export interface SerializedSimulator {
   createdGates: [string, SerializedCustomGate][];
 }
 
+interface PortsCountResult {
+  inputs: number;
+  outputs: number;
+}
+
 export class Simulator {
   readonly createdGates = new Map<string, SerializedCustomGate>();
   readonly subscribers = new Set<() => void>();
 
   meta:
-    | { mode: 'GATE_EDIT'; editedGate: string; circuit: Circuit; prev: SerializedCircuit }
+    | { mode: 'GATE_EDIT'; editedGate: SerializedCustomGate; circuit: Circuit; projectCircuit: SerializedCircuit }
     | { mode: 'PROJECT_EDIT'; circuit: Circuit } = {
     mode: 'PROJECT_EDIT',
     circuit: new Circuit()
@@ -68,6 +73,7 @@ export class Simulator {
 
     let dependencies = new Set<string>();
     ([...this.circuit.gates.values()].filter((it) => !(it instanceof BaseGate)) as CustomGate[]).forEach((it) => {
+      console.log(it.dependencies, it.type);
       dependencies = new Set<string>([...dependencies, ...it.dependencies, it.type]);
     });
 
@@ -84,32 +90,127 @@ export class Simulator {
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
-  removeCreatedGate(type: string) {
-    this.createdGates.delete(type);
-    this.notify();
+  editCreatedGate(type: string): void {
+    const gate = this.createdGates.get(type);
+    if (!gate) return;
+
+    const circuit = Circuit.deserialize(gate.circuit, this.createdGates);
+    circuit.simulate();
+
+    this.meta = {
+      mode: 'GATE_EDIT',
+      editedGate: gate,
+      circuit: circuit,
+      projectCircuit: this.meta.circuit.serialize()
+    };
   }
 
   renameCreatedGate(type: string, name: string): void {
     const gate = this.createdGates.get(type);
     if (!gate) return;
 
-    this.createdGates.set(type, { ...gate, name });
-    if (this.meta.mode === 'PROJECT_EDIT') this.notify();
+    gate.name = name;
+    this.createdGates.set(type, gate);
+
+    if (this.meta.mode === 'GATE_EDIT' && this.meta.editedGate.type === type) this.meta.editedGate = gate;
+    this.notify();
+  }
+
+  updateCreatedGate(): void {
+    if (this.meta.mode !== 'GATE_EDIT') return;
+
+    if (this.meta.circuit.inputs.size === 0 || this.meta.circuit.outputs.size === 0)
+      throw new UserError('Gate must have at least one input and output');
+
+    this.meta.editedGate.circuit = this.meta.circuit.serialize();
+    this.createdGates.set(this.meta.editedGate.type, this.meta.editedGate);
+
+    const result = this.countEditedGatePorts();
+    this.removeInvalidConnections(this.meta.editedGate.type, result);
+
+    this.meta = {
+      mode: 'PROJECT_EDIT',
+      circuit: Circuit.deserialize(this.meta.projectCircuit, this.createdGates)
+    };
+
+    this.circuit.simulate();
+    this.notify();
+  }
+
+  private countEditedGatePorts(): PortsCountResult {
+    if (this.meta.mode !== 'GATE_EDIT') throw new Error('Validate can be used only while editing a custom gate');
+
+    let inputs = 0;
+    let outputs = 0;
+    this.meta.circuit.inputs.forEach(({ connectors }) => (inputs += connectors));
+    this.meta.circuit.outputs.forEach(({ connectors }) => (outputs += connectors));
+
+    return { inputs, outputs };
+  }
+
+  private removeInvalidConnections(type: string, { inputs, outputs }: PortsCountResult) {
+    [...this.createdGates.values()].forEach((it) => {
+      const circuit = Circuit.deserialize(it.circuit, this.createdGates);
+
+      [...circuit.inputs.values(), ...circuit.gates.values()].forEach((it) => {
+        it.connections = it.connections.filter(({ receiverId, to, from }) => {
+          const receiver = circuit.find(receiverId);
+          return !(!receiver || (receiver.type === type && to >= inputs) || (it.type === type && from >= outputs));
+        });
+      });
+
+      it.circuit = circuit.serialize();
+    });
+
+    let projectCircuit = this.circuit;
+    if (this.meta.mode === 'GATE_EDIT')
+      projectCircuit = Circuit.deserialize(this.meta.projectCircuit, this.createdGates);
+
+    [...projectCircuit.inputs.values(), ...projectCircuit.gates.values()].forEach((it) => {
+      it.connections = it.connections.filter(({ receiverId, from, to }) => {
+        const receiver = projectCircuit.find(receiverId);
+        return !(!receiver || (receiver.type === type && to >= inputs) || (it.type === type && from >= outputs));
+      });
+    });
+
+    if (this.meta.mode === 'GATE_EDIT') this.meta.projectCircuit = projectCircuit.serialize();
+  }
+
+  cancelCreatedGateUpdate(): void {
+    if (this.meta.mode !== 'GATE_EDIT') return;
+
+    this.meta = {
+      mode: 'PROJECT_EDIT',
+      circuit: Circuit.deserialize(this.meta.projectCircuit, this.createdGates)
+    };
+
+    this.circuit.simulate();
+  }
+
+  removeCreatedGate(type: string, name: string): void {
+    throw new Error('not implemented');
   }
 
   addGate(type: string): BaseGate | CustomGate | undefined {
     // TODO: add custom gate's dependency
-    if (this.meta.mode === 'GATE_EDIT' && this.meta.editedGate === type) return;
 
     const id = uuid();
     let gate: BaseGate | CustomGate;
 
     if (isBaseGate(type)) gate = ElementFactory.createBaseGate(id, type);
-    else gate = ElementFactory.createCustomGate(id, type, this.createdGates);
+    else {
+      gate = ElementFactory.createCustomGate(id, type, this.createdGates);
+
+      if (
+        this.meta.mode === 'GATE_EDIT' &&
+        (this.meta.editedGate.type === type || gate.dependencies.has(this.meta.editedGate.type))
+      )
+        throw new UserError('You cannot use gates that depend on currently edited gate');
+    }
 
     this.circuit.gates.set(id, gate);
 
-    this.circuit.update(gate);
+    // this.circuit.update(gate);
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
     return gate;
   }
@@ -164,7 +265,6 @@ export class Simulator {
     emitter.connections.push({ from, to, receiverId });
     this.circuit.simulate();
 
-    this.circuit.update(emitter);
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
@@ -176,14 +276,16 @@ export class Simulator {
     const receiver = this.circuit.find(receiverId);
     if (!emitter || !receiver) return;
 
-    emitter.connections = emitter.connections.filter(
-      (connection) => connection.receiverId != receiverId && connection.from == from && connection.to == to
-    );
+    emitter.connections = emitter.connections.filter((connection) => {
+      return !(connection.receiverId == receiverId && connection.from == from && connection.to == to);
+    });
 
-    if (receiver instanceof Gate) receiver.inputs[to] = false;
-    else receiver.states[to] = false;
+    if (receiver instanceof Gate) {
+      this.circuit.reset(receiver);
+    } else receiver.states[to] = false;
 
-    this.circuit.update(receiver);
+    this.circuit.simulate();
+
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
@@ -218,7 +320,7 @@ export class Simulator {
    */
   serialize(): SerializedSimulator {
     return {
-      circuit: this.meta.mode === 'PROJECT_EDIT' ? this.circuit.serialize() : this.meta.prev,
+      circuit: this.meta.mode === 'PROJECT_EDIT' ? this.circuit.serialize() : this.meta.projectCircuit,
       createdGates: [...this.createdGates.entries()]
     };
   }

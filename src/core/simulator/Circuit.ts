@@ -88,9 +88,7 @@ export class Circuit {
     if (callStack.has(element.id)) return;
     callStack.add(element.id);
 
-    element.connections.forEach((conn) => {
-      const { receiverId, from, to } = conn;
-
+    element.connections.forEach(({ receiverId, from, to }) => {
       const receiver = this.find(receiverId);
       if (!receiver) throw new Error(`Element not found ${receiverId}`);
 
@@ -101,6 +99,20 @@ export class Circuit {
       }
 
       this.update(receiver, new Set<string>(callStack));
+    });
+  }
+
+  reset(element: Gate | Port, callStack = new Set<string>()): void {
+    if (element instanceof Gate) element.inputs.fill(false);
+    element.states.fill(false);
+
+    if (callStack.has(element.id)) return;
+    callStack.add(element.id);
+
+    element.connections.forEach(({ receiverId }) => {
+      const receiver = this.find(receiverId);
+      if (!receiver) throw new Error(`Element not found ${receiverId}`);
+      this.reset(receiver, new Set<string>(callStack));
     });
   }
 

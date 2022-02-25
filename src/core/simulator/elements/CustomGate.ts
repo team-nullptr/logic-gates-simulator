@@ -12,11 +12,15 @@ export interface SerializedCustomGate {
 }
 
 export class CustomGate extends Gate {
-  readonly dependencies: Set<string> = new Set<string>();
   readonly inputsNames: string[];
   readonly outputsNames: string[];
 
-  constructor(id: string, readonly circuit: Circuit, { type, name, color }: GateOptions) {
+  constructor(
+    id: string,
+    readonly circuit: Circuit,
+    readonly dependencies = new Set<string>(),
+    { type, name, color }: GateOptions
+  ) {
     super(id, type, name, color);
 
     circuit.inputs.forEach((it) => this.inputs.push(...new Array(it.connectors).fill(false)));

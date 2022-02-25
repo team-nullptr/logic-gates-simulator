@@ -13,9 +13,20 @@ const StyledGrid = styled.div`
   margin-bottom: 8px;
 `;
 
-export const Sidebar = (props: { available: Prototype[]; onDelete: (type: string) => void }) => {
+export const Sidebar = (props: {
+  available: Prototype[];
+  onEdit: (type: string) => void;
+  onDelete: (type: string) => void;
+}) => {
   const renderPrototypes = (blocks: Prototype[]) => {
-    return blocks.map((it, i) => <GatePrototype prototype={it} onDelete={() => props.onDelete(it.type)} key={i} />);
+    return blocks.map((it, i) => (
+      <GatePrototype
+        prototype={it}
+        onEdit={() => props.onEdit(it.type)}
+        onDelete={() => props.onDelete(it.type)}
+        key={i}
+      />
+    ));
   };
 
   return (

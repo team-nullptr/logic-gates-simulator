@@ -28,8 +28,8 @@ export const Editor = ({ project }: { project: Project }) => {
       setInputs(adapter.inputs);
       setOutputs(adapter.outputs);
     };
-    adapter.subscribe(subscriber);
 
+    adapter.subscribe(subscriber);
     return () => adapter.unsubscribe(subscriber);
   }, []);
 
@@ -37,10 +37,15 @@ export const Editor = ({ project }: { project: Project }) => {
     const subscriber = () => {
       projectManager.saveProject(project);
     };
-    project.simulator.subscribe(subscriber);
 
+    project.simulator.subscribe(subscriber);
     return () => project.simulator.unsubscribe(subscriber);
   }, []);
+
+  const handleGateEdit = (type: string) => {
+    if (project.simulator.meta.mode === 'GATE_EDIT') return;
+    adapter.editCreatedGate(type);
+  };
 
   const scrollHandler = (side: 'inputs' | 'outputs', value: number) => {
     const updated = { ...scrolls, [side]: value };
@@ -55,27 +60,39 @@ export const Editor = ({ project }: { project: Project }) => {
     }
 
     adapter.createGate(name, color);
+    console.log(project.simulator.createdGates);
     setCreateGateFormOpen(false);
+  };
+
+  const renderNavigation = () => {
+    const { meta } = project.simulator;
+
+    if (meta.mode === 'PROJECT_EDIT') {
+      return (
+        <EditorNavigation
+          title={project.name}
+          onRename={(value) => console.log('gate renamed to', value)}
+          onCleanup={() => console.log('cleanup clicked')}
+          onCreateGate={() => setCreateGateFormOpen(true)}
+        />
+      );
+    }
+
+    return (
+      <GateEditorNavigation
+        onBack={() => adapter.updateCreatedGate()}
+        onCancel={() => adapter.cancelCreatedGateUpdate()}
+        title={project.name}
+        gateName={meta.editedGate.name}
+        onRename={(value) => adapter.renameCreatedGate(meta.editedGate.type, value)}
+        onCleanup={() => console.log('cleanup clicked')}
+      />
+    );
   };
 
   return (
     <>
-      <EditorNavigation
-        title={project.name}
-        onRename={(value) => console.log('gate renamed to', value)}
-        onCleanup={() => console.log('cleanup clicked')}
-        onCreateGate={() => {
-          setCreateGateFormOpen(true);
-          console.log(project.simulator.createdGates);
-        }}
-      />
-      <GateEditorNavigation
-        onBack={() => console.log('back clicked')}
-        title={project.name}
-        gateName={'test'}
-        onRename={(value) => console.log('gate renamed to', value)}
-        onCleanup={() => console.log('cleanup clicked')}
-      />
+      {renderNavigation()}
       <main className={styles.container}>
         <Controls
           buttons={inputs}
@@ -104,7 +121,11 @@ export const Editor = ({ project }: { project: Project }) => {
           onToggle={(button, index) => adapter.toggleInput(button.id, index)}
           onScroll={(value) => scrollHandler('outputs', value)}
         />
-        <Sidebar available={adapter.available} onDelete={(type) => adapter.removeCreatedGate(type)} />
+        <Sidebar
+          available={adapter.available}
+          onEdit={handleGateEdit}
+          onDelete={(type) => adapter.removeCreatedGate(type)}
+        />
       </main>
       {createGateFormOpen && (
         <CreateGateForm onSubmit={gateCreateHandler} onCancel={() => setCreateGateFormOpen(false)} />

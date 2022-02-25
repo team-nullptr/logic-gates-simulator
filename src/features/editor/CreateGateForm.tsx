@@ -60,6 +60,7 @@ export const CreateGateForm = ({ onSubmit, onCancel }: CreateGateFormProps) => {
             minLength={1}
             value={name}
             onChange={(e) => setName(e.target.value)}
+            autoFocus
           />
           <StyledColorPreview color={color} onClick={handleColorPickerOpen} ref={colorPreviewRef} />
           {colorPickerOpen && (

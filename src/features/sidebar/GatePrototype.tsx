@@ -37,7 +37,7 @@ const StyledContent = styled.p<{ color: string }>`
   }
 `;
 
-export const GatePrototype = (props: { prototype: Prototype; onDelete: () => void }) => {
+export const GatePrototype = (props: { prototype: Prototype; onEdit: () => void; onDelete: () => void }) => {
   const { type, name, color } = props.prototype;
   const ref = useRef<HTMLDivElement>(null);
 
@@ -57,7 +57,13 @@ export const GatePrototype = (props: { prototype: Prototype; onDelete: () => voi
   };
 
   return (
-    <StyledContainer onMouseDown={handleMouseDown} onDragStart={handleDragStart} ref={ref} draggable>
+    <StyledContainer
+      onDoubleClick={props.onEdit}
+      onMouseDown={handleMouseDown}
+      onDragStart={handleDragStart}
+      ref={ref}
+      draggable
+    >
       <StyledContent color={color}>{name}</StyledContent>
     </StyledContainer>
   );

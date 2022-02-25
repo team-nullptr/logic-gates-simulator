@@ -31,42 +31,7 @@ export class Adapter {
     private readonly project: Project,
     readonly scrolls: MutableRefObject<{ inputs: number; outputs: number }>
   ) {
-    const { gates, inputs, outputs } = project.simulator.circuit;
-
-    //TODO: add project's meta to meta project.meta.name etc
-    //TODO: position the gates (maybe abstract that to separate func vvvvvvv)
-    for (const gate of gates.values()) {
-      const { id, color, inputs, states, name } = gate;
-      const block = new Block(id, name, color, [0, 0], inputs, states);
-      this.gates.set(id, block);
-    }
-
-    for (const input of inputs.values()) {
-      const { id, states, name } = input;
-      const button = new Button(id, [0, 0], 'input', states, name);
-      this._buttons.set(id, button);
-    }
-
-    for (const output of outputs.values()) {
-      const { id, states, name } = output;
-      const button = new Button(id, [0, 0], 'output', states, name);
-      this._buttons.set(id, button);
-    }
-
-    for (const element of [...inputs.values(), ...gates.values()]) {
-      for (const connection of element.connections) {
-        const emitter = this.gates.get(element.id)?.outputs ?? this._buttons.get(element.id)?.connectors;
-        const target =
-          this._buttons.get(connection.receiverId)?.connectors ?? this.gates.get(connection.receiverId)?.inputs;
-
-        if (!emitter || !target) continue;
-
-        this.connections.push({
-          from: { group: emitter, at: connection.from },
-          to: { group: target, at: connection.to }
-        });
-      }
-    }
+    this.readCircuit();
   }
 
   get available(): Prototype[] {
@@ -153,6 +118,34 @@ export class Adapter {
     }
   }
 
+  editCreatedGate(type: string): void {
+    this.project.simulator.editCreatedGate(type);
+    this.readCircuit();
+    this.notify();
+  }
+
+  renameCreatedGate(type: string, name: string): void {
+    this.project.simulator.renameCreatedGate(type, name);
+    this.notify();
+  }
+
+  updateCreatedGate(): void {
+    try {
+      this.project.simulator.updateCreatedGate();
+      this.readCircuit();
+    } catch (error) {
+      if (!(error instanceof UserError)) return;
+      messageBus.push({ type: 'error', body: error.message });
+    }
+    this.notify();
+  }
+
+  cancelCreatedGateUpdate(): void {
+    this.project.simulator.cancelCreatedGateUpdate();
+    this.readCircuit();
+    this.notify();
+  }
+
   removeCreatedGate(type: string): void {
     // TODO:
     // this.project.simulator.removeCreatedGate(type);
@@ -164,12 +157,17 @@ export class Adapter {
 
     const { simulator } = this.project;
 
-    const gate = simulator.addGate(type);
-    if (!gate) return;
+    try {
+      const gate = simulator.addGate(type);
+      if (!gate) return;
 
-    const { id, color, inputs, states, name } = gate;
-    const block = new Block(id, name, color, snapped, inputs, states);
-    this.gates.set(id, block);
+      const { id, color, inputs, states, name } = gate;
+      const block = new Block(id, name, color, snapped, inputs, states);
+      this.gates.set(id, block);
+    } catch (error) {
+      if (!(error instanceof UserError)) return;
+      messageBus.push({ type: 'error', body: error.message });
+    }
   }
 
   removeGate(id: string): void {
@@ -181,12 +179,14 @@ export class Adapter {
 
     this.project.simulator.removeGate(id);
     this.gates.delete(id);
+    this.notify();
   }
 
   removeConnection(connection: Connection): void {
     this.connections = this.connections.filter((it) => it !== connection);
     const request = Adapter.connectionToConnectRequest(connection);
     this.project.simulator.disconnect(request);
+    this.notify();
   }
 
   disconnectFrom(connector: Connector): void {
@@ -243,6 +243,54 @@ export class Adapter {
     this.project.simulator.toggleInput(id, index);
     this.notify();
     console.log(this.project.simulator.circuit);
+  }
+
+  private clearProject(): void {
+    this.connecting = undefined;
+    this.offset = [0, 0];
+    this.connecting = undefined;
+    this.gates.clear();
+    this.connections = [];
+    this._buttons.clear();
+  }
+
+  private readCircuit(): void {
+    this.clearProject();
+    const { gates, inputs, outputs } = this.project.simulator.circuit;
+
+    //TODO: position the gates (maybe abstract that to separate func vvvvvvv)
+    for (const gate of gates.values()) {
+      const { id, color, inputs, states, name } = gate;
+      const block = new Block(id, name, color, [0, 0], inputs, states);
+      this.gates.set(id, block);
+    }
+
+    for (const input of inputs.values()) {
+      const { id, states, name } = input;
+      const button = new Button(id, [0, 0], 'input', states, name);
+      this._buttons.set(id, button);
+    }
+
+    for (const output of outputs.values()) {
+      const { id, states, name } = output;
+      const button = new Button(id, [0, 0], 'output', states, name);
+      this._buttons.set(id, button);
+    }
+
+    for (const element of [...inputs.values(), ...gates.values()]) {
+      for (const connection of element.connections) {
+        const emitter = this.gates.get(element.id)?.outputs ?? this._buttons.get(element.id)?.connectors;
+        const target =
+          this._buttons.get(connection.receiverId)?.connectors ?? this.gates.get(connection.receiverId)?.inputs;
+
+        if (!emitter || !target) continue;
+
+        this.connections.push({
+          from: { group: emitter, at: connection.from },
+          to: { group: target, at: connection.to }
+        });
+      }
+    }
   }
 
   private notify() {
