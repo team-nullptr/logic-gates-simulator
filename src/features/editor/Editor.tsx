@@ -49,8 +49,8 @@ export const Editor = ({ project }: { project: Project }) => {
   };
 
   const gateCreateHandler: GateCreateHandler = ({ name, color }) => {
-    if (!name) {
-      messageBus.push({ type: 'error', body: 'You need to enter a name' });
+    if (name.length < 1 || name.length > 8) {
+      messageBus.push({ type: 'error', body: 'Name must be between 1 and 8 characters long' });
       return;
     }
 

@@ -37,6 +37,6 @@ export const GlobalStyle = createGlobalStyle`
     flex-direction: column-reverse;
     gap: 4px;
     pointer-events: none;
-    z-index: 1; 
+    z-index: 1;
   }
 `;
