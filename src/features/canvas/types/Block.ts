@@ -32,7 +32,7 @@ export class Block {
   }
 
   get area(): Area {
-    const [x, y] = this.position.map((v) => v * 48);
+    const [x, y] = this.position.map((v) => v * 24);
     const [w, h] = this.size;
 
     return [x, y, x + w, y + h];
@@ -41,7 +41,7 @@ export class Block {
   move(to: Vector): void {
     this.position = to;
 
-    const [x, y] = multiply(to, [48, 48]);
+    const [x, y] = multiply(to, [24, 24]);
     const [w, h] = this.size;
     const center = y + h / 2;
 

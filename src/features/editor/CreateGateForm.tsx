@@ -18,9 +18,14 @@ interface CreateGateFormProps {
   onCancel: () => void;
 }
 
+const randomColor = () => {
+  const hex = Math.floor(Math.random() * 0xffffff).toString(16);
+  return '#' + hex.padStart(6, '0');
+};
+
 export const CreateGateForm = ({ onSubmit, onCancel }: CreateGateFormProps) => {
   const [name, setName] = useState('');
-  const [color, setColor] = useState('#6601eb');
+  const [color, setColor] = useState(randomColor());
 
   const colorPreviewRef = useRef<HTMLDivElement>(null);
   const [colorPickerPos, setColorPickerPos] = useState({ x: 0, y: 0 });

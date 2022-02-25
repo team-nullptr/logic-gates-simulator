@@ -25,5 +25,5 @@ export const getDistance = (a: Vector, b: Vector): number => {
 };
 
 export const snapToGrid = (position: Vector): Vector => {
-  return position.map((it) => Math.round(it / 48)) as Vector;
+  return position.map((it) => Math.round(it / 24)) as Vector;
 };

@@ -66,7 +66,7 @@ export class Adapter {
     const blocks = new Map<string, number>();
     for (const gate of this.gates.values()) {
       const { inputs, outputs } = gate;
-      const height = Math.max(inputs.states.length, outputs.states.length);
+      const height = Math.max(inputs.states.length, outputs.states.length) * 2;
       blocks.set(gate.id, height);
     }
 
@@ -78,7 +78,7 @@ export class Adapter {
 
     const positions = cleanup(blocks, connections);
     for (const [id, [column, row]] of positions.entries()) {
-      this.gates.get(id)?.move([column * 3 + 2, row + 1]);
+      this.gates.get(id)?.move([column * 6 + 4, row + 2]);
     }
   }
 
