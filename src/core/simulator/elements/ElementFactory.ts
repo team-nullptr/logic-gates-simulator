@@ -17,9 +17,8 @@ export class ElementFactory {
     return new BaseGate(id, options);
   }
 
-  // TODO: Don't generate names for compound (group) ports.
   static createPort(id: string, type: PortType, connectors: number, name = getRandomLetter()): Port {
-    return new Port(id, type, name, connectors);
+    return new Port(id, type, connectors > 1 ? '' : name, connectors);
   }
 
   static createCustomGate(id: string, type: string, createdGates: Map<string, SerializedCustomGate>): CustomGate {

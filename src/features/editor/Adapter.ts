@@ -147,8 +147,14 @@ export class Adapter {
   }
 
   removeCreatedGate(type: string): void {
-    // TODO:
-    // this.project.simulator.removeCreatedGate(type);
+    try {
+      this.project.simulator.removeCreatedGate(type);
+    } catch (error) {
+      if (!(error instanceof UserError)) return;
+      messageBus.push({ type: 'error', body: error.message });
+    }
+
+    this.notify();
   }
 
   addGate(type: string, mouse: Vector): void {

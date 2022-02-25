@@ -65,7 +65,6 @@ export class Simulator {
     if (this.meta.mode === 'GATE_EDIT') throw new UserError('Cannot create a new gate while editing another one');
 
     const serialized = this.circuit.serialize();
-
     if (serialized.inputs.length === 0 || serialized.outputs.length === 0)
       throw new UserError('Gate must have at least one input and output');
 
@@ -82,11 +81,10 @@ export class Simulator {
       name,
       color,
       circuit: serialized,
-      dependencies: [...dependencies] // FIXME: Maybe this can be just Set idk (JSON.stringify)
+      dependencies: [...dependencies]
     });
 
     this.circuit = new Circuit();
-
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
@@ -149,8 +147,8 @@ export class Simulator {
   }
 
   private removeInvalidConnections(type: string, { inputs, outputs }: PortsCountResult) {
-    [...this.createdGates.values()].forEach((it) => {
-      const circuit = Circuit.deserialize(it.circuit, this.createdGates);
+    for (const gate of this.createdGates.values()) {
+      const circuit = Circuit.deserialize(gate.circuit, this.createdGates);
 
       [...circuit.inputs.values(), ...circuit.gates.values()].forEach((it) => {
         it.connections = it.connections.filter(({ receiverId, to, from }) => {
@@ -159,8 +157,8 @@ export class Simulator {
         });
       });
 
-      it.circuit = circuit.serialize();
-    });
+      gate.circuit = circuit.serialize();
+    }
 
     let projectCircuit = this.circuit;
     if (this.meta.mode === 'GATE_EDIT')
@@ -187,31 +185,49 @@ export class Simulator {
     this.circuit.simulate();
   }
 
-  removeCreatedGate(type: string, name: string): void {
-    throw new Error('not implemented');
+  removeCreatedGate(type: string): void {
+    const usages = new Set<string>();
+
+    for (const gate of this.createdGates.values()) {
+      gate.circuit.gates.forEach((it) => {
+        if (it.type === type) usages.add(gate.name);
+      });
+    }
+
+    if (this.meta.mode === 'GATE_EDIT')
+      this.meta.projectCircuit.gates.forEach((it) => {
+        if (it.type === type) usages.add('[project]');
+      });
+
+    this.circuit.gates.forEach((it) => {
+      if (it.type === type) usages.add('[editor]');
+    });
+
+    console.log(usages);
+
+    if (usages.size > 0)
+      throw new UserError(`Cannot delete the gate because it is used in: ${[...usages.values()].join(', ')}`);
+    this.createdGates.delete(type);
+    this.notify();
   }
 
   addGate(type: string): BaseGate | CustomGate | undefined {
-    // TODO: add custom gate's dependency
-
     const id = uuid();
     let gate: BaseGate | CustomGate;
 
     if (isBaseGate(type)) gate = ElementFactory.createBaseGate(id, type);
-    else {
-      gate = ElementFactory.createCustomGate(id, type, this.createdGates);
+    else gate = ElementFactory.createCustomGate(id, type, this.createdGates);
 
-      if (
-        this.meta.mode === 'GATE_EDIT' &&
-        (this.meta.editedGate.type === type || gate.dependencies.has(this.meta.editedGate.type))
-      )
-        throw new UserError('You cannot use gates that depend on currently edited gate');
-    }
+    if (
+      gate instanceof CustomGate &&
+      this.meta.mode === 'GATE_EDIT' &&
+      (this.meta.editedGate.type === type || gate.dependencies.has(this.meta.editedGate.type))
+    )
+      throw new UserError('You cannot use gates that depend on currently edited gate');
 
     this.circuit.gates.set(id, gate);
-
-    // this.circuit.update(gate);
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
+
     return gate;
   }
 
@@ -280,9 +296,8 @@ export class Simulator {
       return !(connection.receiverId == receiverId && connection.from == from && connection.to == to);
     });
 
-    if (receiver instanceof Gate) {
-      this.circuit.reset(receiver);
-    } else receiver.states[to] = false;
+    if (receiver instanceof Gate) this.circuit.reset(receiver);
+    else receiver.states[to] = false;
 
     this.circuit.simulate();
 
