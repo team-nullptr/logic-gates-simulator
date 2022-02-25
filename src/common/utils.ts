@@ -20,3 +20,9 @@ const calculate = (a: Vector, b: Vector, fn: (a: number, b: number) => number): 
 export const isDeleteChord = ({ button, altKey }: MouseEvent | ReactMouseEvent) => {
   return button === 1 || (button === 0 && altKey);
 };
+
+export const exclude = <T>(a: Set<T>, b: Set<T>): Set<T> => {
+  const result = new Set(a);
+  b.forEach((it) => result.delete(it));
+  return result;
+};

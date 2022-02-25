@@ -6,6 +6,11 @@ export const StyledInput = styled.input`
   border: none;
   background: none;
   text-align: inherit;
+  padding: 4px 0;
+
+  &:focus {
+    border-bottom: 2px solid #e1d1fc;
+  }
 `;
 
 export const StyledSpan = styled.span`
@@ -13,4 +18,5 @@ export const StyledSpan = styled.span`
   max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 4px 0;
 `;

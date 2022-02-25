@@ -14,6 +14,7 @@ import { Connectors } from '../canvas/types/Connectors';
 import { ConnectRequest } from '../../core/simulator/Simulator';
 import { UserError } from '../../core/simulator/elements/util/UserError';
 import { messageBus } from '../message-bus/MessageBus';
+import { cleanup } from './utils/cleanup';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -59,6 +60,26 @@ export class Adapter {
   private static connectionToConnectRequest(connection: Connection): ConnectRequest {
     const { from, to } = connection;
     return { emitterId: from.group.parent.id, receiverId: to.group.parent.id, from: from.at, to: to.at };
+  }
+
+  cleanup(): void {
+    const blocks = new Map<string, number>();
+    for (const gate of this.gates.values()) {
+      const { inputs, outputs } = gate;
+      const height = Math.max(inputs.states.length, outputs.states.length);
+      blocks.set(gate.id, height);
+    }
+
+    const connections = [...this.project.simulator.circuit.gates.values()].flatMap((it) =>
+      it.connections
+        .filter((connection) => it.id !== connection.receiverId)
+        .map((connection) => [it.id, connection.receiverId] as [string, string])
+    );
+
+    const positions = cleanup(blocks, connections);
+    for (const [id, [column, row]] of positions.entries()) {
+      this.gates.get(id)?.move([column * 3 + 2, row + 1]);
+    }
   }
 
   updateButtons(): void {
@@ -297,6 +318,8 @@ export class Adapter {
         });
       }
     }
+
+    this.cleanup();
   }
 
   private notify() {

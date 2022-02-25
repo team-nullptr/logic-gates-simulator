@@ -85,7 +85,7 @@ export const Editor = ({ project }: { project: Project }) => {
         title={project.name}
         gateName={meta.editedGate.name}
         onRename={(value) => adapter.renameCreatedGate(meta.editedGate.type, value)}
-        onCleanup={() => console.log('cleanup clicked')}
+        onCleanup={() => adapter.cleanup()}
       />
     );
   };
