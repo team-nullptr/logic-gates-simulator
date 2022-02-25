@@ -10,10 +10,10 @@ export const StyledWrapper = styled.div`
   height: 100%;
 `;
 
-export const StyledPopup = styled.div`
+export const StyledPopup = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
   background: white;
   border-radius: 8px;
   padding: 20px;
@@ -42,16 +42,6 @@ export const StyledColorPreview = styled.div<{ color: string }>`
   border: 2px solid #e1d1fc;
 `;
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 interface StyledButtonProps {
   primary?: boolean;
 }
@@ -69,7 +59,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
 
 export const StyledRow = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 16px;
 `;
 
 interface StyledPickerWrapperProps {

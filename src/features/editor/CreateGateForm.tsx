@@ -51,6 +51,7 @@ export const CreateGateForm = ({ onSubmit, onCancel }: CreateGateFormProps) => {
         onMouseDown={(e) => {
           if (!colorPickerOpen) e.stopPropagation();
         }}
+        onSubmit={() => onSubmit({ name, color })}
       >
         <StyledRow style={{ alignItems: 'center' }}>
           <StyledInput
@@ -70,8 +71,10 @@ export const CreateGateForm = ({ onSubmit, onCancel }: CreateGateFormProps) => {
           )}
         </StyledRow>
         <StyledRow>
-          <StyledButton onClick={onCancel}>Cancel</StyledButton>
-          <StyledButton onClick={() => onSubmit({ name, color })} primary>
+          <StyledButton type="button" onClick={onCancel}>
+            Cancel
+          </StyledButton>
+          <StyledButton type="submit" primary>
             Submit
           </StyledButton>
         </StyledRow>
