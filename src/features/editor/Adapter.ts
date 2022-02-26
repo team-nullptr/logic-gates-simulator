@@ -27,6 +27,7 @@ export class Adapter {
   connections: Connection[] = [];
 
   private readonly _buttons = new Map<string, Button>();
+  private buttonOrder: string[] = [];
 
   constructor(
     private readonly project: Project,
@@ -46,7 +47,14 @@ export class Adapter {
 
   get buttons(): Button[] {
     this.updateButtons();
-    return [...this._buttons.values()];
+
+    const sorted: Button[] = [];
+    for (const id of this.buttonOrder) {
+      const button = this._buttons.get(id);
+      if (button) sorted.push(button);
+    }
+
+    return sorted;
   }
 
   get inputs(): Button[] {
@@ -86,7 +94,10 @@ export class Adapter {
     const top = [48, 48];
     const scrolls = this.scrolls.current;
 
-    for (const button of this._buttons.values()) {
+    for (const id of this.buttonOrder) {
+      const button = this._buttons.get(id);
+      if (!button) continue;
+
       const position: Vector = [0, 0];
 
       if (button.side === 'input') {
@@ -251,6 +262,7 @@ export class Adapter {
 
     const button = new Button(id, [0, 0], type, states, name);
     this._buttons.set(id, button);
+    this.buttonOrder.push(id);
     this.notify();
   }
 
@@ -263,6 +275,20 @@ export class Adapter {
     this.notify();
   }
 
+  movePort(id: string, to: number): void {
+    const button = this._buttons.get(id);
+    if (!button) return;
+
+    const index = this.buttonOrder.indexOf(id);
+    if (index === -1) return;
+
+    const offset = button.side === 'input' ? 0 : this.inputs.length;
+
+    const [removed] = this.buttonOrder.splice(index, 1);
+    this.buttonOrder.splice(offset + to, 0, removed);
+    this.notify();
+  }
+
   removePort(id: string): void {
     const button = this._buttons.get(id);
     if (!button) return;
@@ -271,6 +297,7 @@ export class Adapter {
 
     this.project.simulator.removeGate(id);
     this._buttons.delete(id);
+    this.buttonOrder = this.buttonOrder.filter((it) => it !== id);
 
     this.notify();
   }
@@ -278,7 +305,6 @@ export class Adapter {
   toggleInput(id: string, index: number) {
     this.project.simulator.toggleInput(id, index);
     this.notify();
-    console.log(this.project.simulator.circuit);
   }
 
   private clearProject(): void {
@@ -288,6 +314,7 @@ export class Adapter {
     this.gates.clear();
     this.connections = [];
     this._buttons.clear();
+    this.buttonOrder = [];
   }
 
   private readCircuit(): void {
@@ -305,12 +332,14 @@ export class Adapter {
       const { id, states, name } = input;
       const button = new Button(id, [0, 0], 'input', states, name);
       this._buttons.set(id, button);
+      this.buttonOrder.push(id);
     }
 
     for (const output of outputs.values()) {
       const { id, states, name } = output;
       const button = new Button(id, [0, 0], 'output', states, name);
       this._buttons.set(id, button);
+      this.buttonOrder.push(id);
     }
 
     for (const element of [...inputs.values(), ...gates.values()]) {

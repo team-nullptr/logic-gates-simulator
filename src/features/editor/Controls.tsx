@@ -22,12 +22,18 @@ export const Controls = (props: {
   const scheme = Scheme[editing ? 'black' : 'purple'];
   const direction = props.section === 'inputs' ? 'rtl' : 'ltr';
 
-  const renderButton = (button: ButtonType, key: number) => {
+  const renderButton = (button: ButtonType, index: number) => {
     const locked = props.section === 'outputs';
 
     if (button.type === 'compound') {
       return (
-        <Port key={button.id} onDelete={() => handleDelete(button)}>
+        <Port
+          key={button.id}
+          id={button.id}
+          side={props.section}
+          onDelete={() => handleDelete(button)}
+          onDrop={(id) => handleDrop(id, index)}
+        >
           <BinaryButton state={button.state} onChange={(index) => handleToggle(button, index)} locked={locked} />
         </Port>
       );
@@ -43,7 +49,13 @@ export const Controls = (props: {
     const [background, hover, color] = useColorVariant(scheme, editing ? false : button.state[0]);
 
     return (
-      <Port key={key} onDelete={() => handleDelete(button)}>
+      <Port
+        key={button.id}
+        id={button.id}
+        side={props.section}
+        onDelete={() => handleDelete(button)}
+        onDrop={(id) => handleDrop(id, index)}
+      >
         <StyledButton
           background={background}
           hover={locked ? background : hover}
@@ -68,6 +80,10 @@ export const Controls = (props: {
   const handleScroll = () => {
     if (!ref.current) return;
     props.onScroll(ref.current.scrollTop);
+  };
+
+  const handleDrop = (id: string, at: number) => {
+    props.source.movePort(id, at);
   };
 
   const handleAdd = (connectors: number) => {
