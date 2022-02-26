@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { MouseEvent, useRef, useState } from 'react';
+import { FormEvent, MouseEvent, useRef, useState } from 'react';
 import {
   StyledButton,
   StyledColorPreview,
@@ -48,7 +48,10 @@ export const CreateGateForm = ({ onSubmit, onCancel }: CreateGateFormProps) => {
     }
   };
 
-  const handleColorChange: ColorChangeHandler = ({ hex }) => setColor(hex);
+  const handlePopupSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onSubmit({ name, color });
+  };
 
   return createPortal(
     <StyledWrapper onMouseDown={handleColorPickerClose}>
@@ -56,7 +59,7 @@ export const CreateGateForm = ({ onSubmit, onCancel }: CreateGateFormProps) => {
         onMouseDown={(e) => {
           if (!colorPickerOpen) e.stopPropagation();
         }}
-        onSubmit={() => onSubmit({ name, color })}
+        onSubmit={handlePopupSubmit}
       >
         <StyledRow style={{ alignItems: 'center' }}>
           <StyledInput
@@ -71,7 +74,7 @@ export const CreateGateForm = ({ onSubmit, onCancel }: CreateGateFormProps) => {
           <StyledColorPreview color={color} onClick={handleColorPickerOpen} ref={colorPreviewRef} />
           {colorPickerOpen && (
             <StyledPickerWrapper x={colorPickerPos.x} y={colorPickerPos.y} onMouseDown={(e) => e.stopPropagation()}>
-              <BlockPicker color={color} onChangeComplete={handleColorChange} />
+              <BlockPicker color={color} onChangeComplete={({ hex }) => setColor(hex)} />
             </StyledPickerWrapper>
           )}
         </StyledRow>
