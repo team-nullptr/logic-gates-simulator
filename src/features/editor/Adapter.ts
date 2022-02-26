@@ -112,6 +112,15 @@ export class Adapter {
   }
 
   connect(connection: Connection) {
+    const { from, to } = connection;
+
+    if (from.group === to.group && from.at === to.at) return;
+
+    if (to.group.side === 'output' || from.group.side === 'input') {
+      messageBus.push({ type: 'error', body: 'You can make a connection only between an output and an input' });
+      return;
+    }
+
     const request = Adapter.connectionToConnectRequest(connection);
 
     try {
