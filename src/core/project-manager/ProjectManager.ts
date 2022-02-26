@@ -91,7 +91,6 @@ class ProjectManager {
   deleteProject(id: string): void {
     const projects = ProjectManager.fetchProjects();
     delete projects[id];
-    console.log(projects);
     localStorage.setItem('projects', JSON.stringify(projects));
   }
 }
