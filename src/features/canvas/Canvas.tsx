@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { CanvasHelper } from './CanvasHelper';
-import styles from './Canvas.module.scss';
 import { Adapter } from '../editor/Adapter';
 import { Renderer } from './Renderer';
 import { InteractionManager } from './InteractionManager';
 import { findToolName } from './utils';
 import { ToolFactory } from './tools/ToolFactory';
+import { StyledCanvas } from './Canvas.styles';
 
 let canvasHelper: CanvasHelper;
 let renderer: Renderer;
@@ -47,5 +47,5 @@ export const Canvas = ({ adapter }: { adapter: Adapter }) => {
     return destroy;
   }, []);
 
-  return <canvas ref={ref} className={styles.canvas} />;
+  return <StyledCanvas ref={ref} />;
 };

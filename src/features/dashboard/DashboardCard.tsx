@@ -14,7 +14,6 @@ import { X } from 'react-feather';
 import { formatRelative } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { Editable } from '../common/Editable';
-import { messageBus } from '../message-bus/MessageBus';
 
 interface CardProps {
   project: Project;
