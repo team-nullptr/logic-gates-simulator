@@ -1,34 +1,35 @@
 import { ButtonGroup } from './ButtonGroup';
-import { Button } from './Button';
 import styled from 'styled-components';
-import { MouseEvent, useState } from 'react';
-import { isDeleteChord } from '../../common/utils';
+import { useState } from 'react';
 import { Switch } from './Switch';
+import { StyledButton } from './Button.styles';
+import { useColorVariant } from './hooks/useColorVariant';
+import { ColorScheme } from './types/ColorScheme';
 
-export const BinaryButton = (props: {
-  state: boolean[];
-  onChange: (bit: number) => void;
-  onDelete: () => void;
-  locked?: boolean;
-}) => {
+export const BinaryButton = (props: { state: boolean[]; onChange: (bit: number) => void; locked?: boolean }) => {
   const [signed, setSigned] = useState(false);
   const value = parseBinary(props.state, signed);
 
-  const handleMouseDown = (event: MouseEvent) => {
-    if (!isDeleteChord(event)) return;
-    event.preventDefault();
-    props.onDelete();
-  };
-
   return (
-    <ButtonGroup color="hsl(265.9,88%,95%)" onMouseDown={handleMouseDown}>
+    <ButtonGroup color="hsl(265.9,88%,95%)">
       <StyledValue>{value}</StyledValue>
       <Switch state={signed} onChange={setSigned} />
-      {props.state.map((it, i) => (
-        <Button key={i} color="rgb(102,1,235)" active={it} onClick={() => props.onChange(i)} locked={props.locked}>
-          {props.state.length - i - 1}
-        </Button>
-      ))}
+      {props.state.map((it, i) => {
+        const scheme: ColorScheme = ['hsl(266,99%,46%)', 'hsl(266 88% 65%)', 'hsl(266 88% 82%)', 'hsl(266 88% 90%)'];
+        const [background, hover, color] = useColorVariant(scheme, it);
+
+        return (
+          <StyledButton
+            key={i}
+            background={background}
+            hover={props.locked ? background : hover}
+            onClick={() => props.onChange(i)}
+            style={{ cursor: props.locked ? 'not-allowed' : 'default' }}
+          >
+            <span style={{ color }}>{props.state.length - i - 1}</span>
+          </StyledButton>
+        );
+      })}
     </ButtonGroup>
   );
 };

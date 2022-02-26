@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { Button as ButtonType } from '../canvas/types/Button';
-import { useColor } from './hooks/useColor';
 import { useColorVariant } from './hooks/useColorVariant';
+import { ColorScheme } from './types/ColorScheme';
 
 export const Connectors = (props: { buttons: ButtonType[]; top: number }) => {
-  const scheme = useColor('hsl(266deg 99% 64%)');
+  const scheme: ColorScheme = ['hsl(266,99%,46%)', 'hsl(266 88% 65%)', 'hsl(266 88% 82%)', 'hsl(266 88% 90%)'];
 
   const renderButton = (active: boolean, key: string | number) => {
     const [color] = useColorVariant(scheme, active);

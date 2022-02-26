@@ -1,9 +1,11 @@
 import { useRef } from 'react';
 import { Button as ButtonType } from '../canvas/types/Button';
-import { Button } from './Button';
 import { BinaryButton } from './BinaryButton';
 import styles from './Controls.module.scss';
 import { AddButton } from './AddButton';
+import { StyledButton } from './Button.styles';
+import { ColorScheme } from './types/ColorScheme';
+import { useColorVariant } from './hooks/useColorVariant';
 
 export const Controls = (props: {
   buttons: ButtonType[];
@@ -22,24 +24,27 @@ export const Controls = (props: {
         <BinaryButton
           state={button.state}
           onChange={(index) => props.onToggle(button, index)}
-          onDelete={() => props.onDelete(button.id)}
           key={button.id}
           locked={props.section === 'outputs'}
         />
       );
     }
 
+    const scheme: ColorScheme = ['hsl(266,99%,46%)', 'hsl(266 88% 65%)', 'hsl(266 88% 82%)', 'hsl(266 88% 90%)'];
+    const [background, hover, color] = useColorVariant(scheme, button.state[0]);
+
+    const locked = props.section === 'outputs';
+
     return (
-      <Button
-        color="#6601EB"
-        active={button.state[0]}
-        onClick={() => props.onToggle(button, 0)}
-        onDelete={() => props.onDelete(button.id)}
+      <StyledButton
         key={button.id}
-        locked={props.section === 'outputs'}
+        background={background}
+        hover={locked ? background : hover}
+        onClick={() => props.onToggle(button, 0)}
+        style={{ cursor: locked ? 'not-allowed' : 'default' }}
       >
-        {button.slug}
-      </Button>
+        <span style={{ color }}>{button.slug}</span>
+      </StyledButton>
     );
   };
 

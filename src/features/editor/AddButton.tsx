@@ -1,21 +1,25 @@
-import { Button, StyledButton } from './Button';
-import { Plus } from 'react-feather';
 import { ButtonGroup } from './ButtonGroup';
 import styled from 'styled-components';
+import { StyledButton } from './Button.styles';
+import { Plus } from 'react-feather';
 
 export const AddButton = (props: { onSelect: (option: number) => void }) => {
   const options = [1, 2, 4, 8];
 
   return (
     <StyledGroup color="hsl(47deg 90% 95%)">
-      {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-      <Button color="#EBB90C" active={false} onClick={() => {}}>
-        <Plus width={20} />
-      </Button>
+      <StyledButton background="hsl(46 88% 90%)" hover="hsl(46 88% 82%)">
+        <Plus height="20" color="#ebb90c" />
+      </StyledButton>
       {options.map((number) => (
-        <Button key={number} color="#EBB90C" active={false} onClick={() => props.onSelect(number)}>
-          {number}
-        </Button>
+        <StyledButton
+          key={number}
+          background="hsl(46 88% 90%)"
+          hover="hsl(46 88% 82%)"
+          onClick={() => props.onSelect(number)}
+        >
+          <span style={{ color: '#ebb90c' }}>{number}</span>
+        </StyledButton>
       ))}
     </StyledGroup>
   );
@@ -33,6 +37,6 @@ const StyledGroup = styled(ButtonGroup)`
   }
 
   &:hover > ${StyledButton} {
-    display: block;
+    display: flex;
   }
 `;

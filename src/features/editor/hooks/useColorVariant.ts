@@ -5,5 +5,5 @@ export const useColorVariant = (scheme: ColorScheme, active: boolean): ColorVari
   const [primary, dark, light, text] = scheme;
 
   if (active) return [primary, dark, text];
-  return [light, dark, primary];
+  return [text, light, primary];
 };
