@@ -16,8 +16,10 @@ export const Editable = (props: {
   }, [active]);
 
   const edit = () => {
+    if (text === '') setText(props.value);
+    else props.onEdit(text);
+
     setActive(false);
-    props.onEdit(text);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
