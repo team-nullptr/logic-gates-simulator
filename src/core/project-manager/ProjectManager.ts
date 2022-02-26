@@ -87,6 +87,12 @@ class ProjectManager {
       simulator: _simulator
     };
   }
+
+  deleteProject(id: string): void {
+    const projects = ProjectManager.fetchProjects();
+    delete projects[id];
+    localStorage.setItem('projects', JSON.stringify(projects));
+  }
 }
 
 export const projectManager = new ProjectManager();
