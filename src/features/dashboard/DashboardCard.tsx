@@ -29,11 +29,6 @@ export const DashboardCard = ({ project, onDelete }: CardProps) => {
   };
 
   const handleProjectRename = (name: string) => {
-    if (name.length === 0) {
-      messageBus.push({ type: 'error', body: "Project name can't be empty" });
-      return;
-    }
-
     project.name = name;
     projectManager.saveProject(project);
   };
