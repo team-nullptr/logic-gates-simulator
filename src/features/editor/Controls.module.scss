@@ -6,4 +6,8 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 8px;
+
+  > * {
+    direction: initial;
+  }
 }

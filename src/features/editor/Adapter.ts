@@ -83,7 +83,7 @@ export class Adapter {
   }
 
   updateButtons(): void {
-    const top = [0, 0];
+    const top = [48, 48];
     const scrolls = this.scrolls.current;
 
     for (const button of this._buttons.values()) {
@@ -251,6 +251,15 @@ export class Adapter {
 
     const button = new Button(id, [0, 0], type, states, name);
     this._buttons.set(id, button);
+    this.notify();
+  }
+
+  renamePort(id: string, name: string) {
+    this.project.simulator.renamePort(id, name);
+
+    const button = this._buttons.get(id);
+    if (button) button.slug = name;
+
     this.notify();
   }
 

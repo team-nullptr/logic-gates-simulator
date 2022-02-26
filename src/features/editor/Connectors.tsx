@@ -25,6 +25,7 @@ export const Connectors = (props: { buttons: ButtonType[]; top: number }) => {
 
 const StyledContainer = styled.div`
   overflow-y: hidden;
+  padding-top: 48px;
   padding-bottom: 96px;
   margin: 0 8px;
   height: 100%;

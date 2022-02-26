@@ -99,14 +99,7 @@ export const Editor = ({ project }: { project: Project }) => {
     <>
       {renderNavigation()}
       <main className={styles.container}>
-        <Controls
-          buttons={inputs}
-          section="inputs"
-          onAdd={(connectors) => adapter.addPort('input', connectors)}
-          onDelete={(id) => adapter.removePort(id)}
-          onToggle={(button, index) => adapter.toggleInput(button.id, index)}
-          onScroll={(value) => scrollHandler('inputs', value)}
-        />
+        <Controls section="inputs" source={adapter} onScroll={(value) => scrollHandler('inputs', value)} />
         <div className={styles.wrapper}>
           <div className={styles.side} style={{ left: 0 }}>
             <Connectors buttons={inputs} top={scrolls.inputs} />
@@ -118,14 +111,7 @@ export const Editor = ({ project }: { project: Project }) => {
             <Connectors buttons={outputs} top={scrolls.outputs} />
           </div>
         </div>
-        <Controls
-          buttons={outputs}
-          section="outputs"
-          onAdd={(connectors) => adapter.addPort('output', connectors)}
-          onDelete={(id) => adapter.removePort(id)}
-          onToggle={(button, index) => adapter.toggleInput(button.id, index)}
-          onScroll={(value) => scrollHandler('outputs', value)}
-        />
+        <Controls section="outputs" source={adapter} onScroll={(value) => scrollHandler('outputs', value)} />
         <Sidebar
           available={adapter.available}
           onEdit={handleGateEdit}
