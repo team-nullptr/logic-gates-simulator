@@ -6,6 +6,7 @@ import { AddButton } from './AddButton';
 import { StyledButton } from './Button.styles';
 import { ColorScheme } from './types/ColorScheme';
 import { useColorVariant } from './hooks/useColorVariant';
+import { Port } from './Port';
 
 export const Controls = (props: {
   buttons: ButtonType[];
@@ -21,12 +22,13 @@ export const Controls = (props: {
   const renderButton = (button: ButtonType) => {
     if (button.type === 'compound') {
       return (
-        <BinaryButton
-          state={button.state}
-          onChange={(index) => props.onToggle(button, index)}
-          key={button.id}
-          locked={props.section === 'outputs'}
-        />
+        <Port key={button.id} onDelete={() => props.onDelete(button.id)}>
+          <BinaryButton
+            state={button.state}
+            onChange={(index) => props.onToggle(button, index)}
+            locked={props.section === 'outputs'}
+          />
+        </Port>
       );
     }
 
@@ -36,15 +38,16 @@ export const Controls = (props: {
     const locked = props.section === 'outputs';
 
     return (
-      <StyledButton
-        key={button.id}
-        background={background}
-        hover={locked ? background : hover}
-        onClick={() => props.onToggle(button, 0)}
-        style={{ cursor: locked ? 'not-allowed' : 'default' }}
-      >
-        <span style={{ color }}>{button.slug}</span>
-      </StyledButton>
+      <Port key={button.id} onDelete={() => props.onDelete(button.id)}>
+        <StyledButton
+          background={background}
+          hover={locked ? background : hover}
+          onClick={() => props.onToggle(button, 0)}
+          style={{ cursor: locked ? 'not-allowed' : 'default' }}
+        >
+          <span style={{ color }}>{button.slug}</span>
+        </StyledButton>
+      </Port>
     );
   };
 
