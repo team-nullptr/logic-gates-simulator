@@ -16,8 +16,10 @@ export const StyledCard = styled.div<StyledCardProps>`
   color: ${({ success }) => (success ? 'rgb(102 1 235)' : 'rgb(238 73 73)')};
 `;
 
-export const StyledIcon = styled.svg`
-  display: block;
+export const StyledIcon = styled.div`
+  & svg {
+    display: block;
+  }
 `;
 
 export const StyledMessage = styled.p`
