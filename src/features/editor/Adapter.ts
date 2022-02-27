@@ -27,6 +27,7 @@ export class Adapter {
   connections: Connection[] = [];
 
   private readonly _buttons = new Map<string, Button>();
+  private buttonOrder: string[] = [];
 
   constructor(
     private readonly project: Project,
@@ -46,7 +47,14 @@ export class Adapter {
 
   get buttons(): Button[] {
     this.updateButtons();
-    return [...this._buttons.values()];
+
+    const sorted: Button[] = [];
+    for (const id of this.buttonOrder) {
+      const button = this._buttons.get(id);
+      if (button) sorted.push(button);
+    }
+
+    return sorted;
   }
 
   get inputs(): Button[] {
@@ -70,23 +78,36 @@ export class Adapter {
       blocks.set(gate.id, height);
     }
 
-    const connections = [...this.project.simulator.circuit.gates.values()].flatMap((it) =>
+    const { circuit } = this.project.simulator;
+
+    const connections = [...circuit.gates.values()].flatMap((it) =>
       it.connections
         .filter((connection) => it.id !== connection.receiverId)
         .map((connection) => [it.id, connection.receiverId] as [string, string])
     );
 
-    const positions = cleanup(blocks, connections);
+    const order: string[] = [];
+    for (const id of this.buttonOrder) {
+      const input = circuit.inputs.get(id);
+      if (!input) continue;
+
+      input.connections.forEach((it) => order.push(it.receiverId));
+    }
+
+    const positions = cleanup(blocks, connections, order);
     for (const [id, [column, row]] of positions.entries()) {
       this.gates.get(id)?.move([column * 6 + 4, row + 2]);
     }
   }
 
   updateButtons(): void {
-    const top = [0, 0];
+    const top = [48, 48];
     const scrolls = this.scrolls.current;
 
-    for (const button of this._buttons.values()) {
+    for (const id of this.buttonOrder) {
+      const button = this._buttons.get(id);
+      if (!button) continue;
+
       const position: Vector = [0, 0];
 
       if (button.side === 'input') {
@@ -260,6 +281,32 @@ export class Adapter {
 
     const button = new Button(id, [0, 0], type, states, name);
     this._buttons.set(id, button);
+    this.buttonOrder.push(id);
+    this.notify();
+  }
+
+  renamePort(id: string, name: string) {
+    this.project.simulator.renamePort(id, name);
+
+    const button = this._buttons.get(id);
+    if (button) button.slug = name;
+
+    this.notify();
+  }
+
+  movePort(id: string, to: number): void {
+    const button = this._buttons.get(id);
+    if (!button) return;
+
+    const index = this.buttonOrder.indexOf(id);
+    if (index === -1) return;
+
+    this.project.simulator.movePort(id, to, button.side);
+
+    const offset = button.side === 'input' ? 0 : this.inputs.length;
+
+    const [removed] = this.buttonOrder.splice(index, 1);
+    this.buttonOrder.splice(offset + to, 0, removed);
     this.notify();
   }
 
@@ -271,6 +318,7 @@ export class Adapter {
 
     this.project.simulator.removeGate(id);
     this._buttons.delete(id);
+    this.buttonOrder = this.buttonOrder.filter((it) => it !== id);
 
     this.notify();
   }
@@ -278,7 +326,6 @@ export class Adapter {
   toggleInput(id: string, index: number) {
     this.project.simulator.toggleInput(id, index);
     this.notify();
-    console.log(this.project.simulator.circuit);
   }
 
   private clearProject(): void {
@@ -288,6 +335,7 @@ export class Adapter {
     this.gates.clear();
     this.connections = [];
     this._buttons.clear();
+    this.buttonOrder = [];
   }
 
   private readCircuit(): void {
@@ -305,12 +353,14 @@ export class Adapter {
       const { id, states, name } = input;
       const button = new Button(id, [0, 0], 'input', states, name);
       this._buttons.set(id, button);
+      this.buttonOrder.push(id);
     }
 
     for (const output of outputs.values()) {
       const { id, states, name } = output;
       const button = new Button(id, [0, 0], 'output', states, name);
       this._buttons.set(id, button);
+      this.buttonOrder.push(id);
     }
 
     for (const element of [...inputs.values(), ...gates.values()]) {

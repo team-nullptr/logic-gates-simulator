@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { StyledButton } from './Button';
+import { StyledButton } from './Button.styles';
 
 export const ButtonGroup = styled.div<{ color: string; horizontal?: boolean }>`
   background-color: ${(props) => props.color};

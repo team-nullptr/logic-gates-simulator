@@ -6,6 +6,7 @@ export const Editable = (props: {
   onEdit: (text: string) => void;
   prefix?: string;
   prefixColor?: string;
+  maxLength?: number;
 }) => {
   const [active, setActive] = useState(false);
   const [text, setText] = useState(props.value);
@@ -48,6 +49,7 @@ export const Editable = (props: {
       onKeyDown={handleKeyDown}
       onChange={(event) => setText(event.target.value)}
       onBlur={edit}
+      maxLength={props.maxLength}
     />
   );
 };
