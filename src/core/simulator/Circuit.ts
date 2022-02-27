@@ -58,7 +58,7 @@ export class Circuit {
     });
 
     outputs.forEach(({ id, name, connectors }) => {
-      circuit.outputs.set(id, ElementFactory.createPort(id, 'input', connectors, name));
+      circuit.outputs.set(id, ElementFactory.createPort(id, 'output', connectors, name));
     });
 
     return circuit;
