@@ -282,6 +282,8 @@ export class Adapter {
     const index = this.buttonOrder.indexOf(id);
     if (index === -1) return;
 
+    this.project.simulator.movePort(id, to, button.side);
+
     const offset = button.side === 'input' ? 0 : this.inputs.length;
 
     const [removed] = this.buttonOrder.splice(index, 1);
