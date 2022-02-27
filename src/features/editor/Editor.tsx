@@ -24,6 +24,10 @@ export const Editor = ({ project }: { project: Project }) => {
   const [outputs, setOutputs] = useState<Button[]>(adapter.outputs);
 
   useEffect(() => {
+    projectManager.saveProject(project);
+  }, []);
+
+  useEffect(() => {
     const subscriber = () => {
       setInputs(adapter.inputs);
       setOutputs(adapter.outputs);

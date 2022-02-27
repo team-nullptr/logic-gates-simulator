@@ -27,9 +27,11 @@ class ProjectManager {
    * All saved projects.
    */
   get projects(): Project[] {
-    return Object.values(ProjectManager.fetchProjects()).map(({ modifiedAt, simulator, ...meta }) => {
+    const projects = Object.values(ProjectManager.fetchProjects()).map(({ modifiedAt, simulator, ...meta }) => {
       return { ...meta, modifiedAt: new Date(modifiedAt), simulator: Simulator.deserialize(simulator) };
     });
+
+    return projects.sort(({ modifiedAt: a }, { modifiedAt: b }) => b.getTime() - a.getTime());
   }
 
   /**
@@ -49,7 +51,7 @@ class ProjectManager {
   saveProject({ modifiedAt, simulator, ...meta }: Project) {
     const serialized: SerializedProject = {
       ...meta,
-      modifiedAt: modifiedAt.toString(),
+      modifiedAt: new Date().toString(),
       simulator: simulator.serialize()
     };
 

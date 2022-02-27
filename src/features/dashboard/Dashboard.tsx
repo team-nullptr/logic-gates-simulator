@@ -1,13 +1,17 @@
 import { StyledWrapper, StyledGrid, StyledHeader, StyledTitle } from './Dashboard.styles';
 import { DashboardCard } from './DashboardCard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Project } from '../../core/project-manager/ProjectManager';
 import { projectManager } from '../../core/project-manager/ProjectManager';
 import { DashboardNavigation } from './DashboardNavigation';
 import { messageBus } from '../message-bus/MessageBus';
 
 export const Dashboard = () => {
-  const [projects, setProjects] = useState<Project[]>(projectManager.projects);
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    setProjects(projectManager.projects);
+  }, []);
 
   const handleProjectDelete = (id: string) => {
     projectManager.deleteProject(id);
