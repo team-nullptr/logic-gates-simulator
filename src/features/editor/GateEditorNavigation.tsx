@@ -1,5 +1,5 @@
 import { Navigation } from '../navigation/Navigation';
-import { ArrowLeft, GitMerge, X } from 'react-feather';
+import { ArrowLeft, Check, GitMerge, X } from 'react-feather';
 import { Editable } from '../common/Editable';
 
 interface GateEditorNavigationProps {
@@ -16,8 +16,8 @@ export const GateEditorNavigation = (props: GateEditorNavigationProps) => {
     <Navigation
       color="hsl(265.9,88%,90%)"
       left={[
-        { icon: ArrowLeft, onClick: props.onBack },
-        { icon: X, onClick: props.onCancel }
+        { icon: ArrowLeft, onClick: props.onCancel },
+        { icon: Check, onClick: props.onBack }
       ]}
       right={[{ icon: GitMerge, onClick: props.onCleanup }]}
     >

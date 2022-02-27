@@ -21,4 +21,8 @@ export const StyledButton = styled.button<StyledButtonProps>`
   &:hover {
     background: ${({ expanded }) => (expanded ? '#d7c9f2' : 'rgba(0, 0, 0, 0.08)')};
   }
+
+  & > span {
+    flex-shrink: 0;
+  }
 `;

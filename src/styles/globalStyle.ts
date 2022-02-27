@@ -17,6 +17,7 @@ export const GlobalStyle = createGlobalStyle`
   body,
   #root {
     height: 100%;
+    overflow: hidden;
   }
 
   #popup {

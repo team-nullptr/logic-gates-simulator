@@ -39,6 +39,7 @@ describe('Element factory creates elements properly', () => {
           type: 'circuit',
           color: '#ffddff',
           name: 'test',
+          dependencies: [],
           circuit: {
             inputs: [{ id: '1', name: '', connectors: 1, connections: [{ receiverId: '2', from: 0, to: 0 }] }],
             gates: [{ id: '2', type: 'not', connections: [{ receiverId: '3', from: 0, to: 0 }] }],
@@ -56,5 +57,6 @@ describe('Element factory creates elements properly', () => {
     expect(gate.inputs.length).toEqual(1);
     expect(gate.circuit.gates.get('2')?.type).toEqual('not');
     expect(gate.inputs.length).toEqual(1);
+    expect(gate.dependencies.size).toEqual(0);
   });
 });

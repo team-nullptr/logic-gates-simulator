@@ -71,6 +71,8 @@ export class Adapter {
   }
 
   cleanup(): void {
+    this.offset = [0, 0];
+
     const blocks = new Map<string, number>();
     for (const gate of this.gates.values()) {
       const { inputs, outputs } = gate;

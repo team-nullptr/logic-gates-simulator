@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { Button as ButtonType } from '../canvas/types/Button';
 import { BinaryButton } from './BinaryButton';
-import styles from './Controls.module.scss';
 import { AddButton } from './AddButton';
 import { StyledButton } from './Button.styles';
 import { useColorVariant } from './hooks/useColorVariant';
@@ -10,6 +9,7 @@ import { Edit3 } from 'react-feather';
 import { Editable } from '../common/Editable';
 import { Adapter } from './Adapter';
 import { Scheme } from '../../common/Scheme';
+import { StyledButtons } from './Controls.styles';
 
 export const Controls = (props: {
   section: 'inputs' | 'outputs';
@@ -107,10 +107,10 @@ export const Controls = (props: {
   };
 
   return (
-    <div ref={ref} onScroll={handleScroll} className={styles.buttons} style={{ direction }}>
+    <StyledButtons ref={ref} onScroll={handleScroll} style={{ direction }}>
       {renderEdit()}
       {props.source[props.section].map((it, i) => renderButton(it, i))}
       <AddButton onSelect={handleAdd} />
-    </div>
+    </StyledButtons>
   );
 };

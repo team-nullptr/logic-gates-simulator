@@ -29,9 +29,9 @@ describe('Simulator works properly', () => {
     const c = simulator.addGate('and');
     const d = simulator.addPort('output');
 
-    simulator.removeGate(c.id);
+    simulator.removeGate(c!.id);
 
-    expect(() => simulator.circuit.find(c.id)).toThrow();
+    expect(simulator.circuit.find(c!.id)).toBeUndefined();
     expect(simulator.circuit.find(a.id)?.connections.length).toEqual(0);
     expect(simulator.circuit.find(b.id)?.connections.length).toEqual(0);
     expect(simulator.circuit.find(d.id)?.states[0] && (simulator.circuit.find(d.id) as Gate).inputs[0]).toEqual(false);

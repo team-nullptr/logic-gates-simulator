@@ -18,10 +18,8 @@ export const DashboardNavigation = () => {
   };
 
   return (
-    <Navigation
-      title={'Projects'}
-      left={[]}
-      right={[{ icon: Plus, text: 'New project', onClick: () => createProject() }]}
-    />
+    <Navigation left={[]} right={[{ icon: Plus, text: 'New project', onClick: () => createProject() }]}>
+      <span>Projects</span>
+    </Navigation>
   );
 };

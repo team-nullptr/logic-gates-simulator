@@ -1,5 +1,4 @@
 import { Sidebar } from '../sidebar/Sidebar';
-import styles from './Editor.module.scss';
 import { Canvas } from '../canvas/Canvas';
 import { Adapter } from './Adapter';
 import { Controls } from './Controls';
@@ -11,6 +10,7 @@ import { GateEditorNavigation } from './GateEditorNavigation';
 import { EditorNavigation } from './EditorNavigation';
 import { CreateGateForm, GateCreateHandler } from './CreateGateForm';
 import { messageBus } from '../message-bus/MessageBus';
+import { StyledCanvas, StyledSide, StyledMain, StyledWrapper } from '../Editor.styles';
 
 export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
@@ -102,26 +102,26 @@ export const Editor = ({ project }: { project: Project }) => {
   return (
     <>
       {renderNavigation()}
-      <main className={styles.container}>
+      <StyledMain>
         <Controls section="inputs" source={adapter} onScroll={(value) => scrollHandler('inputs', value)} />
-        <div className={styles.wrapper}>
-          <div className={styles.side} style={{ left: 0 }}>
+        <StyledWrapper>
+          <StyledSide style={{ left: 0 }}>
             <Connectors buttons={inputs} top={scrolls.inputs} />
-          </div>
-          <div className={styles.canvas}>
+          </StyledSide>
+          <StyledCanvas>
             <Canvas adapter={adapter} />
-          </div>
-          <div className={styles.side} style={{ right: 0 }}>
+          </StyledCanvas>
+          <StyledSide style={{ right: 0 }}>
             <Connectors buttons={outputs} top={scrolls.outputs} />
-          </div>
-        </div>
+          </StyledSide>
+        </StyledWrapper>
         <Controls section="outputs" source={adapter} onScroll={(value) => scrollHandler('outputs', value)} />
         <Sidebar
           available={adapter.available}
           onEdit={handleGateEdit}
           onDelete={(type) => adapter.removeCreatedGate(type)}
         />
-      </main>
+      </StyledMain>
       {createGateFormOpen && (
         <CreateGateForm onSubmit={gateCreateHandler} onCancel={() => setCreateGateFormOpen(false)} />
       )}

@@ -6,8 +6,7 @@ import { getRandomLetter } from './util/getRandomLetter';
 
 export const baseGates = new Map<string, BaseGateOptions>([
   ['not', { type: 'not', name: 'not', color: '#f7e813', inputsCount: 1, handler: ([a]: boolean[]) => !a }],
-  ['and', { type: 'and', name: 'and', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }],
-  ['or', { type: 'or', name: 'or', color: '#f136d1', inputsCount: 2, handler: ([a, b]: boolean[]) => a || b }]
+  ['and', { type: 'and', name: 'and', color: '#1398f7', inputsCount: 2, handler: ([a, b]: boolean[]) => a && b }]
 ]);
 
 export class ElementFactory {

@@ -122,6 +122,7 @@ export class InteractionManager {
   };
 
   private handleDrop = (event: DragEvent): void => {
+    event.preventDefault();
     if (!event.dataTransfer) return;
 
     const data = event.dataTransfer.getData('gate/json');

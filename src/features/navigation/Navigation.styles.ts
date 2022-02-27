@@ -8,6 +8,7 @@ export const StyledNavigation = styled.nav`
   padding: 8px 11px;
   text-align: center;
   font-weight: 500;
+  height: 50px;
 `;
 
 export const StyledContainer = styled.div`
