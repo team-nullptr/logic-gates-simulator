@@ -20,3 +20,13 @@ export const StyledGrid = styled.section`
 export const StyledTitle = styled.h1`
   font-size: 36px;
 `;
+
+export const StyledInfo = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  color: #939393;
+  margin: 96px 0;
+`;
