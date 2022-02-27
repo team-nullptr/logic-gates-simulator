@@ -19,10 +19,12 @@ export class Block {
     public color: string,
     position: Vector,
     inputs: boolean[],
-    outputs: boolean[]
+    outputs: boolean[],
+    inputNames: string[],
+    outputNames: string[]
   ) {
-    this.inputs = new Connectors(this, [0, 0], 'input', inputs);
-    this.outputs = new Connectors(this, [0, 0], 'output', outputs);
+    this.inputs = new Connectors(this, [0, 0], 'input', inputs, inputNames);
+    this.outputs = new Connectors(this, [0, 0], 'output', outputs, outputNames);
     this.move(position);
   }
 
@@ -62,9 +64,9 @@ export class Block {
     return undefined;
   }
 
-  render(ctx: CanvasRenderingContext2D): void {
+  render(ctx: CanvasRenderingContext2D, labels: boolean): void {
     renderGate(this, ctx);
-    this.inputs.render(ctx, this.color);
-    this.outputs.render(ctx, this.color);
+    this.inputs.render(ctx, this.color, labels);
+    this.outputs.render(ctx, this.color, labels);
   }
 }

@@ -9,16 +9,19 @@ import { subtract } from '../../common/utils';
 import { snapToGrid } from '../canvas/utils';
 import { Project } from '../../core/project-manager/ProjectManager';
 import { baseGates } from '../../core/simulator/elements/ElementFactory';
-import { PortType } from '../../core/simulator/elements/Port';
+import { Port, PortType } from '../../core/simulator/elements/Port';
 import { Connectors } from '../canvas/types/Connectors';
 import { ConnectRequest } from '../../core/simulator/Simulator';
 import { UserError } from '../../core/simulator/elements/util/UserError';
 import { messageBus } from '../message-bus/MessageBus';
 import { cleanup } from './utils/cleanup';
+import { CustomGate } from '../../core/simulator/elements/CustomGate';
+import { Gate } from '../../core/simulator/elements/Gate';
 
 export class Adapter {
   offset: Vector = [0, 0];
   size: Vector = [0, 0];
+  labels = false;
 
   connecting: [Connector, Vector] | undefined;
   readonly subscribers = new Set<() => void>();
@@ -68,6 +71,11 @@ export class Adapter {
   private static connectionToConnectRequest(connection: Connection): ConnectRequest {
     const { from, to } = connection;
     return { emitterId: from.group.parent.id, receiverId: to.group.parent.id, from: from.at, to: to.at };
+  }
+
+  toggleLabels(): void {
+    this.labels = !this.labels;
+    this.notify();
   }
 
   cleanup(): void {
@@ -211,18 +219,9 @@ export class Adapter {
   }
 
   addGate(type: string, mouse: Vector): void {
-    const position = subtract(mouse, this.offset);
-    const snapped = snapToGrid(position);
-
-    const { simulator } = this.project;
-
     try {
-      const gate = simulator.addGate(type);
-      if (!gate) return;
-
-      const { id, color, inputs, states, name } = gate;
-      const block = new Block(id, name, color, snapped, inputs, states);
-      this.gates.set(id, block);
+      const gate = this.project.simulator.addGate(type);
+      if (gate) this.placeGate(gate, mouse);
     } catch (error) {
       if (!(error instanceof UserError)) return;
       messageBus.push({ type: 'error', body: error.message });
@@ -279,11 +278,8 @@ export class Adapter {
 
   addPort(type: PortType, connectors: number): void {
     const { simulator } = this.project;
-    const { id, states, name } = simulator.addPort(type, connectors);
-
-    const button = new Button(id, [0, 0], type, states, name);
-    this._buttons.set(id, button);
-    this.buttonOrder.push(id);
+    const port = simulator.addPort(type, connectors);
+    this.placePort(port);
     this.notify();
   }
 
@@ -330,6 +326,30 @@ export class Adapter {
     this.notify();
   }
 
+  private placePort(port: Port): void {
+    const { id, type, states, name } = port;
+    const button = new Button(id, [0, 0], type, states, name);
+    this._buttons.set(id, button);
+    this.buttonOrder.push(id);
+  }
+
+  private placeGate(gate: Gate, mouse: Vector): void {
+    const position = subtract(mouse, this.offset);
+    const snapped = snapToGrid(position);
+
+    let inputNames: string[] = [];
+    let outputNames: string[] = [];
+
+    if (gate instanceof CustomGate) {
+      inputNames = gate.inputsNames;
+      outputNames = gate.outputsNames;
+    }
+
+    const { id, color, inputs, states, name } = gate;
+    const block = new Block(id, name, color, snapped, inputs, states, inputNames, outputNames);
+    this.gates.set(id, block);
+  }
+
   private clearProject(): void {
     this.connecting = undefined;
     this.offset = [0, 0];
@@ -344,26 +364,12 @@ export class Adapter {
     this.clearProject();
     const { gates, inputs, outputs } = this.project.simulator.circuit;
 
-    //TODO: position the gates (maybe abstract that to separate func vvvvvvv)
     for (const gate of gates.values()) {
-      const { id, color, inputs, states, name } = gate;
-      const block = new Block(id, name, color, [0, 0], inputs, states);
-      this.gates.set(id, block);
+      this.placeGate(gate, [0, 0]);
     }
 
-    for (const input of inputs.values()) {
-      const { id, states, name } = input;
-      const button = new Button(id, [0, 0], 'input', states, name);
-      this._buttons.set(id, button);
-      this.buttonOrder.push(id);
-    }
-
-    for (const output of outputs.values()) {
-      const { id, states, name } = output;
-      const button = new Button(id, [0, 0], 'output', states, name);
-      this._buttons.set(id, button);
-      this.buttonOrder.push(id);
-    }
+    [...inputs.values()].forEach((it) => this.placePort(it));
+    [...outputs.values()].forEach((it) => this.placePort(it));
 
     for (const element of [...inputs.values(), ...gates.values()]) {
       for (const connection of element.connections) {
