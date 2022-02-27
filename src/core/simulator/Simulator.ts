@@ -268,6 +268,25 @@ export class Simulator {
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
+  movePort(id: string, to: number, side: PortType) {
+    const ports = side === 'input' ? this.circuit.inputs : this.circuit.outputs;
+
+    const port = ports.get(id);
+    if (!port) return;
+
+    const portsArray = [...ports.values()];
+    const index = portsArray.findIndex((it) => it.id === id);
+    if (index === -1) return;
+
+    const temp = portsArray[to];
+    portsArray[to] = port;
+    portsArray[index] = temp;
+
+    ports.clear();
+    portsArray.forEach((it) => ports.set(it.id, it));
+    this.notify();
+  }
+
   connect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);
     const receiver = this.circuit.find(receiverId);
