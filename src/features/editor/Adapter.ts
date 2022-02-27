@@ -78,13 +78,23 @@ export class Adapter {
       blocks.set(gate.id, height);
     }
 
-    const connections = [...this.project.simulator.circuit.gates.values()].flatMap((it) =>
+    const { circuit } = this.project.simulator;
+
+    const connections = [...circuit.gates.values()].flatMap((it) =>
       it.connections
         .filter((connection) => it.id !== connection.receiverId)
         .map((connection) => [it.id, connection.receiverId] as [string, string])
     );
 
-    const positions = cleanup(blocks, connections);
+    const order: string[] = [];
+    for (const id of this.buttonOrder) {
+      const input = circuit.inputs.get(id);
+      if (!input) continue;
+
+      input.connections.forEach((it) => order.push(it.receiverId));
+    }
+
+    const positions = cleanup(blocks, connections, order);
     for (const [id, [column, row]] of positions.entries()) {
       this.gates.get(id)?.move([column * 6 + 4, row + 2]);
     }
