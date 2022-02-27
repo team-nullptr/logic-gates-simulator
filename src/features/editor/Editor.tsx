@@ -80,9 +80,11 @@ export const Editor = ({ project }: { project: Project }) => {
       return (
         <EditorNavigation
           title={project.name}
+          labels={adapter.labels}
           onRename={handleProjectRename}
-          onCleanup={() => adapter.cleanup()}
           onCreateGate={() => setCreateGateFormOpen(true)}
+          onLabelToggle={() => adapter.toggleLabels()}
+          onCleanup={() => adapter.cleanup()}
         />
       );
     }

@@ -11,7 +11,7 @@ export class Renderer {
   }
 
   private renderGates(ctx: CanvasRenderingContext2D) {
-    this.source.gates.forEach((it) => it.render(ctx));
+    this.source.gates.forEach((it) => it.render(ctx, this.source.labels));
   }
 
   private renderConnections(ctx: CanvasRenderingContext2D) {
