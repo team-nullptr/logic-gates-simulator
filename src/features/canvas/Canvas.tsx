@@ -6,6 +6,7 @@ import { InteractionManager } from './InteractionManager';
 import { findToolName } from './utils';
 import { ToolFactory } from './tools/ToolFactory';
 import { StyledCanvas } from './Canvas.styles';
+import { isConnection } from './types/Connection';
 
 let canvasHelper: CanvasHelper;
 let renderer: Renderer;
@@ -30,6 +31,11 @@ const setup = (canvas: HTMLCanvasElement, source: Adapter) => {
 
     interactionManager.tool = tool;
     tool.handleMouseDown(interaction);
+  });
+
+  interactionManager.addEventListener('hover', (interaction) => {
+    if (!isConnection(interaction.target)) return;
+    console.log(interaction, isConnection(interaction.target));
   });
 };
 
