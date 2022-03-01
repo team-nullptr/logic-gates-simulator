@@ -13,7 +13,11 @@ type InteractionListener = (interaction: Interaction) => void;
 
 export class InteractionManager {
   tool?: Tool;
-  private readonly listeners = new Set<InteractionListener>();
+
+  private readonly listeners = {
+    interaction: new Set<InteractionListener>(),
+    hover: new Set<InteractionListener>()
+  };
 
   private readonly canvas: HTMLCanvasElement;
   private pressed = false;
@@ -24,7 +28,8 @@ export class InteractionManager {
   }
 
   destroy(): void {
-    this.listeners.clear();
+    this.listeners.interaction.clear();
+    this.listeners.hover.clear();
     this.canvas.removeEventListener('mousedown', this.handleMouseDown);
     this.canvas.removeEventListener('mousemove', this.handleMouseMove);
     removeEventListener('mouseup', this.handleMouseUp);
@@ -32,12 +37,12 @@ export class InteractionManager {
     this.canvas.removeEventListener('drop', this.handleDrop);
   }
 
-  addEventListener(type: 'interaction', fn: InteractionListener): void {
-    this.listeners.add(fn);
+  addEventListener(type: 'interaction' | 'hover', fn: InteractionListener): void {
+    this.listeners[type].add(fn);
   }
 
-  removeEventListener(type: 'interaction', fn: InteractionListener): void {
-    this.listeners.delete(fn);
+  removeEventListener(type: 'interaction' | 'hover', fn: InteractionListener): void {
+    this.listeners[type].delete(fn);
   }
 
   private resolve(at: Vector): Target {
@@ -98,13 +103,14 @@ export class InteractionManager {
     }
 
     this.pressed = true;
-    this.listeners.forEach((listener) => listener(interaction));
+    this.listeners.interaction.forEach((listener) => listener(interaction));
   };
 
   private handleMouseMove = ({ offsetX, offsetY }: MouseEvent): void => {
-    if (!this.pressed || !this.tool) return;
     const event = this.constructMouseEvent([offsetX, offsetY]);
-    this.tool.handleMouseMove(event);
+
+    if (this.pressed && this.tool) return this.tool.handleMouseMove(event);
+    return this.listeners.hover.forEach((listener) => listener(event));
   };
 
   private handleMouseUp = ({ offsetX, offsetY }: MouseEvent): void => {

@@ -29,6 +29,8 @@ export class Adapter {
   readonly gates = new Map<string, Block>();
   connections: Connection[] = [];
 
+  hoveredConnection?: Connection;
+
   private readonly _buttons = new Map<string, Button>();
   private buttonOrder: string[] = [];
 
