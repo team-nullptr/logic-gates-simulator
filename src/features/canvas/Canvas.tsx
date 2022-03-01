@@ -31,11 +31,15 @@ const setup = (canvas: HTMLCanvasElement, source: Adapter) => {
 
     interactionManager.tool = tool;
     tool.handleMouseDown(interaction);
+    source.hoveredConnection = undefined;
   });
 
-  interactionManager.addEventListener('hover', (interaction) => {
-    if (!isConnection(interaction.target)) return;
-    console.log(interaction, isConnection(interaction.target));
+  interactionManager.addEventListener('hover', ({ target }) => {
+    if (isConnection(target)) {
+      source.hoveredConnection = target;
+    } else {
+      source.hoveredConnection = undefined;
+    }
   });
 };
 
