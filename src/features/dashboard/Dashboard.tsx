@@ -19,13 +19,11 @@ export const Dashboard = () => {
   const handleProjectDelete = (id: string) => {
     projectManager.deleteProject(id);
     setProjects(projects.filter((it) => it.id !== id));
-    messageBus.push({ type: 'success', body: 'project deleted successfully' });
   };
 
   const createProject = () => {
     try {
       const id = projectManager.createProject('Untitled');
-      messageBus.push({ type: 'success', body: 'A new project has been created successfully' });
       navigate(`/editor/${id}`);
     } catch (err) {
       messageBus.push({ type: 'error', body: 'Failed to create a new project' });

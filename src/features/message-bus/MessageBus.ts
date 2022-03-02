@@ -31,3 +31,11 @@ class MessageBus {
 }
 
 export const messageBus = new MessageBus();
+
+messageBus.subscribe((message) => {
+  if (message.type === 'error') {
+    console.error(message.body);
+  } else {
+    console.info(message.body);
+  }
+});
