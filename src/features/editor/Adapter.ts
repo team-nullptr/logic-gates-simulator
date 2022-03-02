@@ -14,7 +14,7 @@ import { Connectors } from '../canvas/types/Connectors';
 import { ConnectRequest } from '../../core/simulator/Simulator';
 import { UserError } from '../../core/simulator/elements/util/UserError';
 import { messageBus } from '../message-bus/MessageBus';
-import { cleanup } from './utils/cleanup';
+import { Block as PositionedBlock, cleanup } from './utils/cleanup';
 import { CustomGate } from '../../core/simulator/elements/CustomGate';
 import { Gate } from '../../core/simulator/elements/Gate';
 
@@ -81,34 +81,25 @@ export class Adapter {
   }
 
   cleanup(): void {
-    this.offset = [0, 0];
+    const blocks = new Map<string, PositionedBlock>();
 
-    const blocks = new Map<string, number>();
-    for (const gate of this.gates.values()) {
-      const { inputs, outputs } = gate;
-      const height = Math.max(inputs.states.length, outputs.states.length) * 2;
-      blocks.set(gate.id, height);
+    for (const block of this.project.simulator.circuit.gates.values()) {
+      const { id, inputs, states, connections } = block;
+      const height = Math.max(inputs.length, states.length);
+      const receivers = connections.map((it) => it.receiverId);
+      blocks.set(id, { height, position: [0, Infinity], connections: receivers });
     }
 
-    const { circuit } = this.project.simulator;
-
-    const connections = [...circuit.gates.values()].flatMap((it) =>
-      it.connections
-        .filter((connection) => it.id !== connection.receiverId)
-        .map((connection) => [it.id, connection.receiverId] as [string, string])
-    );
-
-    const order: string[] = [];
-    for (const id of this.buttonOrder) {
-      const input = circuit.inputs.get(id);
-      if (!input) continue;
-
-      input.connections.forEach((it) => order.push(it.receiverId));
+    const unvisited = new Set(blocks.keys());
+    for (const block of blocks.values()) {
+      block.connections.forEach((it) => unvisited.delete(it));
     }
 
-    const positions = cleanup(blocks, connections, order);
-    for (const [id, [column, row]] of positions.entries()) {
-      this.gates.get(id)?.move([column * 6 + 4, row + 2]);
+    cleanup(blocks, Array.from(unvisited));
+
+    for (const [id, { position }] of blocks) {
+      const [x, y] = position;
+      this.gates.get(id)?.move([x * 6, y * 2]);
     }
   }
 
