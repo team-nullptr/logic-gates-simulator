@@ -10,7 +10,7 @@ import { GateEditorNavigation } from './GateEditorNavigation';
 import { EditorNavigation } from './EditorNavigation';
 import { CreateGateForm, GateCreateHandler } from './CreateGateForm';
 import { messageBus } from '../message-bus/MessageBus';
-import { StyledCanvas, StyledSide, StyledMain, StyledWrapper } from '../Editor.styles';
+import { StyledCanvas, StyledSide, StyledMain, StyledWrapper } from './Editor.styles';
 
 export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
