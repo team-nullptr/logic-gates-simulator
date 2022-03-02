@@ -5,55 +5,17 @@ export const StyledCard = styled.article`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  aspect-ratio: 4 / 3;
   width: 100%;
   overflow: hidden;
   border-radius: 8px;
   border: 2px solid #fafafa;
-`;
-
-export const StyledImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: max-content;
 `;
 
 export const StyledHeader = styled.div`
   position: relative;
   width: 100%;
-  flex-grow: 1;
-  height: 0;
-`;
-
-export const StyledDescription = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  flex-shrink: 0;
-  padding: 16px 12px;
-  border-top: 2px solid #fafafa;
-`;
-
-export const StyledDescriptionSection = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-export const StyledDate = styled.span`
-  color: rgb(136, 136, 136);
-  font-weight: lighter;
-  font-size: 0.8rem;
-`;
-
-export const StyledDeleteButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4px;
-  background: #fff;
-  border: 2px solid #f1f1f1;
-  border-radius: 8px;
+  aspect-ratio: 16/9;
   cursor: pointer;
 `;
 
@@ -63,4 +25,56 @@ export const StyledOptionBar = styled.div`
   position: absolute;
   display: flex;
   flex-direction: row-reverse;
+`;
+
+export const StyledDeleteButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.08);
+  }
+`;
+
+export const StyledIcon = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 8px;
+  background: #e1d1fc;
+  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const StyledDescription = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
+  padding: 12px 16px 16px;
+  cursor: default;
+`;
+
+export const StyledDescriptionSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+export const StyledDate = styled.span`
+  color: rgb(136, 136, 136);
+  font-weight: lighter;
+  font-size: 0.8rem;
 `;
