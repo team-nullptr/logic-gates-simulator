@@ -10,7 +10,7 @@ import { GateEditorNavigation } from './GateEditorNavigation';
 import { EditorNavigation } from './EditorNavigation';
 import { CreateGateForm, GateCreateHandler } from './CreateGateForm';
 import { messageBus } from '../message-bus/MessageBus';
-import { StyledCanvas, StyledSide, StyledMain, StyledWrapper } from './Editor.styles';
+import { StyledCanvas, StyledMain, StyledSide, StyledWrapper } from './Editor.styles';
 
 export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
@@ -95,7 +95,9 @@ export const Editor = ({ project }: { project: Project }) => {
         onCancel={() => adapter.cancelCreatedGateUpdate()}
         title={project.name}
         gateName={meta.editedGate.name}
+        labels={adapter.labels}
         onRename={(value) => adapter.renameCreatedGate(meta.editedGate.type, value)}
+        onLabelToggle={() => adapter.toggleLabels()}
         onCleanup={() => adapter.cleanup()}
       />
     );

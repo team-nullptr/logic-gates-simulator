@@ -81,6 +81,7 @@ export class Adapter {
   }
 
   cleanup(): void {
+    this.offset = [96, 96];
     const blocks = new Map<string, PositionedBlock>();
 
     for (const block of this.project.simulator.circuit.gates.values()) {
@@ -330,8 +331,8 @@ export class Adapter {
     const position = subtract(mouse, this.offset);
     const snapped = snapToGrid(position);
 
-    let inputNames: string[] = [];
-    let outputNames: string[] = [];
+    let inputNames: string[] = ['A', 'B'];
+    let outputNames: string[] = ['P'];
 
     if (gate instanceof CustomGate) {
       inputNames = gate.inputsNames;
