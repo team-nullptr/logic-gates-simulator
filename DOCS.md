@@ -4,6 +4,8 @@
 
 Ta sekcja zawiera opis funkcjonalności edytora bramek.
 
+---
+
 ### **Panel zarządzania projektami**
 
 Po uruchomieniu aplikacji znajdujemy się w panelu zarządzania projektami. Jest to miejsce, w którym możemy tworzyć, otwierać oraz usuwać nasze projekty.
@@ -12,21 +14,21 @@ Po uruchomieniu aplikacji znajdujemy się w panelu zarządzania projektami. Jest
 
 Aby stworzyć nowy projekt klikamy guzik `Create project`, znajdujacy się w prawej części nawigacji.
 
-[obrazek]
+![Przycisk tworzenia projektu](./docs/images/create_project_navbar.png)
 
 Jeżeli nie mamy stworzonego żadnego projektu, możemy również kliknąć w guzik `Create project` w sekcji poniżej.
 
-[obrazek]
+![Sekcja pozwalająca na stworzenie projektu](./docs/images/no_projects_section.png)
 
 Po stworzeniu projektu jesteśmy automatycznie przenoszeni do edytora symulatora.
 
 #### **Zmiana nazwy projektu**
 
-Stworzony projekt domyślnie nazywany jest `Untitled`. Oczywiście istnieje możliwośc zmiany jego nazwy. Aby tego dokonać klikamy lewym przyciskiem myszy na nazwę projektu znajdującą się na jego karcie. Pozwala to na wpisanie nowej nazwy. Odklikniecie myszką w inne miejsce na ekranie, bądź wciśnięcie klawisza `Enter` zatwierdza nową nazwę. Jeżeli chcemy anulować operację możemy kliknąć klawisz `escape`.
-
-_Istnieje również druga opcja zmiany nazwy projektu, która zostanie opisana w sekcji opisu funkcjonalności edytora._
+Stworzony projekt domyślnie nazywany jest `Untitled`. Oczywiście istnieje możliwośc zmiany jego nazwy. Aby tego dokonać klikamy lewym przyciskiem myszy na nazwę projektu znajdującą się na jego karcie. Pozwala to na wpisanie nowej nazwy. Odklikniecie myszką w inne miejsce na ekranie, bądź wciśnięcie klawisza `Enter` zatwierdza wprowadzone zmiany. Jeżeli chcemy anulować operację możemy kliknąć klawisz `escape`.
 
 [obrazek]
+
+_Istnieje również druga opcja zmiany nazwy projektu, która zostanie opisana w sekcji opisu funkcjonalności edytora._
 
 Jeżeli skasujemy nazwę, powrócia ona do poprzedniej zapisanej wartości.
 
@@ -39,6 +41,8 @@ Aby usunąć projekt możemy kliknąć w ikonkę `X` w prawym górnym rogu karty
 [obrazek]
 
 Projekt zostaje wówczas usunięty na zawsze.
+
+---
 
 ### **Edytor**
 
