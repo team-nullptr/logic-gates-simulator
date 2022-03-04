@@ -6,17 +6,13 @@ import { Button } from '../canvas/types/Button';
 import { Block } from '../canvas/types/Block';
 import { Prototype } from '../sidebar/types/Prototype';
 import { subtract } from '../../common/utils';
-import { snapToGrid } from '../canvas/utils';
 import { Project } from '../../core/project-manager/ProjectManager';
 import { baseGates } from '../../core/simulator/elements/ElementFactory';
 import { Port, PortType } from '../../core/simulator/elements/Port';
 import { Connectors } from '../canvas/types/Connectors';
-import { ConnectRequest } from '../../core/simulator/Simulator';
-import { UserError } from '../../core/simulator/elements/util/UserError';
-import { messageBus } from '../message-bus/MessageBus';
 import { Block as PositionedBlock, cleanup } from './utils/cleanup';
-import { CustomGate } from '../../core/simulator/elements/CustomGate';
-import { Gate } from '../../core/simulator/elements/Gate';
+import { Builder } from './Builder';
+import { attempt } from './utils/attepmt';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -43,11 +39,8 @@ export class Adapter {
 
   get available(): Prototype[] {
     const gates = this.project.simulator.createdGates;
-    return [...gates.values(), ...baseGates.values()].map((it) => ({
-      type: it.type,
-      name: it.name,
-      color: it.color
-    }));
+    const all = [...gates.values(), ...baseGates.values()];
+    return all.map(({ type, name, color }) => ({ type, name, color }));
   }
 
   get buttons(): Button[] {
@@ -70,10 +63,66 @@ export class Adapter {
     return this.buttons.filter((it) => it.side === 'output');
   }
 
-  private static connectionToConnectRequest(connection: Connection): ConnectRequest {
-    const { from, to } = connection;
-    return { emitterId: from.group.parent.id, receiverId: to.group.parent.id, from: from.at, to: to.at };
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  // FIXED
+
+  addGate(type: string, mouse: Vector): void {
+    const [gate] = attempt(() => this.project.simulator.addGate(type));
+    if (!gate) return;
+
+    const position = subtract(mouse, this.offset);
+    const block = Builder.buildBlock(gate, position);
+    this.gates.set(gate.id, block);
   }
+
+  removeGate(id: string): void {
+    const gate = this.gates.get(id);
+    if (!gate) return;
+
+    this.disconnectAll(gate.inputs);
+    this.disconnectAll(gate.outputs);
+
+    this.project.simulator.removeGate(id);
+    this.gates.delete(id);
+  }
+
+  addPort(type: PortType, connectors: number): void {
+    const port = this.project.simulator.addPort(type, connectors);
+
+    const button = Builder.buildButton(port);
+    this._buttons.set(button.id, button);
+    this.buttonOrder.push(button.id);
+
+    this.notify();
+  }
+
+  removePort(id: string): void {
+    const button = this._buttons.get(id);
+    if (!button) return;
+
+    this.disconnectAll(button.connectors);
+
+    this.project.simulator.removeGate(id);
+    this._buttons.delete(id);
+    this.buttonOrder = this.buttonOrder.filter((it) => it !== id);
+
+    this.notify();
+  }
+
+  // FIXED
+  //
+  //
+  //
+  //
+  //
+  //
+  //
 
   toggleLabels(): void {
     this.labels = !this.labels;
@@ -137,40 +186,18 @@ export class Adapter {
   }
 
   connect(connection: Connection) {
-    const { from, to } = connection;
-
-    if (from.group === to.group && from.at === to.at) return;
-
-    if (to.group.side === 'output' || from.group.side === 'input') {
-      messageBus.push({ type: 'error', body: 'You can make a connection only between an output and an input' });
-      return;
-    }
-
-    const request = Adapter.connectionToConnectRequest(connection);
-
-    try {
-      this.project.simulator.connect(request);
-      this.connections.push(connection);
-      this.notify();
-    } catch (error) {
-      if (!(error instanceof UserError)) return;
-      messageBus.push({ type: 'error', body: error.message });
-    }
+    const request = Builder.buildConnectRequest(connection);
+    const [, success] = attempt(() => this.project.simulator.connect(request));
+    if (!success) return;
+    this.connections.push(connection);
+    this.notify();
   }
 
   createGate(name: string, color: string) {
-    try {
-      this.project.simulator.createGate(name, color);
-
-      this.connections = [];
-      this.gates.clear();
-      this._buttons.clear();
-
-      this.notify();
-    } catch (error) {
-      if (!(error instanceof UserError)) return;
-      messageBus.push({ type: 'error', body: error.message });
-    }
+    const [, success] = attempt(() => this.project.simulator.createGate(name, color));
+    if (!success) return;
+    this.readCircuit();
+    this.notify();
   }
 
   editCreatedGate(type: string): void {
@@ -185,14 +212,11 @@ export class Adapter {
   }
 
   updateCreatedGate(): void {
-    try {
+    attempt(() => {
       this.project.simulator.updateCreatedGate();
       this.readCircuit();
-    } catch (error) {
-      if (!(error instanceof UserError)) return;
-      messageBus.push({ type: 'error', body: error.message });
-    }
-    this.notify();
+      this.notify();
+    });
   }
 
   cancelCreatedGateUpdate(): void {
@@ -202,41 +226,15 @@ export class Adapter {
   }
 
   removeCreatedGate(type: string): void {
-    try {
+    attempt(() => {
       this.project.simulator.removeCreatedGate(type);
-    } catch (error) {
-      if (!(error instanceof UserError)) return;
-      messageBus.push({ type: 'error', body: error.message });
-    }
-
-    this.notify();
-  }
-
-  addGate(type: string, mouse: Vector): void {
-    try {
-      const gate = this.project.simulator.addGate(type);
-      if (gate) this.placeGate(gate, mouse);
-    } catch (error) {
-      if (!(error instanceof UserError)) return;
-      messageBus.push({ type: 'error', body: error.message });
-    }
-  }
-
-  removeGate(id: string): void {
-    const gate = this.gates.get(id);
-    if (!gate) return;
-
-    this.disconnectAll(gate.inputs);
-    this.disconnectAll(gate.outputs);
-
-    this.project.simulator.removeGate(id);
-    this.gates.delete(id);
-    this.notify();
+      this.notify();
+    });
   }
 
   removeConnection(connection: Connection): void {
     this.connections = this.connections.filter((it) => it !== connection);
-    const request = Adapter.connectionToConnectRequest(connection);
+    const request = Builder.buildConnectRequest(connection);
     this.project.simulator.disconnect(request);
     this.notify();
   }
@@ -257,7 +255,7 @@ export class Adapter {
     this.connections = this.connections.filter((it) => !connected.has(it));
 
     for (const connection of connected) {
-      const request = Adapter.connectionToConnectRequest(connection);
+      const request = Builder.buildConnectRequest(connection);
       this.project.simulator.disconnect(request);
     }
 
@@ -270,19 +268,10 @@ export class Adapter {
     }
   }
 
-  addPort(type: PortType, connectors: number): void {
-    const { simulator } = this.project;
-    const port = simulator.addPort(type, connectors);
-    this.placePort(port);
-    this.notify();
-  }
-
   renamePort(id: string, name: string) {
     this.project.simulator.renamePort(id, name);
-
     const button = this._buttons.get(id);
     if (button) button.slug = name;
-
     this.notify();
   }
 
@@ -296,52 +285,14 @@ export class Adapter {
     this.project.simulator.movePort(id, to, button.side);
 
     const offset = button.side === 'input' ? 0 : this.inputs.length;
-
     const [removed] = this.buttonOrder.splice(index, 1);
     this.buttonOrder.splice(offset + to, 0, removed);
-    this.notify();
-  }
-
-  removePort(id: string): void {
-    const button = this._buttons.get(id);
-    if (!button) return;
-
-    this.disconnectAll(button.connectors);
-
-    this.project.simulator.removeGate(id);
-    this._buttons.delete(id);
-    this.buttonOrder = this.buttonOrder.filter((it) => it !== id);
-
     this.notify();
   }
 
   toggleInput(id: string, index: number) {
     this.project.simulator.toggleInput(id, index);
     this.notify();
-  }
-
-  private placePort(port: Port): void {
-    const { id, type, states, name } = port;
-    const button = new Button(id, [0, 0], type, states, name);
-    this._buttons.set(id, button);
-    this.buttonOrder.push(id);
-  }
-
-  private placeGate(gate: Gate, mouse: Vector): void {
-    const position = subtract(mouse, this.offset);
-    const snapped = snapToGrid(position);
-
-    let inputNames: string[] = ['A', 'B'];
-    let outputNames: string[] = ['P'];
-
-    if (gate instanceof CustomGate) {
-      inputNames = gate.inputsNames;
-      outputNames = gate.outputsNames;
-    }
-
-    const { id, color, inputs, states, name } = gate;
-    const block = new Block(id, name, color, snapped, inputs, states, inputNames, outputNames);
-    this.gates.set(id, block);
   }
 
   private clearProject(): void {
@@ -359,11 +310,18 @@ export class Adapter {
     const { gates, inputs, outputs } = this.project.simulator.circuit;
 
     for (const gate of gates.values()) {
-      this.placeGate(gate, [0, 0]);
+      const block = Builder.buildBlock(gate, [0, 0]);
+      this.gates.set(gate.id, block);
     }
 
-    [...inputs.values()].forEach((it) => this.placePort(it));
-    [...outputs.values()].forEach((it) => this.placePort(it));
+    const placePort = (port: Port) => {
+      const button = Builder.buildButton(port);
+      this._buttons.set(button.id, button);
+      this.buttonOrder.push(button.id);
+    };
+
+    [...inputs.values()].forEach((it) => placePort(it));
+    [...outputs.values()].forEach((it) => placePort(it));
 
     for (const element of [...inputs.values(), ...gates.values()]) {
       for (const connection of element.connections) {
