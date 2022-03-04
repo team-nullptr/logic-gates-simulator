@@ -186,6 +186,10 @@ export class Simulator {
   }
 
   removeCreatedGate(type: string): void {
+    if(this.meta.mode === 'GATE_EDIT' && this.meta.editedGate.type === type) 
+      throw new UserError('Cannot delete currently edited gate')
+    
+
     const usages = new Set<string>();
 
     for (const gate of this.createdGates.values()) {
