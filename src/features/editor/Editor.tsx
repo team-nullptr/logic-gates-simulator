@@ -48,7 +48,7 @@ export const Editor = ({ project }: { project: Project }) => {
 
   const handleGateEdit = (type: string) => {
     if (project.simulator.meta.mode === 'GATE_EDIT') return;
-    adapter.editCreatedGate(type);
+    adapter.editCustomGate(type);
   };
 
   const scrollHandler = (side: 'inputs' | 'outputs', value: number) => {
@@ -63,7 +63,7 @@ export const Editor = ({ project }: { project: Project }) => {
       return;
     }
 
-    adapter.createGate(name, color);
+    adapter.createCustomGate(name, color);
     console.log(project.simulator.createdGates);
     setCreateGateFormOpen(false);
   };
@@ -91,12 +91,12 @@ export const Editor = ({ project }: { project: Project }) => {
 
     return (
       <GateEditorNavigation
-        onBack={() => adapter.updateCreatedGate()}
-        onCancel={() => adapter.cancelCreatedGateUpdate()}
+        onBack={() => adapter.updateCustomGate()}
+        onCancel={() => adapter.cancelCustomGateUpdate()}
         title={project.name}
         gateName={meta.editedGate.name}
         labels={adapter.labels}
-        onRename={(value) => adapter.renameCreatedGate(meta.editedGate.type, value)}
+        onRename={(value) => adapter.renameCustomGate(meta.editedGate.type, value)}
         onLabelToggle={() => adapter.toggleLabels()}
         onCleanup={() => adapter.cleanup()}
       />
@@ -123,7 +123,7 @@ export const Editor = ({ project }: { project: Project }) => {
         <Sidebar
           available={adapter.available}
           onEdit={handleGateEdit}
-          onDelete={(type) => adapter.removeCreatedGate(type)}
+          onDelete={(type) => adapter.removeCustomGate(type)}
         />
       </StyledMain>
       {createGateFormOpen && (

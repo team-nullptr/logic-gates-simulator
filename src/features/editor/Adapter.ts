@@ -13,6 +13,7 @@ import { Connectors } from '../canvas/types/Connectors';
 import { Block as PositionedBlock, cleanup } from './utils/cleanup';
 import { Builder } from './Builder';
 import { attempt } from './utils/attepmt';
+import { swap } from './utils/swap';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -115,6 +116,74 @@ export class Adapter {
     this.notify();
   }
 
+  togglePort(id: string, index: number) {
+    this.project.simulator.toggleInput(id, index);
+    this.notify();
+  }
+
+  renamePort(id: string, name: string) {
+    const button = this._buttons.get(id);
+    if (!button) return;
+
+    this.project.simulator.renamePort(id, name);
+    button.slug = name;
+
+    this.notify();
+  }
+
+  movePort(id: string, to: number): void {
+    const button = this._buttons.get(id);
+    if (!button) return;
+
+    this.project.simulator.movePort(id, to, button.side);
+
+    const a = this.buttonOrder.indexOf(id);
+    const offset = button.side === 'input' ? 0 : this.inputs.length;
+    swap(this.buttonOrder, a, to + offset);
+
+    this.notify();
+  }
+
+  createCustomGate(name: string, color: string) {
+    attempt(() => {
+      this.project.simulator.createGate(name, color);
+      this.readCircuit();
+      this.notify();
+    });
+  }
+
+  removeCustomGate(type: string): void {
+    attempt(() => {
+      this.project.simulator.removeCreatedGate(type);
+      this.notify();
+    });
+  }
+
+  editCustomGate(type: string): void {
+    this.project.simulator.editCreatedGate(type);
+    this.readCircuit();
+    this.notify();
+  }
+
+  renameCustomGate(type: string, name: string): void {
+    this.project.simulator.renameCreatedGate(type, name);
+    this.notify();
+  }
+
+  updateCustomGate(): void {
+    attempt(() => {
+      this.project.simulator.updateCreatedGate();
+      this.readCircuit();
+      this.notify();
+    });
+  }
+
+  cancelCustomGateUpdate(): void {
+    this.project.simulator.cancelCreatedGateUpdate();
+    this.readCircuit();
+    this.notify();
+  }
+
   // FIXED
   //
   //
@@ -193,45 +262,6 @@ export class Adapter {
     this.notify();
   }
 
-  createGate(name: string, color: string) {
-    const [, success] = attempt(() => this.project.simulator.createGate(name, color));
-    if (!success) return;
-    this.readCircuit();
-    this.notify();
-  }
-
-  editCreatedGate(type: string): void {
-    this.project.simulator.editCreatedGate(type);
-    this.readCircuit();
-    this.notify();
-  }
-
-  renameCreatedGate(type: string, name: string): void {
-    this.project.simulator.renameCreatedGate(type, name);
-    this.notify();
-  }
-
-  updateCreatedGate(): void {
-    attempt(() => {
-      this.project.simulator.updateCreatedGate();
-      this.readCircuit();
-      this.notify();
-    });
-  }
-
-  cancelCreatedGateUpdate(): void {
-    this.project.simulator.cancelCreatedGateUpdate();
-    this.readCircuit();
-    this.notify();
-  }
-
-  removeCreatedGate(type: string): void {
-    attempt(() => {
-      this.project.simulator.removeCreatedGate(type);
-      this.notify();
-    });
-  }
-
   removeConnection(connection: Connection): void {
     this.connections = this.connections.filter((it) => it !== connection);
     const request = Builder.buildConnectRequest(connection);
@@ -266,33 +296,6 @@ export class Adapter {
     for (const i in connectors.states) {
       this.disconnectFrom({ group: connectors, at: parseInt(i) });
     }
-  }
-
-  renamePort(id: string, name: string) {
-    this.project.simulator.renamePort(id, name);
-    const button = this._buttons.get(id);
-    if (button) button.slug = name;
-    this.notify();
-  }
-
-  movePort(id: string, to: number): void {
-    const button = this._buttons.get(id);
-    if (!button) return;
-
-    const index = this.buttonOrder.indexOf(id);
-    if (index === -1) return;
-
-    this.project.simulator.movePort(id, to, button.side);
-
-    const offset = button.side === 'input' ? 0 : this.inputs.length;
-    const [removed] = this.buttonOrder.splice(index, 1);
-    this.buttonOrder.splice(offset + to, 0, removed);
-    this.notify();
-  }
-
-  toggleInput(id: string, index: number) {
-    this.project.simulator.toggleInput(id, index);
-    this.notify();
   }
 
   private clearProject(): void {
