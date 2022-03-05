@@ -8,7 +8,7 @@ export const AddButton = (props: { onSelect: (option: number) => void }) => {
 
   return (
     <StyledGroup color="hsl(47deg 90% 95%)">
-      <StyledButton background="hsl(46 88% 90%)" hover="hsl(46 88% 82%)">
+      <StyledButton background="hsl(46 88% 90%)" hover="hsl(46 88% 82%)" onClick={() => props.onSelect(1)}>
         <Plus height="20" color="#ebb90c" />
       </StyledButton>
       {options.map((number) => (

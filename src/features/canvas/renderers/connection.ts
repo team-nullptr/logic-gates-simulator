@@ -57,14 +57,14 @@ export const collides = (start: Vector, end: Vector, other: Vector): boolean => 
     const vertical = cx === px;
 
     if (vertical) {
-      if (!inRange(x, cx - 6, cx + 6)) continue;
+      if (!inRange(x, cx - 8, cx + 8)) continue;
       if (cy > py) {
         if (inRange(y, py, cy)) return true;
       } else {
         if (inRange(y, cy, py)) return true;
       }
     } else {
-      if (!inRange(y, cy - 6, cy + 6)) continue;
+      if (!inRange(y, cy - 8, cy + 8)) continue;
       if (cx > px) {
         if (inRange(x, px, cx)) return true;
       } else {
