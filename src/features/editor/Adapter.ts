@@ -38,32 +38,6 @@ export class Adapter {
     this.readCircuit();
   }
 
-  get available(): Prototype[] {
-    const gates = this.project.simulator.createdGates;
-    const all = [...gates.values(), ...baseGates.values()];
-    return all.map(({ type, name, color }) => ({ type, name, color }));
-  }
-
-  get buttons(): Button[] {
-    this.updateButtons();
-
-    const sorted: Button[] = [];
-    for (const id of this.buttonOrder) {
-      const button = this._buttons.get(id);
-      if (button) sorted.push(button);
-    }
-
-    return sorted;
-  }
-
-  get inputs(): Button[] {
-    return this.buttons.filter((it) => it.side === 'input');
-  }
-
-  get outputs(): Button[] {
-    return this.buttons.filter((it) => it.side === 'output');
-  }
-
   //
   //
   //
@@ -72,6 +46,12 @@ export class Adapter {
   //
   //
   // FIXED
+
+  get availableGates(): Prototype[] {
+    const gates = this.project.simulator.createdGates;
+    const all = [...gates.values(), ...baseGates.values()];
+    return all.map(({ type, name, color }) => ({ type, name, color }));
+  }
 
   addGate(type: string, mouse: Vector): void {
     const [gate] = attempt(() => this.project.simulator.addGate(type));
@@ -86,8 +66,8 @@ export class Adapter {
     const gate = this.gates.get(id);
     if (!gate) return;
 
-    this.disconnectAll(gate.inputs);
-    this.disconnectAll(gate.outputs);
+    this.disconnectGroup(gate.inputs);
+    this.disconnectGroup(gate.outputs);
 
     this.project.simulator.removeGate(id);
     this.gates.delete(id);
@@ -107,7 +87,7 @@ export class Adapter {
     const button = this._buttons.get(id);
     if (!button) return;
 
-    this.disconnectAll(button.connectors);
+    this.disconnectGroup(button.connectors);
 
     this.project.simulator.removeGate(id);
     this._buttons.delete(id);
@@ -184,6 +164,51 @@ export class Adapter {
     this.notify();
   }
 
+  connect(connection: Connection) {
+    const request = Builder.buildConnectRequest(connection);
+    attempt(() => {
+      this.project.simulator.connect(request);
+      this.connections.push(connection);
+      this.notify();
+    });
+  }
+
+  disconnect(connection: Connection): void {
+    const request = Builder.buildConnectRequest(connection);
+    this.project.simulator.disconnect(request);
+    this.connections = this.connections.filter((it) => it !== connection);
+    this.notify();
+  }
+
+  disconnectGroup(group: Connectors): void {
+    for (const i in group.states) {
+      this.disconnectConnector({ group, at: parseInt(i) });
+    }
+  }
+
+  disconnectConnector(connector: Connector): void {
+    const updated: Connection[] = [];
+
+    const compare = (a: Connector, b: Connector) => {
+      return a.group === b.group && a.at === b.at;
+    };
+
+    for (const connection of this.connections) {
+      const { from, to } = connection;
+      const connected = compare(from, connector) || compare(to, connector);
+
+      if (connected) {
+        const request = Builder.buildConnectRequest(connection);
+        this.project.simulator.disconnect(request);
+      } else {
+        updated.push(connection);
+      }
+    }
+
+    this.connections = updated;
+    this.notify();
+  }
+
   // FIXED
   //
   //
@@ -192,6 +217,35 @@ export class Adapter {
   //
   //
   //
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
+  get buttons(): Button[] {
+    this.updateButtons();
+
+    const sorted: Button[] = [];
+    for (const id of this.buttonOrder) {
+      const button = this._buttons.get(id);
+      if (button) sorted.push(button);
+    }
+
+    return sorted;
+  }
+
+  get inputs(): Button[] {
+    return this.buttons.filter((it) => it.side === 'input');
+  }
+
+  get outputs(): Button[] {
+    return this.buttons.filter((it) => it.side === 'output');
+  }
 
   toggleLabels(): void {
     this.labels = !this.labels;
@@ -252,50 +306,6 @@ export class Adapter {
 
   unsubscribe(listener: () => void) {
     this.subscribers.delete(listener);
-  }
-
-  connect(connection: Connection) {
-    const request = Builder.buildConnectRequest(connection);
-    const [, success] = attempt(() => this.project.simulator.connect(request));
-    if (!success) return;
-    this.connections.push(connection);
-    this.notify();
-  }
-
-  removeConnection(connection: Connection): void {
-    this.connections = this.connections.filter((it) => it !== connection);
-    const request = Builder.buildConnectRequest(connection);
-    this.project.simulator.disconnect(request);
-    this.notify();
-  }
-
-  disconnectFrom(connector: Connector): void {
-    const connected = new Set<Connection>();
-
-    const compareConnectors = (a: Connector, b: Connector) => {
-      return a.group === b.group && a.at === b.at;
-    };
-
-    for (const connection of this.connections) {
-      const { from, to } = connection;
-      const isConnected = compareConnectors(from, connector) || compareConnectors(to, connector);
-      if (isConnected) connected.add(connection);
-    }
-
-    this.connections = this.connections.filter((it) => !connected.has(it));
-
-    for (const connection of connected) {
-      const request = Builder.buildConnectRequest(connection);
-      this.project.simulator.disconnect(request);
-    }
-
-    this.notify();
-  }
-
-  disconnectAll(connectors: Connectors): void {
-    for (const i in connectors.states) {
-      this.disconnectFrom({ group: connectors, at: parseInt(i) });
-    }
   }
 
   private clearProject(): void {

@@ -94,9 +94,9 @@ export class InteractionManager {
       if (target instanceof Block) {
         this.source.removeGate(target.id);
       } else if (isConnector(target)) {
-        this.source.disconnectFrom(target);
+        this.source.disconnectConnector(target);
       } else {
-        this.source.removeConnection(target);
+        this.source.disconnect(target);
       }
 
       return;

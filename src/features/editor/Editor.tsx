@@ -121,7 +121,7 @@ export const Editor = ({ project }: { project: Project }) => {
         </StyledWrapper>
         <Controls section="outputs" source={adapter} onScroll={(value) => scrollHandler('outputs', value)} />
         <Sidebar
-          available={adapter.available}
+          available={adapter.availableGates}
           onEdit={handleGateEdit}
           onDelete={(type) => adapter.removeCustomGate(type)}
         />
