@@ -14,6 +14,7 @@ import { Block as PositionedBlock, cleanup } from './utils/cleanup';
 import { Builder } from './Builder';
 import { attempt } from './utils/attepmt';
 import { swap } from './utils/swap';
+import { sort } from './utils/sort';
 
 export class Adapter {
   offset: Vector = [0, 0];
@@ -218,7 +219,7 @@ export class Adapter {
   }
 
   cleanup(): void {
-    this.offset = [96, 96];
+    this.offset = [96, 52];
     const blocks = new Map<string, PositionedBlock>();
 
     for (const block of this.project.simulator.circuit.gates.values()) {
@@ -233,7 +234,12 @@ export class Adapter {
       block.connections.forEach((it) => unvisited.delete(it));
     }
 
-    cleanup(blocks, Array.from(unvisited));
+    const beginnings: string[] = [];
+    for (const input of this.project.simulator.circuit.inputs.values()) {
+      input.connections.forEach((it) => beginnings.push(it.receiverId));
+    }
+
+    cleanup(blocks, sort(new Set([...unvisited, ...beginnings]), beginnings));
 
     for (const [id, { position }] of blocks) {
       const [x, y] = position;
