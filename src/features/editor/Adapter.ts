@@ -18,34 +18,24 @@ import { swap } from './utils/swap';
 export class Adapter {
   offset: Vector = [0, 0];
   size: Vector = [0, 0];
-  labels = false;
 
-  connecting: [Connector, Vector] | undefined;
-  readonly subscribers = new Set<() => void>();
-
+  readonly ports = new Map<string, Button>();
   readonly gates = new Map<string, Block>();
   connections: Connection[] = [];
 
+  connecting?: [Connector, Vector];
   hoveredConnection?: Connection;
 
-  readonly ports = new Map<string, Button>();
-  private buttonOrder: string[] = [];
+  labels = false;
+  private portOrder: string[] = [];
+  private readonly subscribers = new Set<() => void>();
 
   constructor(
     private readonly project: Project,
-    readonly scrolls: MutableRefObject<{ inputs: number; outputs: number }>
+    private readonly scrolls: MutableRefObject<{ inputs: number; outputs: number }>
   ) {
     this.readCircuit();
   }
-
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  // FIXED
 
   get availableGates(): Prototype[] {
     const gates = this.project.simulator.createdGates;
@@ -55,7 +45,7 @@ export class Adapter {
 
   get orderedPorts(): Button[] {
     const ports: Button[] = [];
-    this.buttonOrder.forEach((id) => {
+    this.portOrder.forEach((id) => {
       const port = this.ports.get(id);
       if (port) ports.push(port);
     });
@@ -96,7 +86,7 @@ export class Adapter {
 
     const button = Builder.buildButton(port);
     this.ports.set(button.id, button);
-    this.buttonOrder.push(button.id);
+    this.portOrder.push(button.id);
 
     this.notify();
   }
@@ -109,7 +99,7 @@ export class Adapter {
 
     this.project.simulator.removeGate(id);
     this.ports.delete(id);
-    this.buttonOrder = this.buttonOrder.filter((it) => it !== id);
+    this.portOrder = this.portOrder.filter((it) => it !== id);
 
     this.notify();
   }
@@ -135,9 +125,9 @@ export class Adapter {
 
     this.project.simulator.movePort(id, to, button.side);
 
-    const a = this.buttonOrder.indexOf(id);
+    const a = this.portOrder.indexOf(id);
     const offset = button.side === 'input' ? 0 : this.inputs.length;
-    swap(this.buttonOrder, a, to + offset);
+    swap(this.portOrder, a, to + offset);
 
     this.notify();
   }
@@ -272,24 +262,6 @@ export class Adapter {
     }
   }
 
-  // FIXED
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-
   toggleLabels(): void {
     this.labels = !this.labels;
     this.notify();
@@ -301,16 +273,6 @@ export class Adapter {
 
   unsubscribe(listener: () => void) {
     this.subscribers.delete(listener);
-  }
-
-  private clearProject(): void {
-    this.connecting = undefined;
-    this.offset = [0, 0];
-    this.connecting = undefined;
-    this.gates.clear();
-    this.connections = [];
-    this.ports.clear();
-    this.buttonOrder = [];
   }
 
   private readCircuit(): void {
@@ -325,7 +287,7 @@ export class Adapter {
     const placePort = (port: Port) => {
       const button = Builder.buildButton(port);
       this.ports.set(button.id, button);
-      this.buttonOrder.push(button.id);
+      this.portOrder.push(button.id);
     };
 
     [...inputs.values()].forEach((it) => placePort(it));
@@ -347,6 +309,17 @@ export class Adapter {
     }
 
     this.cleanup();
+  }
+
+  private clearProject(): void {
+    this.offset = [0, 0];
+    this.ports.clear();
+    this.gates.clear();
+    this.connections = [];
+    this.connecting = undefined;
+    this.hoveredConnection = undefined;
+    this.portOrder = [];
+    this.scrolls.current = { inputs: 0, outputs: 0 };
   }
 
   private notify() {
