@@ -47,7 +47,7 @@ export class InteractionManager {
 
   private resolve(at: Vector): Target {
     const gates = this.source.gates.values();
-    const buttons = this.source.buttons.values();
+    const buttons = this.source.ports.values();
     const connections = this.source.connections;
 
     for (const button of buttons) {

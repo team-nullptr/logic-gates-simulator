@@ -28,7 +28,7 @@ export class Adapter {
 
   hoveredConnection?: Connection;
 
-  private readonly _buttons = new Map<string, Button>();
+  readonly ports = new Map<string, Button>();
   private buttonOrder: string[] = [];
 
   constructor(
@@ -51,6 +51,24 @@ export class Adapter {
     const gates = this.project.simulator.createdGates;
     const all = [...gates.values(), ...baseGates.values()];
     return all.map(({ type, name, color }) => ({ type, name, color }));
+  }
+
+  get orderedPorts(): Button[] {
+    const ports: Button[] = [];
+    this.buttonOrder.forEach((id) => {
+      const port = this.ports.get(id);
+      if (port) ports.push(port);
+    });
+
+    return ports;
+  }
+
+  get inputs(): Button[] {
+    return this.orderedPorts.filter((it) => it.side === 'input');
+  }
+
+  get outputs(): Button[] {
+    return this.orderedPorts.filter((it) => it.side === 'output');
   }
 
   addGate(type: string, mouse: Vector): void {
@@ -77,20 +95,20 @@ export class Adapter {
     const port = this.project.simulator.addPort(type, connectors);
 
     const button = Builder.buildButton(port);
-    this._buttons.set(button.id, button);
+    this.ports.set(button.id, button);
     this.buttonOrder.push(button.id);
 
     this.notify();
   }
 
   removePort(id: string): void {
-    const button = this._buttons.get(id);
+    const button = this.ports.get(id);
     if (!button) return;
 
     this.disconnectGroup(button.connectors);
 
     this.project.simulator.removeGate(id);
-    this._buttons.delete(id);
+    this.ports.delete(id);
     this.buttonOrder = this.buttonOrder.filter((it) => it !== id);
 
     this.notify();
@@ -102,7 +120,7 @@ export class Adapter {
   }
 
   renamePort(id: string, name: string) {
-    const button = this._buttons.get(id);
+    const button = this.ports.get(id);
     if (!button) return;
 
     this.project.simulator.renamePort(id, name);
@@ -112,7 +130,7 @@ export class Adapter {
   }
 
   movePort(id: string, to: number): void {
-    const button = this._buttons.get(id);
+    const button = this.ports.get(id);
     if (!button) return;
 
     this.project.simulator.movePort(id, to, button.side);
@@ -209,49 +227,6 @@ export class Adapter {
     this.notify();
   }
 
-  // FIXED
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-
-  get buttons(): Button[] {
-    this.updateButtons();
-
-    const sorted: Button[] = [];
-    for (const id of this.buttonOrder) {
-      const button = this._buttons.get(id);
-      if (button) sorted.push(button);
-    }
-
-    return sorted;
-  }
-
-  get inputs(): Button[] {
-    return this.buttons.filter((it) => it.side === 'input');
-  }
-
-  get outputs(): Button[] {
-    return this.buttons.filter((it) => it.side === 'output');
-  }
-
-  toggleLabels(): void {
-    this.labels = !this.labels;
-    this.notify();
-  }
-
   cleanup(): void {
     this.offset = [96, 96];
     const blocks = new Map<string, PositionedBlock>();
@@ -280,24 +255,44 @@ export class Adapter {
     const top = [48, 48];
     const scrolls = this.scrolls.current;
 
-    for (const id of this.buttonOrder) {
-      const button = this._buttons.get(id);
-      if (!button) continue;
-
+    for (const port of this.orderedPorts) {
       const position: Vector = [0, 0];
 
-      if (button.side === 'input') {
+      if (port.side === 'input') {
         position[0] = -this.offset[0] + 12;
         position[1] = top[0] - this.offset[1] - scrolls.inputs;
-        top[0] += button.height;
+        top[0] += port.height;
       } else {
         position[0] = this.size[0] - this.offset[0] - 12;
         position[1] = top[1] - this.offset[1] - scrolls.outputs;
-        top[1] += button.height;
+        top[1] += port.height;
       }
 
-      button.move(position);
+      port.move(position);
     }
+  }
+
+  // FIXED
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
+  toggleLabels(): void {
+    this.labels = !this.labels;
+    this.notify();
   }
 
   subscribe(listener: () => void) {
@@ -314,7 +309,7 @@ export class Adapter {
     this.connecting = undefined;
     this.gates.clear();
     this.connections = [];
-    this._buttons.clear();
+    this.ports.clear();
     this.buttonOrder = [];
   }
 
@@ -329,7 +324,7 @@ export class Adapter {
 
     const placePort = (port: Port) => {
       const button = Builder.buildButton(port);
-      this._buttons.set(button.id, button);
+      this.ports.set(button.id, button);
       this.buttonOrder.push(button.id);
     };
 
@@ -338,9 +333,9 @@ export class Adapter {
 
     for (const element of [...inputs.values(), ...gates.values()]) {
       for (const connection of element.connections) {
-        const emitter = this.gates.get(element.id)?.outputs ?? this._buttons.get(element.id)?.connectors;
+        const emitter = this.gates.get(element.id)?.outputs ?? this.ports.get(element.id)?.connectors;
         const target =
-          this._buttons.get(connection.receiverId)?.connectors ?? this.gates.get(connection.receiverId)?.inputs;
+          this.ports.get(connection.receiverId)?.connectors ?? this.gates.get(connection.receiverId)?.inputs;
 
         if (!emitter || !target) continue;
 
