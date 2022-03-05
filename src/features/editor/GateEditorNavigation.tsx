@@ -16,10 +16,10 @@ export const GateEditorNavigation = (props: GateEditorNavigationProps) => {
     <Navigation
       color="hsl(265.9,88%,90%)"
       left={[
-        { icon: ArrowLeft, onClick: props.onCancel },
-        { icon: Check, onClick: props.onBack }
+        { icon: ArrowLeft, tooltip: 'Cancel', onClick: props.onCancel },
+        { icon: Check, tooltip: 'Save', onClick: props.onBack }
       ]}
-      right={[{ icon: GitMerge, onClick: props.onCleanup }]}
+      right={[{ icon: GitMerge, tooltip: 'Cleanup layout', onClick: props.onCleanup }]}
     >
       <Editable
         value={props.gateName}
