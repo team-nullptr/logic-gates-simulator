@@ -291,7 +291,13 @@ export class Simulator {
     const emitter = this.circuit.find(emitterId);
     const receiver = this.circuit.find(receiverId);
 
-    if (!emitter || !receiver || (emitter === receiver && (emitter as Gate).inputs.length === 1)) return false;
+    if (
+      !emitter ||
+      !receiver ||
+      (emitter === receiver && (emitter as Gate).inputs.length === 1) ||
+      receiver.type === 'input'
+    )
+      return false;
 
     const isDoubler = [...this.circuit.inputs.values(), ...this.circuit.gates.values()].some((it) =>
       it.connections.some((it) => it.receiverId === receiverId && it.to === to)
