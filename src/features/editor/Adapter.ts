@@ -174,7 +174,12 @@ export class Adapter {
   }
 
   connect(connection: Connection) {
-    if (connection.from.group.side === 'output' && connection.to.group.side === 'output') return;
+    if (
+      (connection.from.group.side === 'output' && connection.to.group.side === 'output') ||
+      (connection.from.group.side === 'input' && connection.to.group.side === 'input')
+    )
+      return;
+
     const request = Builder.buildConnectRequest(connection);
     const [result] = attempt(() => this.project.simulator.connect(request));
     if (!result) return;
