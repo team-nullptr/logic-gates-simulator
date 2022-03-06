@@ -66,7 +66,7 @@ Obszary wejścia i wyjścia pozwalają również układać dodane elementy w odp
 
 <!-- TODO: [obrazek] -->
 
-### _Usuwanie dodanych wejść i wyjść_
+#### _Usuwanie dodanych wejść i wyjść_
 
 Aby usunąć wejście lub wyjście klikamy na nie rolką na myszy (scroll'em) lub lewym przyciskiem myszy przytrzymująć klawisz `alt` (`option` na komputerach od firmy apple).
 
