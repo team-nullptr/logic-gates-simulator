@@ -8,7 +8,9 @@ Ta sekcja zawiera opis funkcjonalności edytora bramek.
 
 Po uruchomieniu aplikacji znajdujemy się w panelu zarządzania projektami. Jest to miejsce, w którym możemy tworzyć, otwierać oraz usuwać nasze projekty. Panel zarządzania projektami składa się z nawigacji oraz listy projektów.
 
-### Tworzenie projektu
+### Zarządzanie projektami
+
+#### _Tworzenie projektu_
 
 Aby stworzyć nowy projekt klikamy guzik `Create project`, znajdujacy się w prawej części nawigacji.
 
@@ -20,17 +22,13 @@ Jeżeli nie mamy stworzonego żadnego projektu, możemy również kliknąć w gu
 
 Po stworzeniu projektu jesteśmy automatycznie przenoszeni do edytora symulatora.
 
-### Zmiana nazwy projektu
+#### _Zmiana nazwy projektu_
 
 Stworzony projekt domyślnie nazywany jest `Untitled`. Oczywiście istnieje możliwość zmiany jego nazwy. Aby tego dokonać klikamy lewym przyciskiem myszy na nazwę projektu znajdującą się na jego karcie. Pozwala to na wpisanie nowej nazwy. Odklikniecie myszką w inne miejsce na ekranie, bądź wciśnięcie klawisza `enter` zatwierdza wprowadzone zmiany. Wciśnięcie klawisza `escape`. Jeżeli skasujemy nazwę, powrócia ona do poprzedniej zapisanej wartości.
 
 <!-- TODO: [obrazek] -->
 
-> Istnieje również druga opcja zmiany nazwy projektu, która zostanie opisana w sekcji opisu funkcjonalności edytora.
-
-<!-- TODO: [obrazek] -->
-
-### Usuwanie projektu
+#### _Usuwanie projektu_
 
 Aby usunąć projekt możemy kliknąć w ikonkę `X` w prawym górnym rogu karty projektu. Projekt zostaje wówczas usunięty na zawsze.
 
