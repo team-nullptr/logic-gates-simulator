@@ -31,6 +31,7 @@ export const GateEditorNavigation = (props: GateEditorNavigationProps) => {
         onEdit={props.onRename}
         prefix={props.title + ' / '}
         prefixColor="hsl(266,99%,36%)"
+        maxLength={8}
       />
     </Navigation>
   );
