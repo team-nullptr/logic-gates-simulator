@@ -1,5 +1,7 @@
 # Dokumentacja symulatora bramek logicznych
 
+
+
 # Opis funkcjonalności
 
 Ta sekcja zawiera opis funkcjonalności edytora bramek.
@@ -160,13 +162,15 @@ W edytorze został zaimplementowany system powiadomień, który wyświetla infor
 
 <img alt="info card" src="./docs/images/info_card.png" width="400"/>
 
-## Dokumentacja techniczna
+# Dokumentacja techniczna
 
-Aplikacja została podzielona na 3 główne elementy:
+## Ogólny podział
+
+Aplikacja została podzielona na 3 główne segmenty:
 
 - Symulator
 - Adapter
-- UI
+- Renderer
 
 ### Symulator
 
@@ -174,27 +178,48 @@ Symulator jest odpowiedzialny za logikę tworzenia układów. To on przechowuje 
 
 #### Symulowanie układów
 
-Obliczanie stanu bramek zaczyna się od wejśc do układu. Na przykład dla poniższego przykładu:
+Obliczanie stanu bramek zaczyna się od wejść do układu. Na przykład dla poniższego przykładu:
 
-```
-[n] - indeks wejścia / wyjścia elementu
-(n) - stan wejścia / wyjścia
-element[0](1) - element o wyjściu o indeksie 0 i stanie 1
+```cpp
+// [n] - indeks wejścia / wyjścia elementu
+// (n) - stan wejścia / wyjścia
+// element[0](1) - element o wyjściu o indeksie 0 i stanie 1
 
 in[0](1) --> in[0](1)|-------|
                      |  AND  |out[0](0) --> out[0](0)
 in[0](0) --> in[1](0)|-------|
 ```
 
-Symulator przeiteruje przez 2 wejścia. Dla każdego z nich przeiteruje przez jego połączenia i przekarze aktualny stan na wejście bramki, która zostanie wywołana z zaktualizowanymi stanami wejść, a następnie przekarze swój stan elementom do których jest połączona ... i tak dalej. Kompletna lista operacji (przekazywania stanów / wywołań bramek) dla powyższego układu wygląda następująco:
+Symulator przeiteruje przez wszystkie (w tym przypadku 2) wejścia. Dla każdego z nich przeiteruje przez jego połączenia i przekarze aktualny stan na wejście bramki, która zostanie wywołana z zaktualizowanymi stanami wejść, a następnie przekarze swój stan elementom do których jest połączona ... i tak dalej. Kompletna lista operacji (przekazywania stanów / wywołań bramek) dla powyższego układu wygląda następująco:
 
-```
-in[0] -> in[0] |and| out[0] -> out[0]
+```cpp
+in[0] -> in[0] |and| out[0] -> out[0] // przekazanie wartości pierwszego wejścia do pierwszego wejścia bramki and, wywołanie jej i przekazanie wyniku do wyjścia
 in[1] -> in[1] |and| out[0] -> out[0]
 ```
 
 Po wykonaniu tych operacji otrzymujemy poprawny stan układu dla aktualnych parametrów.
 
+### Renderer
+
+Renderer odpowiada za wyświetlenie układu symulatora użytkownikowi. Sam w sobie przetrzymuje częściowe dane na temat układu, które są niezbędne do wyrenderowania go w elemencie canvas.
+
 ### Adapter
 
-Ponieważ początkowo tworzyliśmy
+Ponieważ początkowo Renderer i Symulator były tworzone osobno, powstała potrzeba połączenia ich w spójną całość. Właśnie to jest zadaniem adaptera. Jest on abstrakcją, która pozwala połączyć logikę Renderera i Symulatora w całość.
+
+## Struktura plików
+
+```cpp
+src  // główny folder zawierający kod źródłowy
+ |- common // Ogólne funkcje pomocnicze wykorzystywane w projekcie
+ |- core // Implementacja symulatora, układu, zarządzanie projektami etc
+ |- features // Komponenty i logika strony klienta (komponenty React, Renderer)
+ |  |- canvas // Implementacja Renderer'a
+ |  |- common // Komponenty reużywane w innych komponentach
+ |  |- dashboard // Strona zarządzania projektami
+ |  |- editor // Strona edytora, implementacja Adaptera
+ |  |- message-bus // Implementacja systemu powiadomień
+ |  |- navigation // Implementacja nawigacji
+ |  |- sidebar // Implementacja przybornika
+ |- styles // style globalne
+```
