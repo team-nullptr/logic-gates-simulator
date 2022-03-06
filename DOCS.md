@@ -56,7 +56,7 @@ Aby zmienić stan wejścia (pozwala to na testowanie układu w trakcie jego twor
 
 #### _Zmiana nazwy wejść i wyjść_
 
-Wejścia i wyjścia mają automatycznie przypisywaną nazwę (losowa litera angielskiego alfabetu). Można ją zmienić klikając w ikonkę ołówka, która znajduje się na samej górze obszaru wejść / wyjść. Elementy, które mogą mieć zmienioną nazwę zmieniają kolor na szary. Edycję możemy rozpocząć klikając w szare elementy. Podobnie jak w przypadku zmiany nazwy projektów, zatwierdzamy odkliknięciem w inne miejsce lub przyciskiem `enter`. Aby anulować nasze zmiany klikamy przycisk `escape`.
+Wejścia i wyjścia mają automatycznie przypisywaną nazwę (losowa litera angielskiego alfabetu). Można ją zmienić klikając w ikonkę ołówka, która znajduje się na samej górze obszaru wejść / wyjść. Elementy, które mogą mieć zmienioną nazwę zmieniają kolor na szary. Edycję możemy rozpocząć klikając w nie. Podobnie jak w przypadku zmiany nazwy projektów, zatwierdzamy odkliknięciem w inne miejsce lub przyciskiem `enter`. Aby anulować nasze zmiany klikamy przycisk `escape`.
 
 <img alt="renaming ports" src="./docs/gifs/renaming_ports.gif" width="400"/>
 
