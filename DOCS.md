@@ -26,7 +26,7 @@ Po stworzeniu projektu jesteśmy automatycznie przenoszeni do edytora symulatora
 
 #### _Zmiana nazwy projektu_
 
-Stworzony projekt domyślnie nazywany jest `Untitled`. Oczywiście istnieje możliwość zmiany jego nazwy. Aby tego dokonać klikamy lewym przyciskiem myszy na nazwę projektu znajdującą się na jego karcie. Pozwala to na wpisanie nowej nazwy. Odklikniecie myszką w inne miejsce na ekranie, bądź wciśnięcie klawisza `enter` zatwierdza wprowadzone zmiany. Wciśnięcie klawisza `escape`. Jeżeli skasujemy nazwę, powrócia ona do poprzedniej zapisanej wartości.
+Stworzony projekt domyślnie nazywany jest `Untitled`. Oczywiście istnieje możliwość zmiany jego nazwy. Aby tego dokonać klikamy lewym przyciskiem myszy na nazwę projektu znajdującą się na jego karcie. Pozwala to na wpisanie nowej nazwy. Odklikniecie myszką w inne miejsce na ekranie, bądź wciśnięcie klawisza `enter` zatwierdza wprowadzone zmiany. Wciśnięcie klawisza `escape` anuluje wprowadzone zmiany. Jeżeli skasujemy nazwę, powrócia ona do poprzedniej zapisanej wartości.
 
 <img alt="editing project's name" src="./docs/gifs/rename_project.gif" width="400"/>
 
@@ -38,7 +38,7 @@ Aby usunąć projekt możemy kliknąć w ikonkę `X` w prawym górnym rogu karty
 
 ## Edytor
 
-Edytor pozwala na tworzenie nowych układów, symulowaniu ich oraz zapisywaniu do osobnych bloczków. Każdy projekt tworzony jest z pustym edytorem oraz dwoma podstawowymi bramkami logicznymi `and` oraz `not`.
+Edytor pozwala na tworzenie nowych układów, symulowaniu ich oraz zapisywaniu do osobnych bloczków. Każdy projekt tworzony jest z pustym edytorem oraz dwoma podstawowymi bramkami logicznymi `and` i `not`.
 
 Edytor składa się z obszaru roboczego, przybornika oraz nawigacji.
 
