@@ -243,7 +243,7 @@ export class Adapter {
 
     for (const [id, { position }] of blocks) {
       const [x, y] = position;
-      this.gates.get(id)?.move([x * 6, y * 2]);
+      this.gates.get(id)?.move([x * 8, y * 2]);
     }
   }
 
