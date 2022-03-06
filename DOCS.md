@@ -14,11 +14,11 @@ Po uruchomieniu aplikacji znajdujemy się w panelu zarządzania projektami. Jest
 
 Aby stworzyć nowy projekt klikamy guzik `Create project`, znajdujacy się w prawej części nawigacji.
 
-<!-- TODO: [obrazek] -->
+<img alt="create project button" src="./docs/images/create_project_navbar_button.png" width="150"/>
 
 Jeżeli nie mamy stworzonego żadnego projektu, możemy również kliknąć w guzik `Create project` w sekcji poniżej.
 
-<!-- TODO: [obrazek] -->
+<img src="./docs/images/no_projects_button.png" width="400"/>
 
 Po stworzeniu projektu jesteśmy automatycznie przenoszeni do edytora symulatora.
 
@@ -26,13 +26,13 @@ Po stworzeniu projektu jesteśmy automatycznie przenoszeni do edytora symulatora
 
 Stworzony projekt domyślnie nazywany jest `Untitled`. Oczywiście istnieje możliwość zmiany jego nazwy. Aby tego dokonać klikamy lewym przyciskiem myszy na nazwę projektu znajdującą się na jego karcie. Pozwala to na wpisanie nowej nazwy. Odklikniecie myszką w inne miejsce na ekranie, bądź wciśnięcie klawisza `enter` zatwierdza wprowadzone zmiany. Wciśnięcie klawisza `escape`. Jeżeli skasujemy nazwę, powrócia ona do poprzedniej zapisanej wartości.
 
-<!-- TODO: [obrazek] -->
+<img alt="editing project's name" src="./docs/gifs/rename_project.gif" width="400"/>
 
 #### _Usuwanie projektu_
 
 Aby usunąć projekt możemy kliknąć w ikonkę `X` w prawym górnym rogu karty projektu. Projekt zostaje wówczas usunięty na zawsze.
 
-<!-- TODO: [obrazek] -->
+<img alt="delete project" src="./docs/gifs/delete_project.gif" width="400"/>
 
 ## Edytor
 
@@ -46,27 +46,29 @@ Edytor składa się z obszaru roboczego, przybornika oraz nawigacji.
 
 Po najechaniu na żółty plus, znajdujący sie po lewej / prawej stronie obszaru roboczego, rozwija się lista, która pozwala dodać `1`, `2`, `4` lub `8` bitowe wejście / wyjście. Elementy początkowo mają stan `0` (wejścia są wyłączone, a wyjścia nie odbierają żadnego sygnału).
 
-<!-- TODO: [obrazek] -->
+<img alt="adding ports" src="./docs/gifs/adding_ports.gif" width="400"/>
 
 Aby zmienić stan wejścia (pozwala to na testowanie układu w trakcie jego tworzenia) klikamy na nie lewym przyciskiem myszy. Kolor jasnofioletowy reprezentuje stan `0`, a kolor ciemno fioletowy stan `1`.
 
-<!-- TODO: [obrazek] -->
+<img alt="toggling ports" src="./docs/gifs/toggling_ports.gif" width="400"/>
 
 #### _Zmiana nazwy wejść i wyjść_
 
 Wejścia i wyjścia mają automatycznie przypisywaną nazwę (losowa litera angielskiego alfabetu). Można ją zmienić klikając w ikonkę ołówka, która znajduje się na samej górze obszaru wejść / wyjść. Elementy, które mogą mieć zmienioną nazwę zmieniają kolor na szary. Edycję możemy rozpocząć klikając w szare elementy. Podobnie jak w przypadku zmiany nazwy projektów, zatwierdzamy odkliknięciem w inne miejsce lub przyciskiem `enter`. Aby anulować nasze zmiany klikamy przycisk `escape`.
 
-<!-- TODO: [obrazek] -->
+<img alt="renaming ports" src="./docs/gifs/renaming_ports.gif" width="400"/>
 
 #### _Zmiana kolejności ustawienia wejść i wyjść_
 
 Obszary wejścia i wyjścia pozwalają również układać dodane elementy w odpowiadającej nam kolejności. Przytrzymanie lewego przycisku myszy na elemencie pozwala go przenieśc w miejsce innego elementu.
 
-<!-- TODO: [obrazek] -->
+<img alt="moving ports" src="./docs/gifs/moving_ports.gif" width="400"/>
 
 #### _Usuwanie dodanych wejść i wyjść_
 
 Aby usunąć wejście lub wyjście klikamy na nie rolką na myszy (scroll'em) lub lewym przyciskiem myszy przytrzymująć klawisz `alt` (`option` na komputerach od firmy apple).
+
+<img alt="deleting ports" src="./docs/gifs/deleting_ports.gif" width="400"/>
 
 ### Edycja głównego układu
 
@@ -84,7 +86,6 @@ Kabelek zmienia kolor w zależności od tego na jaki stan ustawia wejście do kt
 
 Usunięcie braki z układu działa identycznie jak usuwanie elementów wejścia i wyjścia. Klikamy rolkę na myszce albo lewy przycisk myszy przytrzymująć `alt` (`option` w przypadku komputerów od apple).
 
-<!-- TODO: [obrazek] -->
 ### Nawigacja edytora
 
 Nawigacja edytora posiada kilka ciekawych funkcjonalności, które są bardzo istotne podczas tworzenia układu.
