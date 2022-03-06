@@ -82,7 +82,7 @@ Aby dodać bramkę do układu przeciągamy ją (`drag and drop`) do obszaru rob
 
 #### _Tworzenie połączeń_
 
-Wejścia oraz wyjścia elementu w układzie zaznaczne są poprzez małe kropki po jego lewej oraz prawej stronie. Aby stworzyć połączenie między elementami układu wystarczy przytrzymać lewy przycisk myszy na wyjściu elementu oraz przeciągnąć kabelek do innego wejścia. W tym momencie stan wejścia do którego stworzyliśmy połącznie będzie zależny od stanu wyjścia bramki, od które połącznie zostało poprowadzone.
+Wejścia oraz wyjścia elementu w układzie zaznaczne są poprzez małe kropki po jego lewej oraz prawej stronie. Aby stworzyć połączenie między elementami układu wystarczy przytrzymać lewy przycisk myszy na wyjściu elementu oraz przeciągnąć kabelek do innego wejścia. W tym momencie stan wejścia do którego stworzyliśmy połącznie będzie zależny od stanu wyjścia bramki, od której zostało poprowadzone.
 
 Kabelek zmienia kolor w zależności od tego na jaki stan ustawia wejście do którego jest podłączony. W przypadku gdy stan ten jest równy 0 kolor kabelka jest szary, a gdy 1 fioletowy.
 
