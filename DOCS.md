@@ -154,6 +154,47 @@ Edycja nazwy stworzonej bramki wygląda identycznie jak w przypadku zmiany nazwy
 
 <img alt="renaming gates" src="./docs/gifs/renaming_gate.gif" width="400"/>
 
+## System Powiadomień
+
+W edytorze został zaimplementowany system powiadomień, który wyświetla informacjie o ewentualnych błędach. Pojawiają się one w lewym dolnym rogu aplikacji.
+
+<img alt="info card" src="./docs/images/info_card.png" width="400"/>
+
 ## Dokumentacja techniczna
 
-...
+Aplikacja została podzielona na 3 główne elementy:
+
+- Symulator
+- Adapter
+- UI
+
+### Symulator
+
+Symulator jest odpowiedzialny za logikę tworzenia układów. To on przechowuje aktualny układ, bramki jakie zostały stworzone, oraz informacje o połączeniach między bramkami.
+
+#### Symulowanie układów
+
+Obliczanie stanu bramek zaczyna się od wejśc do układu. Na przykład dla poniższego przykładu:
+
+```
+[n] - indeks wejścia / wyjścia elementu
+(n) - stan wejścia / wyjścia
+element[0](1) - element o wyjściu o indeksie 0 i stanie 1
+
+in[0](1) --> in[0](1)|-------|
+                     |  AND  |out[0](0) --> out[0](0)
+in[0](0) --> in[1](0)|-------|
+```
+
+Symulator przeiteruje przez 2 wejścia. Dla każdego z nich przeiteruje przez jego połączenia i przekarze aktualny stan na wejście bramki, która zostanie wywołana z zaktualizowanymi stanami wejść, a następnie przekarze swój stan elementom do których jest połączona ... i tak dalej. Kompletna lista operacji (przekazywania stanów / wywołań bramek) dla powyższego układu wygląda następująco:
+
+```
+in[0] -> in[0] |and| out[0] -> out[0]
+in[1] -> in[1] |and| out[0] -> out[0]
+```
+
+Po wykonaniu tych operacji otrzymujemy poprawny stan układu dla aktualnych parametrów.
+
+### Adapter
+
+Ponieważ początkowo tworzyliśmy
