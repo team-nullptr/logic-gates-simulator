@@ -76,41 +76,61 @@ Aby usunąć wejście lub wyjście klikamy na nie rolką na myszy (scroll'em) lu
 
 Aby dodać bramkę do układu przeciągamy ją (`drag and drop`) do obszaru roboczego. Bramka wyświetli się wówczas w miejscu gdzie została opuszona.
 
+<img alt="adding gates" src="./docs/gifs/adding_gates.gif" width="400"/>
+
 #### _Tworzenie połączeń_
 
 Wejścia oraz wyjścia elementu w układzie zaznaczne są poprzez małe kropki po jego lewej oraz prawej stronie. Aby stworzyć połączenie między elementami układu wystarczy przytrzymać lewy przycisk myszy na wyjściu elementu oraz przeciągnąć kabelek do innego wejścia. W tym momencie stan wejścia do którego stworzyliśmy połącznie będzie zależny od stanu wyjścia bramki, od które połącznie zostało poprowadzone.
 
 Kabelek zmienia kolor w zależności od tego na jaki stan ustawia wejście do którego jest podłączony. W przypadku gdy stan ten jest równy 0 kolor kabelka jest szary, a gdy 1 fioletowy.
 
+<img alt="making connections" src="./docs/gifs/making_connections.gif" width="400"/>
+
 #### _Usuwanie bramek z układu_
 
 Usunięcie braki z układu działa identycznie jak usuwanie elementów wejścia i wyjścia. Klikamy rolkę na myszce albo lewy przycisk myszy przytrzymująć `alt` (`option` w przypadku komputerów od apple).
+
+<img alt="deleting gates" src="./docs/gifs/deleting_gates.gif" width="400"/>
 
 ### Nawigacja edytora
 
 Nawigacja edytora posiada kilka ciekawych funkcjonalności, które są bardzo istotne podczas tworzenia układu.
 
+<img alt="editor navigation" src="./docs/images/editor_navigation.png" width="400"/>
+
 #### _Porządkowanie układu_
 
 Guzik porządkujący układ jest pierwszym guzikiem od prawej strony. Układa on elementy znajdujące się w obszarze roboczym w czytelny sposób.
+
+<img alt="cleaning up a circuit" src="./docs/gifs/cleaning_up_a_circuit.gif" width="400"/>
 
 #### _Wyświetlanie nazw wejść i wyjść elementów_
 
 Przycisk pozwalający włączyć podgląd nazw wejść i wyjść znajduje się zaraz obok guzika do porządkowania elementów. Jest reprezentowany przez ikonkę oka. Nazwy wejść i wyjść bramki wyświetlają się obok nich.
 
+<img alt="toggling port names" src="./docs/gifs/toggling_port_names.gif" width="400"/>
+
 #### _Zapisywanie stworzonych układów_
 
 Przycisk `Create gate` pozwala na tworzenie nowych bramek z aktualnie stworzonego układu. Należy pamiętać, że każda stworzona bramka musi posiadać conajmniej jedno wejście i wyjście.
 
+<img alt="create gate" src="./docs/images/create_gate.png" width="150"/>
+
 Po kliknięciu w przycisk wyświetli się formularz, w którym wpisujemy nazwę bramki i wybieramy kolor (jeżeli nie odpowiada nam wylosowany). Aby zapisać nowy element klikamy przycisk `submit`. Jeżli chcemy anulować tworzenie bramki klikamy w przycisk cancel, albo w lekko przyciemnione tło.
+
+<img alt="creating custom gate" src="./docs/gifs/creating_custom_gate.gif" width="400"/>
 
 #### _Zmiana nazwy projektu bezpośrednio z edytora_
 
 Aby zmienić nazwę projektu bezpośrednio z edytora klikamy w tytuł projektu po środku nawigacji. Zasady edycji są identyczne jak w panelu zarządzania projektami.
 
+<img alt="renaming project in editor" src="./docs/gifs/renaming_project_editor.gif" width="400"/>
+
 #### _Powrót do panelu zarządzania projektami_
 
 Aby powrócić do panelu zarządzania projektami klikamy w ikonkę domu, po lewej stronie nawigacji.
+<br/>
+<img alt="home button" src="./docs/images/home.png" width="40"/>
 
 ### System edycji bramek
 
@@ -118,15 +138,21 @@ Aby wejść w tryb edycji bramki klikamy na nią podwójnym kliknięciem w przy
 
 Po wejściu w tryb edycji bramki nawigacja zmienia swój kolor na jasnofioletowy. Obok nazwy projektu pojawia się nazwa edytowanej bramki.
 
+<img alt="editing gates" src="./docs/gifs/editing_gates.gif" width="400"/>
+
 #### _Edycja układu stworzonej bramki_
 
 System edycji bramek pozwala zmieniać strukturę stworzonego elementu (dodawać nowe wejścia, wyjścia i bramki wewnętrzne). Należy pamiętać, że stworzona bramka, nie może korzystać z samej siebie oraz bramki w której jest wykorzystywana.
 
 Aby zatwierdzić edycję klikamy w ikonke znacznika po lewej stronie nawigacji. Aby anulować edycję klikamy w strzałkę obok niego.
 
+<img alt="editing gates" src="./docs/images/navbar_options_editing.png" width="100"/>
+
 #### _Edycja nazwy stworzonej bramki_
 
 Edycja nazwy stworzonej bramki wygląda identycznie jak w przypadku zmiany nazwy projektu (Klikamy w nazwę bramki na nawigacji).
+
+<img alt="renaming gates" src="./docs/gifs/renaming_gate.gif" width="400"/>
 
 ## Dokumentacja techniczna
 
