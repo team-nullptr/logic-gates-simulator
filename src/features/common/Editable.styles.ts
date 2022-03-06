@@ -21,6 +21,7 @@ export const StyledSpan = styled.span`
   max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 4px 0;
+  padding: 6px 0;
   min-width: 24px;
+  cursor: pointer;
 `;

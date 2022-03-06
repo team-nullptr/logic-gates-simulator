@@ -93,7 +93,7 @@ export const Controls = (props: {
 
   const handleToggle = (button: ButtonType, index = 0) => {
     if (editing) return;
-    props.source.toggleInput(button.id, index);
+    props.source.togglePort(button.id, index);
   };
 
   const handleRename = (button: ButtonType, name: string) => {

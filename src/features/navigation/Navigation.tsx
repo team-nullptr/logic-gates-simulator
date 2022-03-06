@@ -11,7 +11,7 @@ interface NavigationProps {
 
 export const Navigation: FC<NavigationProps> = (props) => {
   const renderActions = (items: NavigationItem[]) => {
-    return items.map((it, i) => <NavigationButton icon={it.icon} onClick={it.onClick} text={it.text} key={i} />);
+    return items.map((it, i) => <NavigationButton icon={it.icon} onClick={it.onClick} text={it.text} key={i} tooltip={it.tooltip} />);
   };
 
   return (

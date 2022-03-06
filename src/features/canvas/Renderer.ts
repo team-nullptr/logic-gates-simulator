@@ -1,5 +1,6 @@
 import { Adapter } from '../editor/Adapter';
 import { renderConnection } from './renderers/connection';
+import { Connection } from './types/Connection';
 
 export class Renderer {
   constructor(private readonly source: Adapter) {}
@@ -15,7 +16,7 @@ export class Renderer {
   }
 
   private renderConnections(ctx: CanvasRenderingContext2D) {
-    const { connecting, connections } = this.source;
+    const { connecting, connections, hoveredConnection } = this.source;
 
     if (connecting) {
       const [{ group, at }, end] = connecting;
@@ -28,14 +29,29 @@ export class Renderer {
       }
     }
 
+    const grayed = !!hoveredConnection;
+    let over: Connection | undefined;
+
     connections.forEach((it) => {
-      const { from, to } = it;
-      const state = from.group.states[from.at];
-
-      const start = from.group.items[from.at];
-      const end = to.group.items[to.at];
-
-      renderConnection([start, end], state, ctx);
+      if (it === hoveredConnection) {
+        over = it;
+      } else {
+        this.renderConnection(ctx, it, grayed);
+      }
     });
+
+    if (over) {
+      this.renderConnection(ctx, over, false);
+    }
   }
+
+  private renderConnection = (ctx: CanvasRenderingContext2D, connection: Connection, grayed: boolean) => {
+    const { from, to } = connection;
+    const state = from.group.states[from.at];
+
+    const start = from.group.items[from.at];
+    const end = to.group.items[to.at];
+
+    renderConnection([start, end], state, ctx, grayed);
+  };
 }

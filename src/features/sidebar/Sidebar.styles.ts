@@ -4,6 +4,7 @@ export const StyledSidebar = styled.div`
   height: 100%;
   width: 288px;
   min-width: 288px;
+  overflow-y: auto;
 `;
 
 export const StyledGrid = styled.div`

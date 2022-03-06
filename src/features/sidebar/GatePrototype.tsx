@@ -16,8 +16,7 @@ const StyledContainer = styled.div`
 const StyledContent = styled.p<{ color: string }>`
   position: relative;
   top: 50%;
-  left: 12px;
-  width: calc(100% - 24px);
+  width: 100%;
   transform: translateY(-50%);
   text-align: center;
   font-weight: 700;

@@ -1,8 +1,7 @@
-import { StyledWrapper, StyledGrid, StyledHeader, StyledTitle, StyledInfo, StyledSpan } from './Dashboard.styles';
+import { StyledGrid, StyledInfo, StyledWrapper } from './Dashboard.styles';
 import { DashboardCard } from './DashboardCard';
 import { useEffect, useState } from 'react';
-import { Project } from '../../core/project-manager/ProjectManager';
-import { projectManager } from '../../core/project-manager/ProjectManager';
+import { Project, projectManager } from '../../core/project-manager/ProjectManager';
 import { DashboardNavigation } from './DashboardNavigation';
 import { messageBus } from '../message-bus/MessageBus';
 import { NavigationButton } from '../navigation/NavigationButton';
@@ -20,13 +19,11 @@ export const Dashboard = () => {
   const handleProjectDelete = (id: string) => {
     projectManager.deleteProject(id);
     setProjects(projects.filter((it) => it.id !== id));
-    messageBus.push({ type: 'success', body: 'project deleted successfully' });
   };
 
   const createProject = () => {
     try {
       const id = projectManager.createProject('Untitled');
-      messageBus.push({ type: 'success', body: 'A new project has been created successfully' });
       navigate(`/editor/${id}`);
     } catch (err) {
       messageBus.push({ type: 'error', body: 'Failed to create a new project' });
@@ -37,9 +34,6 @@ export const Dashboard = () => {
     <>
       <DashboardNavigation />
       <StyledWrapper>
-        <StyledHeader>
-          <StyledTitle>Projects</StyledTitle>
-        </StyledHeader>
         {projects.length ? (
           <StyledGrid>
             {projects.map((project) => (
