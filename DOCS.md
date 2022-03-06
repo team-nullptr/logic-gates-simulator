@@ -185,10 +185,11 @@ Obliczanie stanu bramek zaczyna się od wejść do układu. Na przykład dla pon
 // (n) - stan wejścia / wyjścia
 // element[0](1) - element o wyjściu o indeksie 0 i stanie 1
 
-in[0](1) --> in[0](1)|-------|
+in[0](1) --> in[0](0)|-------|
                      |  AND  |out[0](0) --> out[0](0)
-in[0](0) --> in[1](0)|-------|
+in[0](1) --> in[1](0)|-------|
 ```
+_Wszystkie bramki przed pierwszą symulacją mają ustawione stan 0 na wszystkich wejściach i wyjściach_
 
 Symulator przeiteruje przez wszystkie (w tym przypadku 2) wejścia. Dla każdego z nich przeiteruje przez jego połączenia i przekarze aktualny stan na wejście bramki, która zostanie wywołana z zaktualizowanymi stanami wejść, a następnie przekarze swój stan elementom do których jest połączona ... i tak dalej. Kompletna lista operacji (przekazywania stanów / wywołań bramek) dla powyższego układu wygląda następująco:
 
@@ -197,8 +198,13 @@ in[0] -> in[0] |and| out[0] -> out[0] // przekazanie wartości pierwszego wejśc
 in[1] -> in[1] |and| out[0] -> out[0]
 ```
 
-Po wykonaniu tych operacji otrzymujemy poprawny stan układu dla aktualnych parametrów.
+Po wykonaniu tych operacji otrzymujemy poprawny stan układu dla aktualnych parametrów:
 
+```cpp
+in[0](1) --> in[0](1)|-------|
+                     |  AND  |out[0](1) --> out[0](1)
+in[0](0) --> in[1](1)|-------|
+```
 ### Renderer
 
 Renderer odpowiada za wyświetlenie układu symulatora użytkownikowi. Sam w sobie przetrzymuje częściowe dane na temat układu, które są niezbędne do wyrenderowania go w elemencie canvas.
