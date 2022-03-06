@@ -174,12 +174,12 @@ export class Adapter {
   }
 
   connect(connection: Connection) {
+    if (connection.from.group.side === 'output' && connection.to.group.side === 'output') return;
     const request = Builder.buildConnectRequest(connection);
-    attempt(() => {
-      this.project.simulator.connect(request);
-      this.connections.push(connection);
-      this.notify();
-    });
+    const [result] = attempt(() => this.project.simulator.connect(request));
+    if (!result) return;
+    this.connections.push(connection);
+    this.notify();
   }
 
   disconnect(connection: Connection): void {
