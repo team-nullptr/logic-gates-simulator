@@ -29,8 +29,6 @@ export const cleanup = (blocks: Map<string, Block>, beginnings: string[]) => {
 
   let row = 0;
   for (const id of beginnings) {
-    const block = blocks.get(id);
-    if (!block) continue;
     row = recursive(id, [0, row]);
   }
 };

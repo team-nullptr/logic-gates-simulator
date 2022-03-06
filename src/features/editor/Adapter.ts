@@ -234,17 +234,12 @@ export class Adapter {
       blocks.set(id, { height, position: [0, Infinity], connections: receivers });
     }
 
-    const unvisited = new Set(blocks.keys());
-    for (const block of blocks.values()) {
-      block.connections.forEach((it) => unvisited.delete(it));
-    }
-
     const beginnings: string[] = [];
     for (const input of this.project.simulator.circuit.inputs.values()) {
       input.connections.forEach((it) => beginnings.push(it.receiverId));
     }
 
-    cleanup(blocks, sort(new Set([...unvisited, ...beginnings]), beginnings));
+    cleanup(blocks, sort(new Set([...beginnings, ...blocks.keys()]), beginnings));
 
     for (const [id, { position }] of blocks) {
       const [x, y] = position;
