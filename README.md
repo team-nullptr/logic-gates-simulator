@@ -4,7 +4,25 @@ Jest to nasza implementacja symulatora bramek logicznych.
 
 # Uruchamianie projektu
 
-Do uruchomienia projektu potrzebne jest środowisko node.js (aplikacja była tworzona na wersji v16.13.0). Po pobraniu projektu należy wywołać komendę `npm i` wewnątrz folderu z projektem, która zainstaluje wszystkie wymagane zależności. Komenda `npm run dev` uruchamia projekt na porcie `3000` w trybie developerskim. Jeżeli w trakcie działania aplikacji uruchomionej poprzednią komendą zmieni się kod źródłowy, mogą wystąpić problemy. Należy wtedy odświeżyć stronę. Istnieje również drugi sposób uruchomienia aplikacji. Używając komendy `npm run build` możemy ją zbudować. Stworzy się wtedy folder `dist`, który zawiera zbudowaną aplikację, która może zostać uruchomiona na lokalnym serwerze. Można to osiągnąć używając wtyczki do visual studio code `live server`. Bardzo ważne jest aby otworzyć folder `dist` jako osobny projekt w visual studio code, żeby wtyczka poprawnie ładowała pliki.
+Do uruchomienia projektu potrzebne jest środowisko node.js (aplikacja była tworzona na wersji v16.13.0).
+
+Po pobraniu projektu wchodzimy do głównego folderu (znajduje się w nim plik `package.json`) i instalujemy wymagane zależności:
+
+```zsh
+npm i
+```
+
+Aby uruchomić projekt najpierw należy go zbudować:
+
+```zsh
+npm run build
+```
+
+Oraz włączyć serwer poglądowy:
+
+```zsh
+npm run serve
+```
 
 # Opis funkcjonalności
 
@@ -199,6 +217,7 @@ in[0](1) --> in[0](0)|-------|
                      |  AND  |out[0](0) --> out[0](0)
 in[0](1) --> in[1](0)|-------|
 ```
+
 _Wszystkie bramki przed pierwszą symulacją mają ustawione stan 0 na wszystkich wejściach i wyjściach_
 
 Symulator przeiteruje przez wszystkie (w tym przypadku 2) wejścia. Dla każdego z nich przeiteruje przez jego połączenia i przekarze aktualny stan na wejście bramki, która zostanie wywołana z zaktualizowanymi stanami wejść, a następnie przekarze swój stan elementom do których jest połączona ... i tak dalej. Kompletna lista operacji (przekazywania stanów / wywołań bramek) dla powyższego układu wygląda następująco:
@@ -215,6 +234,7 @@ in[0](1) --> in[0](1)|-------|
                      |  AND  |out[0](1) --> out[0](1)
 in[0](0) --> in[1](1)|-------|
 ```
+
 ### Renderer
 
 Renderer odpowiada za wyświetlenie układu symulatora użytkownikowi. Sam w sobie przetrzymuje częściowe dane na temat układu, które są niezbędne do wyrenderowania go w elemencie canvas.
