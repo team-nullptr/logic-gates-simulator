@@ -21,7 +21,7 @@ export class Connectors {
 
   collides(other: Vector): number | undefined {
     for (const [i, item] of this.items.entries()) {
-      if (getDistance(item, other) <= 16) return i;
+      if (getDistance(item, other) <= 20) return i;
     }
   }
 

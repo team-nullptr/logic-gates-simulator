@@ -10,7 +10,7 @@ import { GateEditorNavigation } from './GateEditorNavigation';
 import { EditorNavigation } from './EditorNavigation';
 import { CreateGateForm, GateCreateHandler } from './CreateGateForm';
 import { messageBus } from '../message-bus/MessageBus';
-import { StyledCanvas, StyledSide, StyledMain, StyledWrapper } from './Editor.styles';
+import { StyledCanvas, StyledMain, StyledSide, StyledWrapper } from './Editor.styles';
 
 export const Editor = ({ project }: { project: Project }) => {
   const [scrolls, setScrolls] = useState({ inputs: 0, outputs: 0 });
@@ -48,7 +48,7 @@ export const Editor = ({ project }: { project: Project }) => {
 
   const handleGateEdit = (type: string) => {
     if (project.simulator.meta.mode === 'GATE_EDIT') return;
-    adapter.editCreatedGate(type);
+    adapter.editCustomGate(type);
   };
 
   const scrollHandler = (side: 'inputs' | 'outputs', value: number) => {
@@ -63,7 +63,7 @@ export const Editor = ({ project }: { project: Project }) => {
       return;
     }
 
-    adapter.createGate(name, color);
+    adapter.createCustomGate(name, color);
     console.log(project.simulator.createdGates);
     setCreateGateFormOpen(false);
   };
@@ -91,11 +91,13 @@ export const Editor = ({ project }: { project: Project }) => {
 
     return (
       <GateEditorNavigation
-        onBack={() => adapter.updateCreatedGate()}
-        onCancel={() => adapter.cancelCreatedGateUpdate()}
+        onBack={() => adapter.updateCustomGate()}
+        onCancel={() => adapter.cancelCustomGateUpdate()}
         title={project.name}
         gateName={meta.editedGate.name}
-        onRename={(value) => adapter.renameCreatedGate(meta.editedGate.type, value)}
+        labels={adapter.labels}
+        onRename={(value) => adapter.renameCustomGate(meta.editedGate.type, value)}
+        onLabelToggle={() => adapter.toggleLabels()}
         onCleanup={() => adapter.cleanup()}
       />
     );
@@ -119,9 +121,9 @@ export const Editor = ({ project }: { project: Project }) => {
         </StyledWrapper>
         <Controls section="outputs" source={adapter} onScroll={(value) => scrollHandler('outputs', value)} />
         <Sidebar
-          available={adapter.available}
+          available={adapter.availableGates}
           onEdit={handleGateEdit}
-          onDelete={(type) => adapter.removeCreatedGate(type)}
+          onDelete={(type) => adapter.removeCustomGate(type)}
         />
       </StyledMain>
       {createGateFormOpen && (

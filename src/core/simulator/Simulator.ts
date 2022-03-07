@@ -43,9 +43,6 @@ export class Simulator {
     this.meta.circuit = circuit;
   }
 
-  /**
-   * Deserializes serialized simulator from json object.
-   */
   static deserialize({ circuit, createdGates }: SerializedSimulator): Simulator {
     const simulator = new Simulator();
     createdGates.forEach(([id, gate]) => simulator.createdGates.set(id, gate));
@@ -291,11 +288,17 @@ export class Simulator {
     this.notify();
   }
 
-  connect({ emitterId, receiverId, from, to }: ConnectRequest): void {
+  connect({ emitterId, receiverId, from, to }: ConnectRequest): boolean {
     const emitter = this.circuit.find(emitterId);
     const receiver = this.circuit.find(receiverId);
 
-    if (!emitter || !receiver || (emitter === receiver && (emitter as Gate).inputs.length === 1)) return;
+    if (
+      !emitter ||
+      !receiver ||
+      (emitter === receiver && (emitter as Gate).inputs.length === 1) ||
+      receiver.type === 'input'
+    )
+      return false;
 
     const isDoubler = [...this.circuit.inputs.values(), ...this.circuit.gates.values()].some((it) =>
       it.connections.some((it) => it.receiverId === receiverId && it.to === to)
@@ -306,11 +309,9 @@ export class Simulator {
     this.circuit.simulate();
 
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
+    return true;
   }
 
-  /**
-   * Removes connection between two elements.
-   */
   disconnect({ emitterId, receiverId, from, to }: ConnectRequest): void {
     const emitter = this.circuit.find(emitterId);
     const receiver = this.circuit.find(receiverId);
@@ -354,9 +355,6 @@ export class Simulator {
     if (this.meta.mode === 'PROJECT_EDIT') this.notify();
   }
 
-  /**
-   * Serializes simulator into json object.
-   */
   serialize(): SerializedSimulator {
     return {
       circuit: this.meta.mode === 'PROJECT_EDIT' ? this.circuit.serialize() : this.meta.projectCircuit,

@@ -17,11 +17,11 @@ export const EditorNavigation = (props: EditorNavigationProps) => {
 
   return (
     <Navigation
-      left={[{ icon: Home, onClick: () => navigate('/') }]}
+      left={[{ icon: Home, tooltip: 'Back to dashboard', onClick: () => navigate('/') }]}
       right={[
         { icon: Plus, text: 'Create gate', onClick: props.onCreateGate },
-        { icon: props.labels ? EyeOff : Eye, onClick: props.onLabelToggle },
-        { icon: GitMerge, onClick: props.onCleanup }
+        { icon: props.labels ? EyeOff : Eye, tooltip: 'Toggle input names', onClick: props.onLabelToggle },
+        { icon: GitMerge, tooltip: 'Cleanup layout', onClick: props.onCleanup }
       ]}
     >
       <Editable value={props.title} onEdit={props.onRename} />

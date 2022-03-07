@@ -1,5 +1,5 @@
 import { Navigation } from '../navigation/Navigation';
-import { ArrowLeft, Check, GitMerge, X } from 'react-feather';
+import { ArrowLeft, Check, Eye, EyeOff, GitMerge } from 'react-feather';
 import { Editable } from '../common/Editable';
 
 interface GateEditorNavigationProps {
@@ -7,25 +7,31 @@ interface GateEditorNavigationProps {
   onCancel: () => void;
   title: string;
   gateName: string;
+  labels: boolean;
   onRename: (to: string) => void;
+  onLabelToggle: () => void;
   onCleanup: () => void;
 }
 
 export const GateEditorNavigation = (props: GateEditorNavigationProps) => {
   return (
     <Navigation
-      color="hsl(265.9,88%,90%)"
+      color="hsl(265.9,88%,95%)"
       left={[
-        { icon: ArrowLeft, onClick: props.onCancel },
-        { icon: Check, onClick: props.onBack }
+        { icon: ArrowLeft, tooltip: 'Cancel', onClick: props.onCancel },
+        { icon: Check, tooltip: 'Save', onClick: props.onBack }
       ]}
-      right={[{ icon: GitMerge, onClick: props.onCleanup }]}
+      right={[
+        { icon: props.labels ? EyeOff : Eye, tooltip: 'Toggle labels', onClick: props.onLabelToggle },
+        { icon: GitMerge, tooltip: 'Cleanup', onClick: props.onCleanup }
+      ]}
     >
       <Editable
         value={props.gateName}
         onEdit={props.onRename}
         prefix={props.title + ' / '}
-        prefixColor="rgb(102,1,235)"
+        prefixColor="hsl(266,99%,36%)"
+        maxLength={8}
       />
     </Navigation>
   );

@@ -47,14 +47,12 @@ export class InteractionManager {
 
   private resolve(at: Vector): Target {
     const gates = this.source.gates.values();
-    const buttons = this.source.buttons.values();
+    const buttons = this.source.ports.values();
     const connections = this.source.connections;
 
     for (const button of buttons) {
       const connector = button.collides(at);
-      if (button.collides(at)) {
-        return connector;
-      }
+      if (button.collides(at)) return connector;
     }
 
     for (const block of gates) {
@@ -94,9 +92,9 @@ export class InteractionManager {
       if (target instanceof Block) {
         this.source.removeGate(target.id);
       } else if (isConnector(target)) {
-        this.source.disconnectFrom(target);
+        this.source.disconnectConnector(target);
       } else {
-        this.source.removeConnection(target);
+        this.source.disconnect(target);
       }
 
       return;
