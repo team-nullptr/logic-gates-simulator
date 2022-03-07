@@ -1,6 +1,10 @@
-# Dokumentacja symulatora bramek logicznych
+# Symulator bramek logicznych
 
+Jest to nasza implementacja symulatora bramek logicznych.
 
+# Uruchamianie projektu
+
+Do uruchomienia projektu potrzebny jest środowisko node.js (aplikacja była tworzona na wersji v16.13.0). Po pobraniu projektu należy wywołać komendę `npm i`, która zainstaluje wszystkie wymagane zależności. Komenda `npm run dev` uruchamia projekt na porcie `3000` w trybie developerskim. Jeżeli w trakcie działania aplikacji uruchomionej poprzednią komendą zmieni się kod źródłowy, mogą wystąpić problemy. Należy wtedy odświeżyć stronę. Istnieje również drugi sposób uruchomienia aplikacji. Używając komendy `npm run build` możemy ją zbudować. Stworzy się wtedy folder `dist`, który zawiera zbudowaną aplikację, która może zostać uruchomiona na lokalnym serwerze. Można to osiągnąć używając wtyczki do visual studio code `live server`. Bardzo ważne jest aby otworzyć folder `dist` jako osobny projekt w visual studio code, żeby wtyczka poprawnie ładowała pliki.
 
 # Opis funkcjonalności
 
@@ -85,6 +89,12 @@ Aby dodać bramkę do układu przeciągamy ją (`drag and drop`) do obszaru rob
 Wejścia oraz wyjścia elementu w układzie zaznaczne są poprzez małe kropki po jego lewej oraz prawej stronie. Aby stworzyć połączenie między elementami układu wystarczy przytrzymać lewy przycisk myszy na wyjściu elementu oraz przeciągnąć kabelek do innego wejścia. W tym momencie stan wejścia do którego stworzyliśmy połącznie będzie zależny od stanu wyjścia bramki, od której zostało poprowadzone.
 
 Kabelek zmienia kolor w zależności od tego na jaki stan ustawia wejście do którego jest podłączony. W przypadku gdy stan ten jest równy 0 kolor kabelka jest szary, a gdy 1 fioletowy.
+
+<img alt="making connections" src="./docs/gifs/making_connections.gif" width="400"/>
+
+#### _Praca z połączeniami_
+
+Aby poprawić czytelność połączeń po najechaniu myszką połączenie podświetla się.
 
 <img alt="making connections" src="./docs/gifs/making_connections.gif" width="400"/>
 
