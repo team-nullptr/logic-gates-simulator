@@ -142,6 +142,7 @@ export class Adapter {
   }
 
   removeCustomGate(type: string): void {
+    if (baseGates.get(type)) return;
     attempt(() => {
       this.project.simulator.removeCreatedGate(type);
       this.notify();

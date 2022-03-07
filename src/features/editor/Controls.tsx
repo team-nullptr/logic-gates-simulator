@@ -60,7 +60,7 @@ export const Controls = (props: {
           background={background}
           hover={locked ? background : hover}
           onClick={() => handleToggle(button, 0)}
-          style={{ color, cursor: locked && !editing ? 'not-allowed' : 'default' }}
+          style={{ color }}
         >
           {renderButtonContent()}
         </StyledButton>

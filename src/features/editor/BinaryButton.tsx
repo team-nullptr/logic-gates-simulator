@@ -24,7 +24,6 @@ export const BinaryButton = (props: { state: boolean[]; onChange: (bit: number) 
             background={background}
             hover={props.locked ? background : hover}
             onClick={() => props.onChange(i)}
-            style={{ cursor: props.locked ? 'not-allowed' : 'default' }}
           >
             <span style={{ color }}>{props.state.length - i - 1}</span>
           </StyledButton>
