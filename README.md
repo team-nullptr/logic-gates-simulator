@@ -114,8 +114,6 @@ Kabelek zmienia kolor w zależności od tego na jaki stan ustawia wejście do kt
 
 Aby poprawić czytelność połączeń po najechaniu myszką połączenie podświetla się.
 
-<img alt="making connections" src="./docs/gifs/making_connections.gif" width="400"/>
-
 #### _Usuwanie bramek z układu_
 
 Usunięcie braki z układu działa identycznie jak usuwanie elementów wejścia i wyjścia. Klikamy rolkę na myszce albo lewy przycisk myszy przytrzymująć `alt` (`option` w przypadku komputerów od apple).
